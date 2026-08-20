@@ -9,7 +9,7 @@ An interactive, single-file HTML prototype of **سجّل / Sajjel**, a merchant�
 - Full prior transcript: `/mnt/transcripts/2026-08-18-15-52-56-sajjel-arabic-prototype.txt` (contains the complete POC spec document — read incrementally if spec details are needed).
 
 ## Design system
-- Palette (user-specified): mist `#E8EDF2` (bg), ink `#2C3947` (chrome/primary dark), steel `#547A95` (primary actions), gold `#C2A56D` (accent/pay CTAs). CSS variables at top of `<style>`.
+- Palette: mist `#EDE9E6` (bg), ink `#5C4F4A` (chrome/primary dark), sage `#5C766D` (primary actions, kept in the `--steel` variable), tan `#C9996B` (accent/pay CTAs). Source: colorhunt.co/palette/ede9e6c9996b5c4f4a5c766d. CSS variables at top of `<style>`; every derived tint in the file was remapped to the same warm family.
 - Font: Cairo. Logo: notebook/checklist SVG badge, gold on ink.
 - Status pills: 🟢 مسدد (green) / 🔵 دين نشط (blue) / 🔴 متأخر (red) / ⚫ بلغ الحد (dark). "Due soon" (amber) styling exists (`st-amber`) but no customer currently uses it.
 
