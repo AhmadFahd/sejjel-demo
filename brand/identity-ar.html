@@ -1,0 +1,388 @@
+<title>هوية سِجِّل</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Baloo+Bhaijaan+2:wght@500;600;700&family=IBM+Plex+Sans+Arabic:wght@400;500;700&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+  :root {
+    --ground: #F3EFEB;
+    --surface: #EDE9E6;
+    --surface-2: #E6E0DA;
+    --ink: #3E3531;
+    --brand: #5C4F4A;
+    --muted: #8C7F77;
+    --line: #D9D1CA;
+    --bad: #9B5E45;
+    /* literal brand pair — specimens only, never themed */
+    --bone: #EDE9E6;
+    --taupe: #5C4F4A;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --ground: #221D1A;
+      --surface: #2C2622;
+      --surface-2: #362F2A;
+      --ink: #E8E1DB;
+      --brand: #D8CFC8;
+      --muted: #A2938C;
+      --line: #453C36;
+      --bad: #C98A6F;
+    }
+  }
+  :root[data-theme="dark"] {
+    --ground: #221D1A;
+    --surface: #2C2622;
+    --surface-2: #362F2A;
+    --ink: #E8E1DB;
+    --brand: #D8CFC8;
+    --muted: #A2938C;
+    --line: #453C36;
+    --bad: #C98A6F;
+  }
+
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--ground);
+    color: var(--ink);
+    font-family: "IBM Plex Sans Arabic", "Segoe UI", Tahoma, sans-serif;
+    font-size: 1.02rem;
+    line-height: 1.95;
+  }
+  .page { direction: rtl; max-width: 1060px; margin: 0 auto; padding: 0 24px 96px; }
+  .measure { max-width: 68ch; }
+
+  h1, h2, h3 {
+    font-family: "Baloo Bhaijaan 2", "IBM Plex Sans Arabic", sans-serif;
+    color: var(--brand);
+    text-wrap: balance;
+    line-height: 1.4;
+  }
+  h1 { font-size: clamp(2.4rem, 6vw, 3.6rem); font-weight: 700; margin: 0; }
+  h2 { font-size: 1.6rem; font-weight: 600; margin: 0 0 12px; }
+  h3 { font-size: 1.15rem; font-weight: 600; margin: 0 0 6px; }
+  p { margin: 0 0 14px; }
+  .muted { color: var(--muted); }
+
+  header.hero {
+    padding: 72px 0 40px;
+    border-bottom: 1px solid var(--line);
+    display: flex; flex-direction: column; gap: 18px;
+  }
+  .kicker { color: var(--muted); font-weight: 500; font-size: .95rem; }
+  .hero-lede { max-width: 62ch; font-size: 1.12rem; }
+
+  section { padding: 56px 0 8px; }
+  section + section { border-top: 1px solid var(--line); }
+  .sec-no {
+    font-family: "Baloo Bhaijaan 2", sans-serif;
+    color: var(--muted); font-size: 1rem; font-weight: 600; display: block;
+  }
+
+  /* specimen panels: fixed brand colors by design */
+  .panel-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px; margin: 22px 0 10px; }
+  .panel {
+    border-radius: 14px; border: 1px solid var(--line);
+    padding: 34px 28px; display: flex; align-items: center; justify-content: center;
+    min-height: 220px;
+  }
+  .panel.on-bone  { background: #EDE9E6; color: #5C4F4A; }
+  .panel.on-taupe { background: #5C4F4A; color: #EDE9E6; border-color: #5C4F4A; }
+  .panel svg { max-width: 100%; height: auto; }
+  .caption { font-size: .88rem; color: var(--muted); margin: 6px 4px 0; }
+
+  .spec-word { width: min(420px, 80%); }
+  .spec-mark { width: 96px; }
+
+  /* colors */
+  .swatches { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 16px; margin: 22px 0 8px; }
+  .swatch { border-radius: 14px; overflow: hidden; border: 1px solid var(--line); }
+  .swatch .chip { height: 120px; }
+  .swatch .meta { padding: 12px 16px; background: var(--surface); display: flex; justify-content: space-between; align-items: baseline; gap: 10px; }
+  .hex { font-family: "IBM Plex Mono", monospace; font-size: .85rem; direction: ltr; unicode-bidi: isolate; color: var(--muted); }
+
+  /* clear space */
+  .diagram {
+    background: var(--surface); border: 1px solid var(--line); border-radius: 14px;
+    padding: 28px; margin: 22px 0 10px; display: flex; justify-content: center;
+  }
+  .diagram svg { width: min(560px, 100%); height: auto; }
+
+  .minsizes { display: flex; flex-wrap: wrap; gap: 16px; margin: 18px 0; }
+  .minbox {
+    background: var(--surface); border: 1px solid var(--line); border-radius: 12px;
+    padding: 16px 20px; flex: 1 1 220px;
+  }
+  .minbox b { color: var(--brand); }
+
+  /* don'ts */
+  .dont-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 14px; margin: 22px 0 8px; }
+  .dont {
+    border: 1px solid var(--line); border-radius: 12px; overflow: hidden;
+    background: var(--surface);
+  }
+  .dont .stage {
+    height: 150px; background: #EDE9E6; color: #5C4F4A;
+    display: flex; align-items: center; justify-content: center; overflow: hidden;
+  }
+  .dont .stage.grey { background: #D8CFC8; color: #EDE9E6; }
+  .dont .label {
+    padding: 9px 14px; font-size: .88rem; color: var(--bad); font-weight: 500;
+    display: flex; gap: 8px; align-items: center;
+  }
+  .dont .label::before { content: "✕"; font-weight: 700; }
+
+  /* pattern */
+  .pattern-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px; margin: 22px 0 10px; }
+  .pattern-tile { border-radius: 14px; overflow: hidden; border: 1px solid var(--line); line-height: 0; }
+  .pattern-tile svg { width: 100%; height: 240px; display: block; }
+
+  /* app icon tiles */
+  .approw { display: flex; gap: 20px; flex-wrap: wrap; margin: 22px 0 8px; }
+  .apptile { width: 108px; height: 108px; border-radius: 26px; display: flex; align-items: center; justify-content: center; border: 1px solid var(--line); }
+  .apptile.t1 { background: #EDE9E6; color: #5C4F4A; }
+  .apptile.t2 { background: #5C4F4A; color: #EDE9E6; border-color: #5C4F4A; }
+  .apptile svg { width: 54px; height: auto; }
+
+  table { border-collapse: collapse; width: 100%; margin: 18px 0; background: var(--surface); border-radius: 12px; overflow: hidden; }
+  th, td { text-align: right; padding: 11px 16px; border-bottom: 1px solid var(--line); }
+  th { color: var(--brand); font-weight: 700; font-size: .92rem; background: var(--surface-2); }
+  tr:last-child td { border-bottom: none; }
+  td.file { font-family: "IBM Plex Mono", monospace; font-size: .84rem; direction: ltr; text-align: left; color: var(--muted); }
+
+  ul.rules { padding-right: 20px; margin: 10px 0 16px; }
+  ul.rules li { margin-bottom: 6px; }
+
+  footer { border-top: 1px solid var(--line); margin-top: 56px; padding-top: 18px; font-size: .88rem; color: var(--muted); }
+</style>
+
+<div class="page" lang="ar">
+
+  <!-- shared symbols -->
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+    <defs>
+      <symbol id="mark" viewBox="0 0 336 500">
+        <path d="M38 242 L120 358 L298 112" fill="none" stroke="currentColor" stroke-width="62" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M210 66 Q224 46 238 66 Q252 86 266 66 L266 28" fill="none" stroke="currentColor" stroke-width="16" stroke-linecap="round" stroke-linejoin="round"/>
+        <circle cx="118" cy="432" r="30" fill="currentColor"/>
+      </symbol>
+      <symbol id="wordmark" viewBox="0 0 1040 520">
+        <g fill="none" stroke="currentColor" stroke-width="56" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M 982 240 L 982 284 Q 982 330 934 330 L 908 330 Q 866 330 866 288 L 866 262"/>
+          <path d="M 800 262 L 800 288 Q 800 330 756 330 L 728 330 Q 686 330 686 290 L 686 272"/>
+          <path d="M 968 318 Q 978 466 782 466 Q 646 466 620 372"/>
+          <path d="M 222 132 L 222 292 Q 222 356 158 356 L 120 356 Q 62 356 62 302 L 62 278"/>
+        </g>
+        <g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M 388 272 L 470 388 L 648 142" stroke-width="62"/>
+          <path d="M 560 96 Q 574 76 588 96 Q 602 116 616 96 L 616 58" stroke-width="16"/>
+        </g>
+        <circle cx="468" cy="462" r="30" fill="currentColor"/>
+      </symbol>
+    </defs>
+  </svg>
+
+  <header class="hero">
+    <span class="kicker">دليل الهوية البصرية · الإصدار الأول · ٢٠٢٦</span>
+    <h1>هوية سِجِّل</h1>
+    <p class="hero-lede">«سِجِّل» علامة مبنية على فعل واحد: التوثيق. الكلمة مرسومة بخط هندسي مدوّر الأطراف، ويحل محل حرف الجيم علامةُ صحّ تحمل نقطته وشدّته. هذا الدليل يحدد استخدام الشعار بنسختيه، ونظام اللونين، والنمط الزخرفي المشتق من العلامة.</p>
+  </header>
+
+  <section>
+    <span class="sec-no">١</span>
+    <h2>الفكرة</h2>
+    <div class="measure">
+      <p>العلامة تدمج القراءة والوظيفة: من بعيد تُقرأ «سجّل»، ومن قريب تظهر علامة الصح في قلب الكلمة، فيصبح اسم المنتج ووعده شيئاً واحداً — كل قيد يُسجَّل يُوثَّق. نقطة الجيم تحت العلامة والشدّة فوقها تُبقيان الكلمة صحيحة إملائياً رغم التحوير.</p>
+      <p>لهذا السبب لا يجوز فصل عناصر العلامة أو إعادة تركيبها: علامة الصح وحدها بلا نقطة ولا شدّة ليست أيقونة «سجّل»، بل علامة صح عامة.</p>
+    </div>
+  </section>
+
+  <section>
+    <span class="sec-no">٢</span>
+    <h2>نسختا الشعار</h2>
+    <div class="measure">
+      <p><b>الشعار الكامل</b> (الكلمة) هو الاستخدام الأساسي: الترويسات، الصفحات التعريفية، المطبوعات، وأي مساحة يزيد عرضها المتاح عن ضعف ارتفاعها. <b>الأيقونة</b> (علامة الصح مع النقطة والشدّة) للمساحات الصغيرة أو المربعة: أيقونة التطبيق، الفافيكون، الصور الرمزية، والأختام.</p>
+    </div>
+    <div class="panel-row">
+      <div class="panel on-bone"><svg class="spec-word" viewBox="0 0 1040 520" role="img" aria-label="الشعار الكامل"><use href="#wordmark"/></svg></div>
+      <div class="panel on-taupe"><svg class="spec-word" viewBox="0 0 1040 520" role="img" aria-label="الشعار الكامل معكوساً"><use href="#wordmark"/></svg></div>
+    </div>
+    <p class="caption">الشعار الكامل على الأرضيتين المعتمدتين.</p>
+    <div class="panel-row">
+      <div class="panel on-bone"><svg class="spec-mark" viewBox="0 0 336 500" role="img" aria-label="الأيقونة"><use href="#mark"/></svg></div>
+      <div class="panel on-taupe"><svg class="spec-mark" viewBox="0 0 336 500" role="img" aria-label="الأيقونة معكوسة"><use href="#mark"/></svg></div>
+    </div>
+    <p class="caption">الأيقونة: علامة الصح + نقطة الجيم + الشدّة. العناصر الثلاثة تظهر معاً دائماً.</p>
+
+    <h3 style="margin-top:28px">أيقونة التطبيق</h3>
+    <div class="approw">
+      <div class="apptile t1"><svg viewBox="0 0 336 500"><use href="#mark"/></svg></div>
+      <div class="apptile t2"><svg viewBox="0 0 336 500"><use href="#mark"/></svg></div>
+    </div>
+    <p class="caption">داخل المربع المستدير تشغل الأيقونة نحو ٥٥٪ من ارتفاعه، متمركزةً بصرياً.</p>
+  </section>
+
+  <section>
+    <span class="sec-no">٣</span>
+    <h2>اللونان</h2>
+    <div class="measure">
+      <p>الهوية تقوم على لونين فقط، وقاعدة تطبيقهما واحدة: <b>لون للعلامة ولون للأرضية، ولا ثالث لهما</b>. على الأرضية العجينية تكون العلامة بُنّية، وعلى الأرضية البُنّية تكون العلامة عجينية. تمايز علامة الصح عن الحروف يأتي من شكلها وسماكتها، لا من لون إضافي.</p>
+    </div>
+    <div class="swatches">
+      <div class="swatch">
+        <div class="chip" style="background:#5C4F4A"></div>
+        <div class="meta"><b>البُنّي الداكن — لون العلامة الأساسي</b><span class="hex">#5C4F4A</span></div>
+      </div>
+      <div class="swatch">
+        <div class="chip" style="background:#EDE9E6;border-bottom:1px solid var(--line)"></div>
+        <div class="meta"><b>العجيني — لون الأرضية الأساسي</b><span class="hex">#EDE9E6</span></div>
+      </div>
+    </div>
+    <ul class="rules measure">
+      <li>لا تدرجات لونية، ولا شفافية جزئية للعلامة.</li>
+      <li>على صورة فوتوغرافية: تُستخدم النسخة العجينية فوق المناطق الداكنة فقط، وبتباين كافٍ.</li>
+      <li>عند الطباعة بلون واحد (ختم، تفريغ ليزري): أي من اللونين يصلح، والقاعدة نفسها تنطبق.</li>
+    </ul>
+  </section>
+
+  <section>
+    <span class="sec-no">٤</span>
+    <h2>المساحة الآمنة والحدود الدنيا</h2>
+    <div class="measure">
+      <p>وحدة القياس هي <b>«ن»: قطر نقطة الجيم</b>. تُترك مساحة فارغة لا يقل عرضها عن «ن» حول الشعار من كل جهة، لا يدخلها نص ولا عنصر رسومي ولا حافة قصّ.</p>
+    </div>
+    <div class="diagram">
+      <svg viewBox="0 0 1160 640" role="img" aria-label="مخطط المساحة الآمنة">
+        <rect x="8" y="8" width="1144" height="624" rx="18" fill="none" stroke="#8C7F77" stroke-width="3" stroke-dasharray="14 12"/>
+        <g style="color:#5C4F4A"><svg x="60" y="60" width="1040" height="520" viewBox="0 0 1040 520"><use href="#wordmark"/></svg></g>
+        <rect x="16" y="290" width="52" height="52" fill="#8C7F77" opacity=".35"/>
+        <text x="42" y="380" text-anchor="middle" font-family="IBM Plex Sans Arabic, sans-serif" font-size="34" fill="#8C7F77">ن</text>
+      </svg>
+    </div>
+    <p class="caption">المخطط توضيحي؛ الالتزام بالنسبة لا بالأرقام المطلقة.</p>
+    <div class="minsizes">
+      <div class="minbox">الشعار الكامل: لا يقل عرضه عن <b>١٢٠ بكسل</b> على الشاشات، و<b>٣٠ مم</b> في الطباعة.</div>
+      <div class="minbox">الأيقونة: لا يقل ارتفاعها عن <b>٢٤ بكسل</b> على الشاشات، و<b>٨ مم</b> في الطباعة.</div>
+    </div>
+  </section>
+
+  <section>
+    <span class="sec-no">٥</span>
+    <h2>الاستخدام الخاطئ</h2>
+    <p class="measure">كل ما يلي ممنوع، على أي وسيط:</p>
+    <div class="dont-grid">
+      <div class="dont">
+        <div class="stage"><svg width="140" height="96" viewBox="0 0 336 500" preserveAspectRatio="none"><use href="#mark"/></svg></div>
+        <div class="label">تمطيط العلامة أو ضغطها</div>
+      </div>
+      <div class="dont">
+        <div class="stage"><svg width="90" viewBox="-90 -60 516 620"><g transform="rotate(28 168 250)"><use href="#mark"/></g></svg></div>
+        <div class="label">تدوير العلامة أو إمالتها</div>
+      </div>
+      <div class="dont">
+        <div class="stage" style="color:#1BA08C"><svg width="70" viewBox="0 0 336 500"><use href="#mark"/></svg></div>
+        <div class="label">ألوان من خارج اللوحة — حتى ألوان النسخ السابقة</div>
+      </div>
+      <div class="dont">
+        <div class="stage"><svg width="70" viewBox="0 0 336 500" style="filter:drop-shadow(6px 8px 6px rgba(0,0,0,.45))"><use href="#mark"/></svg></div>
+        <div class="label">الظلال والتأثيرات</div>
+      </div>
+      <div class="dont">
+        <div class="stage"><svg width="70" viewBox="0 0 336 500"><path d="M38 242 L120 358 L298 112" fill="none" stroke="currentColor" stroke-width="12" stroke-linecap="round" stroke-linejoin="round"/><circle cx="118" cy="432" r="30" fill="none" stroke="currentColor" stroke-width="10"/></svg></div>
+        <div class="label">تحويل العلامة إلى خطوط رفيعة، أو حذف عناصرها</div>
+      </div>
+      <div class="dont">
+        <div class="stage grey"><svg width="70" viewBox="0 0 336 500"><use href="#mark"/></svg></div>
+        <div class="label">أرضية ضعيفة التباين</div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <span class="sec-no">٦</span>
+    <h2>النمط</h2>
+    <div class="measure">
+      <p>النمط مشتق من الأيقونة نفسها، ويُستخدم كخلفية هادئة تربط التطبيقات ببعضها: أغلفة، بطاقات، فواصل صفحات، تغليف. القاعدة: <b>النمط ملمس، لا رسالة</b> — يبقى بتباين منخفض (٦٪ إلى ١٠٪ من لون العلامة على الأرضية) ولا يوضع خلف نص طويل.</p>
+    </div>
+    <div class="pattern-row">
+      <div class="pattern-tile">
+        <svg viewBox="0 0 660 240" role="img" aria-label="نمط الأيقونة على الأرضية العجينية">
+          <defs>
+            <pattern id="pA" width="220" height="220" patternUnits="userSpaceOnUse">
+              <g fill="#5C4F4A" stroke="#5C4F4A" opacity=".09">
+                <g transform="translate(18,14) scale(0.185)">
+                  <path d="M38 242 L120 358 L298 112" fill="none" stroke-width="62" stroke-linecap="round" stroke-linejoin="round"/>
+                  <path d="M210 66 Q224 46 238 66 Q252 86 266 66 L266 28" fill="none" stroke-width="16" stroke-linecap="round" stroke-linejoin="round"/>
+                  <circle cx="118" cy="432" r="30" stroke="none"/>
+                </g>
+                <g transform="translate(118,112) rotate(-14) scale(0.185)">
+                  <path d="M38 242 L120 358 L298 112" fill="none" stroke-width="62" stroke-linecap="round" stroke-linejoin="round"/>
+                  <path d="M210 66 Q224 46 238 66 Q252 86 266 66 L266 28" fill="none" stroke-width="16" stroke-linecap="round" stroke-linejoin="round"/>
+                  <circle cx="118" cy="432" r="30" stroke="none"/>
+                </g>
+              </g>
+            </pattern>
+          </defs>
+          <rect width="660" height="240" fill="#EDE9E6"/>
+          <rect width="660" height="240" fill="url(#pA)"/>
+        </svg>
+      </div>
+      <div class="pattern-tile">
+        <svg viewBox="0 0 660 240" role="img" aria-label="نمط الأيقونة على الأرضية البنية">
+          <defs>
+            <pattern id="pB" width="220" height="220" patternUnits="userSpaceOnUse">
+              <g fill="#EDE9E6" stroke="#EDE9E6" opacity=".1">
+                <g transform="translate(18,14) scale(0.185)">
+                  <path d="M38 242 L120 358 L298 112" fill="none" stroke-width="62" stroke-linecap="round" stroke-linejoin="round"/>
+                  <path d="M210 66 Q224 46 238 66 Q252 86 266 66 L266 28" fill="none" stroke-width="16" stroke-linecap="round" stroke-linejoin="round"/>
+                  <circle cx="118" cy="432" r="30" stroke="none"/>
+                </g>
+                <g transform="translate(118,112) rotate(-14) scale(0.185)">
+                  <path d="M38 242 L120 358 L298 112" fill="none" stroke-width="62" stroke-linecap="round" stroke-linejoin="round"/>
+                  <path d="M210 66 Q224 46 238 66 Q252 86 266 66 L266 28" fill="none" stroke-width="16" stroke-linecap="round" stroke-linejoin="round"/>
+                  <circle cx="118" cy="432" r="30" stroke="none"/>
+                </g>
+              </g>
+            </pattern>
+          </defs>
+          <rect width="660" height="240" fill="#5C4F4A"/>
+          <rect width="660" height="240" fill="url(#pB)"/>
+        </svg>
+      </div>
+      <div class="pattern-tile">
+        <svg viewBox="0 0 660 240" role="img" aria-label="نمط الشدة">
+          <defs>
+            <pattern id="pC" width="120" height="90" patternUnits="userSpaceOnUse">
+              <g fill="none" stroke="#5C4F4A" stroke-width="9" stroke-linecap="round" stroke-linejoin="round" opacity=".1">
+                <path d="M20 40 Q31 25 42 40 Q53 55 64 40 L64 12"/>
+                <path d="M80 85 Q91 70 102 85 Q113 100 124 85 L124 57"/>
+              </g>
+            </pattern>
+          </defs>
+          <rect width="660" height="240" fill="#EDE9E6"/>
+          <rect width="660" height="240" fill="url(#pC)"/>
+        </svg>
+      </div>
+    </div>
+    <p class="caption">الأول والثاني: نمط الأيقونة على الأرضيتين. الثالث: نمط الشدّة، ملمس أدق للمساحات الصغيرة كظهر البطاقات.</p>
+    <ul class="rules measure">
+      <li>الأيقونة داخل النمط عنصر زخرفي، ولا تُستخدم بديلاً عن الشعار.</li>
+      <li>لا يظهر النمط والشعار الكامل فوق المساحة نفسها؛ يفصل بينهما مجال هادئ.</li>
+      <li>مقياس الوحدة داخل النمط يبقى ثابتاً في التطبيق الواحد، وميلها لا يتجاوز ١٥ درجة.</li>
+      <li>ألوان النمط من اللوحة نفسها حصراً، بالتباين المنخفض المحدد أعلاه.</li>
+    </ul>
+  </section>
+
+  <section>
+    <span class="sec-no">٧</span>
+    <h2>مرجع الملفات</h2>
+    <table>
+      <tr><th>الملف</th><th>الاستخدام</th></tr>
+      <tr><td class="file">sejjel-logo.svg</td><td>الشعار الكامل — الاستخدام الأساسي في كل الوسائط</td></tr>
+      <tr><td class="file">sejjel-icon.svg</td><td>الأيقونة — أيقونة التطبيق، الفافيكون، الصور الرمزية</td></tr>
+      <tr><td class="file">sejjel-pattern.svg</td><td>وحدة النمط القابلة للتكرار</td></tr>
+    </table>
+    <p class="caption measure">التصدير من ملفات SVG المصدر حصراً؛ لا يُعاد رسم العلامة ولا تُقتطع من لقطات شاشة.</p>
+  </section>
+
+  <footer>
+    سِجِّل · دليل الهوية البصرية · الإصدار الأول — يُعتمد هذا الدليل مرجعاً لأي تطبيق جديد للعلامة، وما لم يرد فيه يُعرض على فريق التصميم قبل التنفيذ.
+  </footer>
+</div>
