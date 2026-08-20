@@ -1,0 +1,1473 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>سجّل | Sajjel — نموذج أولي</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+:root{
+  --mist:#E8EDF2;
+  --ink:#2C3947;
+  --steel:#547A95;
+  --gold:#C2A56D;
+  --card:#ffffff;
+  --line:rgba(44,57,71,.08);
+  --txt2:#66788A;
+  --green:#3E8E64; --green-bg:#E4F2EA; --green-tx:#2E7350;
+  --amber:#D9902A; --amber-bg:#F8EEDD; --amber-tx:#96690F;
+  --red:#C4554D;   --red-bg:#F7E4E2;   --red-tx:#A03E37;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;height:100%}
+body{
+  font-family:'Cairo','Segoe UI',Tahoma,Arial,sans-serif;
+  background:radial-gradient(120% 120% at 20% 0%, #3B4D61 0%, var(--ink) 55%, #1E2833 100%);
+  display:flex;align-items:center;justify-content:center;padding:18px;color:var(--ink);
+}
+.phone{
+  position:relative;width:min(430px,100%);height:min(880px,calc(100dvh - 36px));
+  background:var(--mist);border-radius:34px;overflow:hidden;display:flex;flex-direction:column;
+  box-shadow:0 40px 90px rgba(0,0,0,.5), 0 0 0 1px rgba(255,255,255,.06);
+}
+@media (max-width:480px){body{padding:0}.phone{width:100%;height:100dvh;border-radius:0}}
+
+/* ---------- chrome ---------- */
+.statusbar{height:34px;flex:none;display:flex;justify-content:space-between;align-items:center;
+  padding:0 20px;background:var(--ink);color:#fff;font-size:12.5px;font-weight:800;letter-spacing:.3px}
+.statusbar svg{opacity:.9}
+.appbar{flex:none;background:var(--ink);color:#fff;padding:4px 14px 14px;display:flex;align-items:center;gap:10px}
+.logo-badge{width:40px;height:40px;border-radius:13px;flex:none;
+  background:linear-gradient(135deg,#D8BD8A,var(--gold) 60%,#A8894F);color:var(--ink);
+  display:grid;place-items:center;box-shadow:inset 0 1px 0 rgba(255,255,255,.5)}
+.brand{font-size:19px;font-weight:900;line-height:1.05}
+.brand-sub{font-size:10.5px;font-weight:700;color:#9FB0BF;letter-spacing:.5px}
+.roleswitch{margin-inline-start:auto;background:rgba(255,255,255,.12);border-radius:999px;padding:3px;display:flex;gap:2px}
+.roleswitch button{border:0;background:transparent;color:#C4CFDA;font:inherit;font-weight:800;font-size:12px;
+  padding:6px 13px;border-radius:999px;cursor:pointer;transition:.15s}
+.roleswitch button.on{background:var(--gold);color:var(--ink)}
+.iconbtn{position:relative;width:38px;height:38px;flex:none;border:0;border-radius:12px;
+  background:rgba(255,255,255,.12);color:#fff;display:grid;place-items:center;cursor:pointer}
+.badge{position:absolute;top:-5px;inset-inline-start:-5px;min-width:18px;height:18px;border-radius:9px;
+  background:var(--gold);color:var(--ink);font-size:10.5px;font-weight:900;display:grid;place-items:center;
+  padding:0 4px;border:2px solid var(--ink)}
+.hide{display:none!important}
+
+/* ---------- stage / screens ---------- */
+.stage{flex:1;position:relative;overflow:hidden}
+.screen{position:absolute;inset:0;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:16px 16px 28px;display:none;scrollbar-width:thin}
+.screen.active{display:block;animation:slideIn .26s ease}
+@keyframes slideIn{from{opacity:0;transform:translateX(-12px)}to{opacity:1;transform:none}}
+
+.bottomnav{flex:none;height:68px;background:#fff;border-top:1px solid var(--line);
+  display:grid;grid-template-columns:repeat(4,1fr)}
+.nav-item{position:relative;border:0;background:none;display:flex;flex-direction:column;align-items:center;gap:3px;
+  font-family:inherit;font-size:10.5px;color:#8B98A5;font-weight:800;cursor:pointer;padding-top:11px}
+.nav-item.on{color:var(--steel)}
+.nav-item .nbadge{position:absolute;top:6px;inset-inline-start:calc(50% - 22px);min-width:16px;height:16px;border-radius:8px;
+  background:var(--red);color:#fff;font-size:9.5px;font-weight:900;display:grid;place-items:center;padding:0 4px}
+
+/* ---------- typography & cards ---------- */
+.h1{font-size:20px;font-weight:900;color:var(--ink);margin:4px 0 4px}
+.sub{color:var(--txt2);font-size:13px;font-weight:600;margin:0 0 14px}
+.list-title{display:flex;align-items:center;justify-content:space-between;font-size:15px;font-weight:900;color:var(--ink);margin:18px 2px 8px}
+.list-title small{font-size:11.5px;color:var(--txt2);font-weight:700}
+.muted{color:var(--txt2)}
+.center{text-align:center}
+.card{background:var(--card);border-radius:18px;padding:16px;
+  box-shadow:0 1px 2px rgba(44,57,71,.05),0 10px 26px rgba(44,57,71,.07);margin-bottom:12px}
+.divider{height:1px;background:var(--line);margin:14px 0}
+.topline{display:flex;align-items:center;gap:10px;margin-bottom:12px}
+.topline .h1{margin:0}
+.back{border:0;background:#fff;width:38px;height:38px;flex:none;border-radius:12px;display:grid;place-items:center;
+  color:var(--ink);cursor:pointer;box-shadow:0 2px 8px rgba(44,57,71,.1)}
+
+/* ---------- stats ---------- */
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin-bottom:4px}
+.stat{background:#fff;border-radius:15px;padding:11px 10px;text-align:center;box-shadow:0 1px 2px rgba(44,57,71,.05)}
+.stat b{display:block;font-size:16px;font-weight:900;color:var(--ink);font-variant-numeric:tabular-nums}
+.stat span{font-size:10.5px;font-weight:800;color:var(--txt2)}
+.stat.gold b{color:#9A7B3E}
+.stat.red b{color:var(--red)}
+
+/* ---------- customer / merchant cards ---------- */
+.cust-card{cursor:pointer;transition:transform .12s}
+.cust-card:active{transform:scale(.985)}
+.cust-top{display:flex;align-items:center;gap:11px;margin-bottom:10px}
+.avatar{width:44px;height:44px;flex:none;border-radius:50%;display:grid;place-items:center;
+  color:#fff;font-weight:900;font-size:17px;background:var(--steel)}
+.avatar.a2{background:var(--ink)}
+.avatar.a3{background:var(--gold);color:var(--ink)}
+.cust-top .nm{font-size:15px;font-weight:900;color:var(--ink);line-height:1.2}
+.cust-top .mb{font-size:12px;color:var(--txt2);font-weight:700;direction:ltr;text-align:right}
+.kvrow{display:flex;justify-content:space-between;align-items:center;padding:5px 0;font-size:12.5px;color:var(--txt2);font-weight:700}
+.kvrow b{color:var(--ink);font-size:14px;font-weight:900;font-variant-numeric:tabular-nums}
+.kvrow b.big{font-size:17px}
+.kvrow b.rd{color:var(--red)}
+
+.pill{display:inline-flex;gap:6px;align-items:center;font-size:11px;font-weight:900;padding:4px 11px;border-radius:999px;white-space:nowrap}
+.pill .d{width:7px;height:7px;border-radius:50%;background:currentColor}
+.st-green{background:var(--green-bg);color:var(--green-tx)}
+.st-blue{background:#E7EEF4;color:var(--steel)}
+.st-amber{background:var(--amber-bg);color:var(--amber-tx)}
+.st-red{background:var(--red-bg);color:var(--red-tx)}
+.st-dark{background:#E2E6EA;color:var(--ink)}
+
+/* ---------- buttons ---------- */
+.btn{display:flex;width:100%;justify-content:center;align-items:center;gap:8px;border:0;border-radius:14px;
+  padding:14px;font-family:inherit;font-weight:900;font-size:14.5px;cursor:pointer;transition:.15s;line-height:1.2}
+.btn:active{transform:scale(.98)}
+.btn-primary{background:var(--steel);color:#fff}
+.btn-ink{background:var(--ink);color:#fff}
+.btn-gold{background:linear-gradient(135deg,#D2B67F,var(--gold));color:var(--ink)}
+.btn-soft{background:#DDE6EE;color:var(--ink)}
+.btn-ghost{background:#fff;color:var(--steel);border:1.5px solid #C6D3DE}
+.btn-danger{background:var(--red);color:#fff}
+.btn-sm{padding:10px 12px;font-size:13px;border-radius:12px}
+.row{display:flex;gap:10px}
+.row .btn{flex:1}
+.link{background:none;border:0;color:var(--steel);font:inherit;font-weight:800;font-size:13px;cursor:pointer;text-decoration:underline}
+
+/* ---------- forms ---------- */
+.field{margin-bottom:13px}
+.field label{display:block;font-size:12px;font-weight:800;color:#5A6B7C;margin-bottom:6px}
+.input{width:100%;border:1.5px solid #D2DBE3;background:#fff;border-radius:13px;padding:13px 14px;
+  font-family:inherit;font-size:15px;font-weight:700;color:var(--ink);outline:none;transition:border .15s}
+.input:focus{border-color:var(--steel)}
+.input:disabled{background:#EEF2F6;color:#93A1AE}
+.input-lg{font-size:26px;text-align:center;font-weight:900;font-variant-numeric:tabular-nums;letter-spacing:1px}
+.chips{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}
+.chip{background:#fff;border:1.5px solid #D2DBE3;border-radius:999px;padding:8px 15px;font-family:inherit;
+  font-size:13px;font-weight:800;color:var(--ink);cursor:pointer;transition:.15s}
+.chip.on{border-color:var(--steel);background:var(--steel);color:#fff}
+.chk{display:flex;align-items:center;gap:7px;font-size:12px;font-weight:800;color:var(--txt2);cursor:pointer;user-select:none}
+.chk input{width:17px;height:17px;accent-color:var(--steel);cursor:pointer}
+.seg{background:#DDE6EE;border-radius:13px;padding:3px;display:flex;gap:3px;margin-bottom:12px}
+.seg button{flex:1;border:0;border-radius:10px;background:transparent;font-family:inherit;font-weight:800;
+  font-size:13px;color:var(--txt2);padding:10px;cursor:pointer}
+.seg button.on{background:#fff;color:var(--ink);box-shadow:0 2px 6px rgba(44,57,71,.12)}
+
+/* ---------- hero (ledger card) ---------- */
+.hero{position:relative;overflow:hidden;background:linear-gradient(140deg,var(--ink) 0%,#3A4D61 100%);
+  color:#fff;border-radius:20px;padding:18px;margin-bottom:12px}
+.hero::after{content:"";position:absolute;top:-55px;inset-inline-end:-55px;width:150px;height:150px;border-radius:50%;
+  background:radial-gradient(circle at 35% 35%, rgba(194,165,109,.5), rgba(194,165,109,.08) 65%)}
+.hero .lbl{font-size:11px;font-weight:800;color:#B9C5D1}
+.hero .amt{font-size:32px;font-weight:900;font-variant-numeric:tabular-nums;line-height:1.15;margin:2px 0 4px}
+.hero .amt small{font-size:15px;font-weight:800;color:var(--gold)}
+.hero-head{display:flex;justify-content:space-between;align-items:flex-start;position:relative;z-index:1}
+.hero-name{font-size:15px;font-weight:900}
+.hero-mb{font-size:11.5px;color:#9FB0BF;font-weight:700;direction:ltr;text-align:right}
+.hero-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:14px;padding-top:13px;
+  border-top:1px solid rgba(255,255,255,.15);position:relative;z-index:1}
+.hero-grid span{display:block;font-size:10px;font-weight:800;color:#9FB0BF;margin-bottom:2px}
+.hero-grid b{font-size:13px;font-weight:900;font-variant-numeric:tabular-nums}
+.hero .pill{position:relative;z-index:1}
+
+/* ---------- transactions ---------- */
+.tx{display:flex;justify-content:space-between;align-items:center;padding:12px 2px;border-bottom:1px solid var(--line)}
+.tx:last-child{border-bottom:0}
+.tx .t-t{font-size:13.5px;font-weight:800;color:var(--ink)}
+.tx .t-d{font-size:11px;color:var(--txt2);font-weight:700}
+.t-left{text-align:left}
+.t-amt{font-size:14.5px;font-weight:900;font-variant-numeric:tabular-nums;color:var(--ink);direction:ltr}
+.t-amt.cr{color:var(--green-tx)}
+.tag{display:inline-block;font-size:10px;font-weight:900;padding:2px 8px;border-radius:6px;margin-top:2px}
+.tag-debt{background:#E7EEF4;color:var(--steel)}
+.tag-paid{background:var(--green-bg);color:var(--green-tx)}
+
+/* ---------- alerts / hints ---------- */
+.warnbox{border-radius:16px;padding:14px;display:flex;gap:11px;align-items:flex-start;margin-bottom:12px;font-weight:700;font-size:13px;line-height:1.65}
+.warn-red{background:var(--red-bg);border:1px solid #ECC7C3;color:var(--red-tx)}
+.warn-amber{background:var(--amber-bg);border:1px solid #EBD7B4;color:var(--amber-tx)}
+.warnbox svg{flex:none;margin-top:2px}
+.hint{background:linear-gradient(135deg,#F7F0E2,#FFFDF8);border:1.5px dashed var(--gold);color:#7A6234;
+  border-radius:15px;padding:12px 14px;font-size:12.5px;font-weight:700;line-height:1.7;display:flex;gap:9px;align-items:flex-start;margin-bottom:12px}
+.hint b{color:#5E4A20}
+.hint .x{margin-inline-start:auto;border:0;background:none;color:#A98F5C;font-weight:900;cursor:pointer;font-size:15px;line-height:1}
+
+/* ---------- QR ---------- */
+.qr-box{position:relative;width:248px;margin:6px auto 4px;background:#fff;border-radius:20px;padding:18px;
+  box-shadow:0 10px 30px rgba(44,57,71,.12)}
+.qr-corners span{position:absolute;width:26px;height:26px;border:3px solid var(--gold)}
+.qr-corners span:nth-child(1){top:8px;inset-inline-start:8px;border-inline-end:0;border-bottom:0;border-start-start-radius:12px}
+.qr-corners span:nth-child(2){top:8px;inset-inline-end:8px;border-inline-start:0;border-bottom:0;border-start-end-radius:12px}
+.qr-corners span:nth-child(3){bottom:8px;inset-inline-start:8px;border-inline-end:0;border-top:0;border-end-start-radius:12px}
+.qr-corners span:nth-child(4){bottom:8px;inset-inline-end:8px;border-inline-start:0;border-top:0;border-end-end-radius:12px}
+.qr-cv{display:block;width:200px;height:200px;margin:0 auto;image-rendering:pixelated;border-radius:4px}
+.qr-token{font-size:10.5px;color:#8B98A5;direction:ltr;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;margin-top:10px;text-align:center;font-weight:600}
+.timer{display:inline-flex;gap:7px;align-items:center;background:var(--ink);color:#fff;border-radius:999px;
+  padding:8px 18px;font-weight:900;font-size:14px;font-variant-numeric:tabular-nums;margin:10px auto 0}
+.timer.low{background:var(--red);animation:pulse 1s infinite}
+@keyframes pulse{50%{opacity:.75}}
+.ex{position:absolute;inset:0;border-radius:20px;background:rgba(232,237,242,.96);display:none;
+  flex-direction:column;align-items:center;justify-content:center;gap:12px;padding:18px;text-align:center;z-index:3}
+.ex.show{display:flex}
+.ex b{font-size:15px;color:var(--red-tx)}
+.ex p{margin:0;font-size:12px;color:var(--txt2);font-weight:700}
+
+/* ---------- scanner ---------- */
+.scanner{position:relative;height:330px;border-radius:20px;overflow:hidden;margin-bottom:14px;
+  background:radial-gradient(130% 100% at 50% 0%, #41546A 0%, #1C2632 70%);display:grid;place-items:center}
+.scan-box{position:relative;width:212px;height:212px}
+.scan-box i{position:absolute;width:34px;height:34px;border:3.5px solid var(--gold)}
+.scan-box i:nth-child(1){top:0;inset-inline-start:0;border-inline-end:0;border-bottom:0;border-start-start-radius:10px}
+.scan-box i:nth-child(2){top:0;inset-inline-end:0;border-inline-start:0;border-bottom:0;border-start-end-radius:10px}
+.scan-box i:nth-child(3){bottom:0;inset-inline-start:0;border-inline-end:0;border-top:0;border-end-start-radius:10px}
+.scan-box i:nth-child(4){bottom:0;inset-inline-end:0;border-inline-start:0;border-top:0;border-end-end-radius:10px}
+.scan-line{position:absolute;left:7%;right:7%;height:2.5px;border-radius:2px;
+  background:linear-gradient(90deg,transparent,var(--gold),transparent);animation:scan 2.1s ease-in-out infinite;box-shadow:0 0 14px var(--gold)}
+@keyframes scan{0%,100%{top:6%}50%{top:92%}}
+.scan-cap{position:absolute;bottom:14px;left:0;right:0;text-align:center;color:#C4CFDA;font-size:12px;font-weight:800}
+
+/* ---------- success ---------- */
+.success-wrap{text-align:center;padding-top:34px}
+.big-check{width:94px;height:94px;border-radius:50%;background:var(--green-bg);color:var(--green);
+  display:grid;place-items:center;margin:0 auto 16px;animation:pop .45s cubic-bezier(.2,1.6,.4,1)}
+@keyframes pop{from{transform:scale(.4);opacity:0}}
+.success-wrap .h1{font-size:21px}
+
+/* ---------- notifications ---------- */
+.notif{display:flex;gap:11px;align-items:flex-start;background:#fff;border-radius:16px;padding:14px;margin-bottom:10px;
+  box-shadow:0 1px 2px rgba(44,57,71,.05)}
+.notif.act{cursor:pointer;border:1.5px solid var(--gold)}
+.n-ic{width:38px;height:38px;flex:none;border-radius:12px;display:grid;place-items:center;background:#E7EEF4;color:var(--steel)}
+.n-ic.g{background:var(--green-bg);color:var(--green-tx)}
+.n-ic.o{background:var(--amber-bg);color:var(--amber-tx)}
+.n-tx{font-size:13px;font-weight:800;color:var(--ink);line-height:1.6}
+.n-tm{font-size:10.5px;color:var(--txt2);font-weight:700;margin-top:2px}
+.n-go{margin-inline-start:auto;align-self:center;color:var(--gold)}
+.empty{text-align:center;color:#8B98A5;padding:44px 12px;font-size:13px;font-weight:700}
+.empty svg{display:block;margin:0 auto 10px;opacity:.4}
+
+/* ---------- overlay / toast ---------- */
+.overlay{position:absolute;inset:0;z-index:80;background:rgba(44,57,71,.55);backdrop-filter:blur(3px);
+  display:none;align-items:center;justify-content:center}
+.overlay.show{display:flex}
+.ov-card{background:#fff;border-radius:20px;padding:26px 28px;display:flex;flex-direction:column;align-items:center;gap:14px;
+  min-width:240px;text-align:center;font-weight:800;font-size:13.5px;color:var(--ink)}
+.spin{width:36px;height:36px;border-radius:50%;border:3.5px solid #DBE3EA;border-top-color:var(--steel);animation:rot .8s linear infinite}
+@keyframes rot{to{transform:rotate(360deg)}}
+.toast{position:absolute;top:100px;left:14px;right:14px;z-index:90;background:var(--ink);color:#fff;
+  padding:13px 16px;border-radius:14px;display:flex;gap:10px;align-items:center;font-size:13px;font-weight:800;line-height:1.5;
+  border-inline-start:4px solid var(--gold);box-shadow:0 14px 34px rgba(0,0,0,.3);
+  transform:translateY(-160%);opacity:0;transition:.35s;pointer-events:none}
+.toast.show{transform:none;opacity:1}
+
+/* ---------- welcome ---------- */
+#s-welcome{background:linear-gradient(175deg,var(--ink) 0%,#33455A 62%,var(--steel) 135%);color:#fff;
+  display:none;padding:34px 26px 30px}
+#s-welcome.active{display:flex;flex-direction:column}
+.w-logo{width:88px;height:88px;border-radius:26px;background:linear-gradient(135deg,#D8BD8A,var(--gold) 60%,#A8894F);
+  color:var(--ink);display:grid;place-items:center;margin:26px auto 16px;box-shadow:0 18px 40px rgba(0,0,0,.35),inset 0 2px 0 rgba(255,255,255,.5)}
+.w-name{text-align:center;font-size:42px;font-weight:900;line-height:1.05}
+.w-en{text-align:center;font-size:12px;font-weight:800;letter-spacing:6px;color:var(--gold);margin:4px 0 10px}
+.w-tag{text-align:center;font-size:14px;font-weight:700;color:#CBD6E0;margin:0 0 26px;line-height:1.8}
+.feat{display:flex;gap:11px;align-items:center;color:#DFE6EC;font-size:13px;font-weight:700;margin-bottom:12px}
+.fico{width:32px;height:32px;flex:none;border-radius:10px;background:rgba(255,255,255,.12);display:grid;place-items:center;color:var(--gold)}
+.w-btns{margin-top:auto;display:flex;flex-direction:column;gap:10px}
+.btn-wghost{background:rgba(255,255,255,.1);color:#fff;border:1.5px solid rgba(255,255,255,.35)}
+.w-note{text-align:center;font-size:10.5px;color:#93A3B2;font-weight:700;margin-top:14px}
+
+/* ---------- OTP ---------- */
+.otp{display:flex;gap:11px;justify-content:center;direction:ltr;margin:20px 0 22px}
+.otpbox{width:58px;height:62px;border:1.5px solid #D2DBE3;border-radius:14px;background:#fff;text-align:center;
+  font-family:inherit;font-size:24px;font-weight:900;color:var(--ink);outline:none}
+.otpbox:focus{border-color:var(--steel)}
+
+/* misc */
+.pay-apple{background:#000;color:#fff}
+.gateway-note{display:flex;gap:8px;align-items:center;justify-content:center;font-size:11px;color:var(--txt2);font-weight:700;margin-top:12px}
+.proj{font-size:13px;font-weight:800;color:var(--txt2);background:#fff;border:1.5px dashed #C6D3DE;border-radius:13px;padding:11px 14px;margin-bottom:12px;line-height:1.7}
+.proj b{color:var(--ink);font-variant-numeric:tabular-nums}
+.proj.over{border-color:var(--red);background:var(--red-bg);color:var(--red-tx)}
+.proj.over b{color:var(--red-tx)}
+.mini-kv{display:grid;grid-template-columns:1fr 1fr;gap:8px 14px;font-size:12.5px;font-weight:700;color:var(--txt2)}
+.mini-kv b{display:block;color:var(--ink);font-size:14px;font-weight:900;font-variant-numeric:tabular-nums}
+/* invoice / bill upload */
+.upl{width:100%;border:2px dashed #B9C6D3;border-radius:14px;background:#F4F7FA;padding:13px;display:flex;align-items:center;justify-content:center;gap:9px;color:var(--steel);font-weight:800;font-size:13px;cursor:pointer;font-family:inherit;transition:.15s}
+.upl:active{transform:scale(.98)}
+.upl svg{flex:none}
+.upl-prev{display:flex;align-items:center;gap:11px;background:#fff;border:1px solid var(--line);border-radius:14px;padding:9px 11px}
+.upl-th{width:46px;height:46px;border-radius:10px;border:1px solid var(--line);background:#EDF1F5;display:flex;align-items:center;justify-content:center;color:var(--steel);overflow:hidden;flex:none}
+.upl-th img{width:100%;height:100%;object-fit:cover}
+.upl-nm{flex:1;min-width:0}
+.upl-nm b{display:block;font-size:12.5px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;direction:ltr;text-align:end}
+.upl-nm span{font-size:11px;color:var(--txt2);font-weight:700}
+.upl-x{width:30px;height:30px;border-radius:9px;border:1px solid var(--line);background:#fff;color:#B3403A;font-weight:900;cursor:pointer;flex:none}
+.tag-bill{background:#F3EAD6;color:#8A6A2F;cursor:pointer;display:inline-flex;align-items:center;gap:4px;border:none;font-family:inherit}
+.t-left .tag-bill{margin-top:4px}
+.bill-link{background:none;border:none;color:var(--steel);font-weight:800;font-size:12.5px;text-decoration:underline;cursor:pointer;font-family:inherit;padding:0}
+.billview{position:absolute;inset:0;z-index:85;background:rgba(44,57,71,.72);backdrop-filter:blur(3px);display:none;align-items:center;justify-content:center;padding:24px 20px}
+.billview.show{display:flex}
+.bv-card{background:#fff;border-radius:18px;width:100%;max-width:330px;overflow:hidden;box-shadow:0 26px 60px rgba(20,28,36,.4)}
+.bv-head{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:11px 14px;border-bottom:1px solid var(--line)}
+.bv-head b{font-size:13px;color:var(--ink)}
+.bv-x{width:30px;height:30px;border-radius:9px;border:1px solid var(--line);background:#F4F7FA;cursor:pointer;font-weight:900;color:var(--txt2)}
+.bv-body{max-height:400px;overflow:auto;background:#EDF1F5}
+.bv-body img{width:100%;display:block}
+.bv-doc{padding:38px 20px;display:flex;flex-direction:column;align-items:center;gap:10px;color:var(--steel);font-weight:800;font-size:12.5px;text-align:center;direction:ltr;word-break:break-all}
+</style>
+</head>
+<body>
+<div class="phone" id="app">
+
+  <!-- status bar -->
+  <div class="statusbar">
+    <span>9:41</span>
+    <span style="display:flex;gap:6px;align-items:center">
+      <svg width="16" height="11" viewBox="0 0 16 11" fill="currentColor"><rect x="0" y="7" width="3" height="4" rx="1"/><rect x="4.5" y="5" width="3" height="6" rx="1"/><rect x="9" y="2.5" width="3" height="8.5" rx="1"/><rect x="13" y="0" width="3" height="11" rx="1"/></svg>
+      <b style="font-size:11px">5G</b>
+      <svg width="23" height="11" viewBox="0 0 25 12" fill="none" stroke="currentColor"><rect x="1" y="1" width="20" height="10" rx="3" stroke-width="1.4"/><rect x="3" y="3" width="14" height="6" rx="1.5" fill="currentColor" stroke="none"/><path d="M23 4v4" stroke-width="1.6" stroke-linecap="round"/></svg>
+    </span>
+  </div>
+
+  <!-- app bar -->
+  <div class="appbar hide" id="appbar">
+    <div class="logo-badge">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <rect x="5" y="3" width="14" height="18" rx="2.5"/>
+        <path d="M9 8h6.5M9 12h6.5M9 16h3"/>
+        <path d="M13.6 16.6l1.7 1.7 3.2-3.6" stroke-width="2.4"/>
+      </svg>
+    </div>
+    <div>
+      <div class="brand">سجّل</div>
+      <div class="brand-sub">SAJJEL · نموذج أولي</div>
+    </div>
+    <div class="roleswitch">
+      <button id="rsM" onclick="setRole('merchant')">تاجر</button>
+      <button id="rsC" onclick="setRole('customer')">عميل</button>
+    </div>
+    <button class="iconbtn" onclick="openBell()">
+      <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8a6 6 0 1 0-12 0c0 7-3 8-3 8h18s-3-1-3-8"/><path d="M10.3 21a2 2 0 0 0 3.4 0"/></svg>
+      <span class="badge hide" id="bellBadge">0</span>
+    </button>
+  </div>
+
+  <div class="stage">
+
+    <!-- ======== WELCOME ======== -->
+    <div class="screen" id="s-welcome">
+      <div class="w-logo">
+        <svg width="46" height="46" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="5" y="3" width="14" height="18" rx="2.5"/>
+          <path d="M9 8h6.5M9 12h6.5M9 16h3"/>
+          <path d="M13.6 16.6l1.7 1.7 3.2-3.6" stroke-width="2.4"/>
+        </svg>
+      </div>
+      <div class="w-name">سجّل</div>
+      <div class="w-en">SAJJEL</div>
+      <p class="w-tag">دفتر الديون الرقمي بين التاجر والعميل<br>ربط آمن · توثيق ثنائي · سداد إلكتروني</p>
+
+      <div class="feat"><span class="fico"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><path d="M14 14h3v3h-3zM21 14v2M14 21h2M19 19h2v2"/></svg></span>ربط الحسابات بمسح رمز مؤقت صالح لدقيقتين</div>
+      <div class="feat"><span class="fico"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></span>لا يُسجَّل دين إلا بموافقة العميل ومسح التاجر</div>
+      <div class="feat"><span class="fico"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><rect x="2" y="5" width="20" height="14" rx="2.5"/><path d="M2 10h20"/></svg></span>سداد كامل أو جزئي عبر Apple Pay والبطاقات</div>
+
+      <div class="w-btns">
+        <button class="btn btn-gold" onclick="startAs('merchant')">الدخول كتاجر</button>
+        <button class="btn btn-wghost" onclick="startAs('customer')">الدخول كعميل</button>
+        <div class="w-note">نموذج أولي (POC) — جميع البيانات والعمليات تجريبية</div>
+      </div>
+    </div>
+
+    <!-- ======== OTP ======== -->
+    <div class="screen" id="s-otp">
+      <div class="topline">
+        <button class="back" onclick="go('s-welcome')"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m9 6 6 6-6 6"/></svg></button>
+        <div class="h1">رمز التحقق</div>
+      </div>
+      <p class="sub" id="otpSub">أدخل الرمز المُرسل إلى جوالك</p>
+      <div class="card">
+        <div class="otp">
+          <input class="otpbox" maxlength="1" inputmode="numeric">
+          <input class="otpbox" maxlength="1" inputmode="numeric">
+          <input class="otpbox" maxlength="1" inputmode="numeric">
+          <input class="otpbox" maxlength="1" inputmode="numeric">
+        </div>
+        <button class="btn btn-primary" onclick="confirmOtp()">تأكيد الدخول</button>
+        <p class="center muted" style="font-size:11.5px;font-weight:700;margin:12px 0 0">في النموذج الأولي أي رمز مقبول</p>
+      </div>
+    </div>
+
+    <!-- ======== MERCHANT: DASHBOARD ======== -->
+    <div class="screen" id="m-dash">
+      <div class="h1">لوحة التاجر</div>
+      <p class="sub">بقالة الريان — مرحبًا بك 👋</p>
+
+      <div class="hint" id="demoHint">
+        <b>💡</b>
+        <span><b>جرّب النموذج:</b> أنشئ «عملية جديدة» ثم بدّل إلى وضع «العميل» بالأعلى لإتمام الموافقة بالرمز. جرّب مبلغ 300 لأحمد لرؤية حظر حد الائتمان.</span>
+        <button class="x" onclick="this.parentElement.remove()">✕</button>
+      </div>
+
+      <div class="stats">
+        <div class="stat"><b id="stCust">3</b><span>العملاء</span></div>
+        <div class="stat gold"><b id="stOut">0</b><span>المستحق (ر.س)</span></div>
+        <div class="stat red"><b id="stOver">0</b><span>المتأخر (ر.س)</span></div>
+      </div>
+
+      <div class="list-title">العملاء <small id="custCount"></small></div>
+      <div id="custList"></div>
+    </div>
+
+    <!-- ======== MERCHANT: CUSTOMER ACCOUNT ======== -->
+    <div class="screen" id="m-account">
+      <div class="topline">
+        <button class="back" onclick="go('m-dash')"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m9 6 6 6-6 6"/></svg></button>
+        <div class="h1">حساب العميل</div>
+      </div>
+      <div id="acctHero"></div>
+      <div class="row" style="margin-bottom:14px">
+        <button class="btn btn-primary btn-sm" id="acctNewBtn">＋ عملية جديدة</button>
+        <button class="btn btn-soft btn-sm" id="acctSetBtn">إعدادات العميل</button>
+      </div>
+      <div class="list-title">المعاملات</div>
+      <div class="card" id="txListM"></div>
+    </div>
+
+    <!-- ======== MERCHANT: NEW PURCHASE ======== -->
+    <div class="screen" id="m-new">
+      <div class="topline">
+        <button class="back" onclick="go('m-dash')"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m9 6 6 6-6 6"/></svg></button>
+        <div class="h1">عملية شراء جديدة</div>
+      </div>
+
+      <div class="field"><label>اختر العميل</label>
+        <div class="chips" id="custChips"></div>
+        <button class="btn btn-ghost btn-sm" onclick="openScanner('profile')">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><path d="M14 14h3v3h-3zM21 14v2M14 21h2M19 19h2v2"/></svg>
+          مسح الرمز التعريفي للعميل
+        </button>
+      </div>
+
+      <div id="statusPanel" class="hide">
+        <div class="card">
+          <div class="cust-top" style="margin-bottom:6px">
+            <div class="avatar" id="spAv">أ</div>
+            <div style="flex:1"><div class="nm" id="spName" style="font-size:15px;font-weight:900"></div><div class="mb" id="spMobile" style="font-size:12px;color:var(--txt2);font-weight:700;direction:ltr;text-align:right"></div></div>
+            <span id="spPill"></span>
+          </div>
+          <div class="divider" style="margin:10px 0"></div>
+          <div class="mini-kv">
+            <div>الرصيد الحالي<b id="spBal"></b></div>
+            <div>حد الائتمان<b id="spLimit"></b></div>
+            <div>تاريخ الاستحقاق<b id="spDue"></b></div>
+            <div>المتاح<b id="spRemain"></b></div>
+          </div>
+        </div>
+
+        <div id="newNote"></div>
+
+        <div class="field"><label>مبلغ الشراء (ر.س)</label>
+          <input class="input input-lg" id="amtInp" type="tel" inputmode="numeric" placeholder="0">
+        </div>
+        <div class="field"><label>الوصف (اختياري)</label>
+          <input class="input" id="descInp" placeholder="مثال: مشتريات بقالة">
+        </div>
+        <div class="field"><label>الفاتورة / الإيصال (اختياري)</label>
+          <input type="file" id="billInp" class="hide" accept="image/*,application/pdf" onchange="handleBill(this)">
+          <button type="button" class="upl" id="billDrop" onclick="document.getElementById('billInp').click()">
+            <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M4 15v3.5A1.5 1.5 0 0 0 5.5 20h13a1.5 1.5 0 0 0 1.5-1.5V15"/><path d="M12 4v11"/><path d="m7.5 8.5 4.5-4.5 4.5 4.5"/></svg>
+            إرفاق صورة الفاتورة أو ملف PDF
+          </button>
+          <div class="upl-prev hide" id="billPrev">
+            <span class="upl-th" id="billTh"></span>
+            <span class="upl-nm"><b id="billNm"></b><span>سترفق مع العملية وتظهر للعميل</span></span>
+            <button type="button" class="upl-x" onclick="clearBill()">✕</button>
+          </div>
+        </div>
+        <div class="proj" id="projLine">أدخل المبلغ لعرض الرصيد المتوقع</div>
+        <button class="btn btn-ink" onclick="submitPurchase()">إرسال طلب الشراء</button>
+      </div>
+      <div id="statusEmpty" class="empty">اختر عميلًا لعرض حالة حسابه وإتمام العملية</div>
+    </div>
+
+    <!-- ======== MERCHANT: OVERDUE WARNING ======== -->
+    <div class="screen" id="m-warn-overdue">
+      <div class="success-wrap" style="padding-top:22px">
+        <div class="big-check" style="background:var(--amber-bg);color:var(--amber)">
+          <svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3 2.5 20h19L12 3z"/><path d="M12 10v4.5"/><circle cx="12" cy="17.4" r=".9" fill="currentColor" stroke="none"/></svg>
+        </div>
+        <div class="h1">العميل لديه دفعة متأخرة</div>
+        <p class="sub">راجع الحالة قبل تسجيل دين جديد على هذا العميل</p>
+      </div>
+      <div class="card">
+        <div class="mini-kv">
+          <div>الرصيد المستحق<b id="woOut" style="color:var(--red-tx)"></b></div>
+          <div>تاريخ الاستحقاق<b id="woDue"></b></div>
+          <div>مدة التأخر<b id="woDays" style="color:var(--red-tx)"></b></div>
+          <div>الشراء الجديد<b id="woNew"></b></div>
+        </div>
+      </div>
+      <div class="row">
+        <button class="btn btn-soft" onclick="go('m-new')">إلغاء</button>
+        <button class="btn btn-danger" onclick="continueAnyway()">المتابعة رغم ذلك</button>
+      </div>
+    </div>
+
+    <!-- ======== MERCHANT: LIMIT EXCEEDED ======== -->
+    <div class="screen" id="m-limit">
+      <div class="success-wrap" style="padding-top:22px">
+        <div class="big-check" style="background:var(--red-bg);color:var(--red)">
+          <svg width="42" height="42" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="m8.5 8.5 7 7M15.5 8.5l-7 7"/></svg>
+        </div>
+        <div class="h1">تجاوز حد الائتمان</div>
+        <p class="sub">لا يمكن إتمام العملية — الرصيد المتوقع يتجاوز الحد المسموح</p>
+      </div>
+      <div class="card">
+        <div class="mini-kv">
+          <div>الحد الأقصى<b id="liMax"></b></div>
+          <div>الرصيد الحالي<b id="liCur"></b></div>
+          <div>الشراء الجديد<b id="liNew"></b></div>
+          <div>الرصيد المتوقع<b id="liProj" style="color:var(--red-tx)"></b></div>
+        </div>
+      </div>
+      <div class="warnbox warn-red">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3 2.5 20h19L12 3z"/><path d="M12 10v4.5"/></svg>
+        <span>وفق قواعد النموذج، تُحظر العمليات التي تتجاوز الحد. يمكن رفع حد هذا العميل من إعداداته.</span>
+      </div>
+      <div class="row">
+        <button class="btn btn-ghost" id="liEditBtn">تعديل حد العميل</button>
+        <button class="btn btn-ink" onclick="go('m-new')">رجوع</button>
+      </div>
+    </div>
+
+    <!-- ======== MERCHANT: WAITING ======== -->
+    <div class="screen" id="m-wait">
+      <div class="success-wrap" style="padding-top:26px">
+        <div class="big-check" style="background:#E7EEF4;color:var(--steel)">
+          <svg width="42" height="42" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.5 2"/></svg>
+        </div>
+        <div class="h1" id="waitTitle">بانتظار موافقة العميل</div>
+        <p class="sub" id="waitSub"></p>
+      </div>
+      <div class="hint"><b>💡</b><span id="waitHint"></span></div>
+      <button class="btn btn-gold" onclick="setRole('customer','c-notifs')" style="margin-bottom:10px">الانتقال إلى جهاز العميل (محاكاة)</button>
+      <button class="btn btn-primary" onclick="openScanner('approval')" style="margin-bottom:10px">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><path d="M14 14h3v3h-3zM21 14v2M14 21h2M19 19h2v2"/></svg>
+        فتح ماسح الرمز
+      </button>
+      <div class="center"><button class="link" onclick="cancelPending()">إلغاء الطلب</button></div>
+    </div>
+
+    <!-- ======== MERCHANT: SCANNER ======== -->
+    <div class="screen" id="m-scan">
+      <div class="topline">
+        <button class="back" onclick="go('m-dash')"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m9 6 6 6-6 6"/></svg></button>
+        <div class="h1">مسح الرمز</div>
+      </div>
+      <p class="sub" id="scanModeTxt">وجّه الكاميرا نحو رمز QR على جهاز العميل</p>
+      <div class="scanner">
+        <div class="scan-box"><i></i><i></i><i></i><i></i><div class="scan-line"></div></div>
+        <div class="scan-cap">الرمز صالح لدقيقتين ولاستخدام واحد فقط</div>
+      </div>
+      <button class="btn btn-gold" onclick="simulateScan()">✓ محاكاة مسح الرمز</button>
+      <p class="center muted" style="font-size:11.5px;font-weight:700;margin-top:12px">يتحقق الخادم من: الصلاحية · عدم الاستخدام السابق · تطابق التاجر والعميل والعملية</p>
+    </div>
+
+    <!-- ======== MERCHANT: SUCCESS ======== -->
+    <div class="screen" id="m-success">
+      <div class="success-wrap">
+        <div class="big-check">
+          <svg width="46" height="46" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
+        </div>
+        <div class="h1" id="succTitle"></div>
+        <p class="sub" id="succSub"></p>
+      </div>
+      <div class="card"><div class="mini-kv" id="succRows"></div></div>
+      <button class="btn btn-ink" onclick="go('m-dash')">العودة إلى اللوحة</button>
+    </div>
+
+    <!-- ======== MERCHANT: ADD CUSTOMER ======== -->
+    <div class="screen" id="m-add">
+      <div class="h1">إضافة عميل</div>
+      <p class="sub">أدخل رقم جوال العميل لإرسال طلب ربط حساب</p>
+      <div class="card">
+        <div class="field"><label>رقم الجوال</label>
+          <input class="input" id="addMobile" type="tel" inputmode="numeric" placeholder="05XXXXXXXX" value="0561 234 567" style="direction:ltr;text-align:right">
+        </div>
+        <button class="btn btn-primary" onclick="sendConnection()">إرسال طلب الربط</button>
+      </div>
+      <div class="warnbox warn-amber">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 8v5"/><circle cx="12" cy="16.5" r=".9" fill="currentColor" stroke="none"/></svg>
+        <span>لن يُنشأ الحساب إلا بعد موافقة العميل عبر رمز مؤقت يمسحه التاجر — لا يكفي الرقم وحده.</span>
+      </div>
+    </div>
+
+    <!-- ======== MERCHANT: SETTINGS ======== -->
+    <div class="screen" id="m-settings">
+      <div class="h1">إعدادات التاجر</div>
+      <p class="sub">قيم افتراضية تُطبَّق على جميع العملاء ما لم يوجد تخصيص</p>
+      <div class="card">
+        <div class="field"><label>حد الائتمان الافتراضي (ر.س)</label>
+          <input class="input" id="defLimitInp" type="tel" inputmode="numeric" value="1000">
+        </div>
+        <div class="field" style="margin-bottom:15px"><label>مدة السداد الافتراضية (يوم من تاريخ الشراء)</label>
+          <input class="input" id="defDaysInp" type="tel" inputmode="numeric" value="30">
+        </div>
+        <button class="btn btn-primary" onclick="saveMerchantSettings()">حفظ الإعدادات</button>
+      </div>
+
+      <div class="list-title">أدوات العرض التجريبي</div>
+      <div class="card">
+        <p class="muted" style="font-size:12px;font-weight:700;margin:0 0 12px;line-height:1.7">أدوات خاصة بالنموذج الأولي لمحاكاة سيناريوهات لا يمكن انتظارها فعليًا.</p>
+        <button class="btn btn-soft btn-sm" onclick="demoOverdue()" style="margin-bottom:9px">محاكاة تجاوز تاريخ استحقاق أحمد</button>
+        <button class="btn btn-ghost btn-sm" onclick="location.reload()">إعادة تعيين بيانات النموذج</button>
+      </div>
+    </div>
+
+    <!-- ======== MERCHANT: CUSTOMER SETTINGS ======== -->
+    <div class="screen" id="m-cust-settings">
+      <div class="topline">
+        <button class="back" id="csBackBtn"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m9 6 6 6-6 6"/></svg></button>
+        <div class="h1" id="csName">إعدادات العميل</div>
+      </div>
+      <p class="sub">تتجاوز هذه القيم إعدادات التاجر الافتراضية لهذا العميل فقط</p>
+      <div class="card">
+        <div class="field">
+          <label style="display:flex;justify-content:space-between;align-items:center">حد الائتمان (ر.س)
+            <span class="chk"><input type="checkbox" id="csLimitChk" onchange="syncCs()">مخصص</span>
+          </label>
+          <input class="input" id="csLimitInp" type="tel" inputmode="numeric">
+          <p class="muted" id="csLimitNote" style="font-size:11px;font-weight:700;margin:5px 2px 0"></p>
+        </div>
+        <div class="field">
+          <label style="display:flex;justify-content:space-between;align-items:center">مدة السداد (يوم)
+            <span class="chk"><input type="checkbox" id="csDaysChk" onchange="syncCs()">مخصص</span>
+          </label>
+          <input class="input" id="csDaysInp" type="tel" inputmode="numeric">
+          <p class="muted" id="csDaysNote" style="font-size:11px;font-weight:700;margin:5px 2px 0"></p>
+        </div>
+        <button class="btn btn-primary" onclick="saveCustSettings()" style="margin-bottom:9px">حفظ</button>
+        <button class="btn btn-ghost btn-sm" onclick="resetCustSettings()">إعادة التعيين للإعدادات الافتراضية</button>
+      </div>
+    </div>
+
+    <!-- ======== MERCHANT: NOTIFICATIONS ======== -->
+    <div class="screen" id="m-notifs">
+      <div class="h1">إشعارات التاجر</div>
+      <p class="sub">المدفوعات المستلمة وتنبيهات التأخر</p>
+      <div id="mNotifList"></div>
+    </div>
+
+    <!-- ======== CUSTOMER: DASHBOARD ======== -->
+    <div class="screen" id="c-dash">
+      <div class="h1">لوحة العميل</div>
+      <p class="sub">أهلًا أحمد — هذه حساباتك لدى التجّار</p>
+      <div class="stats">
+        <div class="stat gold"><b id="cStDebt">0</b><span>إجمالي الدين (ر.س)</span></div>
+        <div class="stat"><b id="cStMerch">3</b><span>التجّار</span></div>
+        <div class="stat red"><b id="cStOver">0</b><span>المتأخر (ر.س)</span></div>
+      </div>
+      <div class="list-title">حساباتي</div>
+      <div id="merchList"></div>
+    </div>
+
+    <!-- ======== CUSTOMER: MERCHANT ACCOUNT ======== -->
+    <div class="screen" id="c-account">
+      <div class="topline">
+        <button class="back" onclick="go('c-dash')"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m9 6 6 6-6 6"/></svg></button>
+        <div class="h1">حساب التاجر</div>
+      </div>
+      <div id="cAcctHero"></div>
+      <div class="list-title">المعاملات</div>
+      <div class="card" id="txListC"></div>
+    </div>
+
+    <!-- ======== CUSTOMER: NOTIFICATIONS ======== -->
+    <div class="screen" id="c-notifs">
+      <div class="h1">الإشعارات</div>
+      <p class="sub">طلبات الربط والمشتريات بانتظار موافقتك</p>
+      <div id="cNotifList"></div>
+    </div>
+
+    <!-- ======== CUSTOMER: PURCHASE CONFIRM ======== -->
+    <div class="screen" id="c-purchase">
+      <div class="topline">
+        <button class="back" onclick="go('c-notifs')"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m9 6 6 6-6 6"/></svg></button>
+        <div class="h1">تأكيد الشراء</div>
+      </div>
+      <div class="card">
+        <div class="mini-kv">
+          <div>التاجر<b>بقالة الريان</b></div>
+          <div>المبلغ<b id="ppAmt" style="color:#9A7B3E"></b></div>
+          <div>الوصف<b id="ppDesc"></b></div>
+          <div>الرصيد بعد الشراء<b id="ppAfter"></b></div>
+          <div id="ppBillRow" class="hide">الفاتورة<b><button class="bill-link" onclick="viewBillTmp()">عرض الفاتورة المرفقة</button></b></div>
+        </div>
+      </div>
+      <div class="qr-box">
+        <div class="qr-corners"><span></span><span></span><span></span><span></span></div>
+        <canvas class="qr-cv" id="qrP" width="200" height="200"></canvas>
+        <div class="qr-token" id="tokP"></div>
+        <div class="ex" id="exP">
+          <b>انتهت صلاحية الرمز</b>
+          <p>الرمز صالح لدقيقتين فقط ولاستخدام واحد</p>
+          <button class="btn btn-ink btn-sm" style="width:auto;padding-inline:22px" onclick="regen('P')">إنشاء رمز جديد</button>
+        </div>
+      </div>
+      <div class="center"><span class="timer"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.5 2"/></svg><span id="tP">01:59</span></span></div>
+      <p class="center muted" style="font-size:12px;font-weight:800;margin:12px 0 12px">اعرض هذه الشاشة للتاجر ليمسح الرمز ويؤكد العملية</p>
+      <button class="btn btn-ghost btn-sm" onclick="setRole('merchant','m-scan')">العودة إلى جهاز التاجر — الماسح (محاكاة)</button>
+    </div>
+
+    <!-- ======== CUSTOMER: CONNECTION CONFIRM ======== -->
+    <div class="screen" id="c-connect">
+      <div class="topline">
+        <button class="back" onclick="go('c-notifs')"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m9 6 6 6-6 6"/></svg></button>
+        <div class="h1">الموافقة على الربط</div>
+      </div>
+      <div class="warnbox warn-amber" style="margin-bottom:14px">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 8v5"/><circle cx="12" cy="16.5" r=".9" fill="currentColor" stroke="none"/></svg>
+        <span><b>بقالة الريان</b> تريد إنشاء حساب معك. اعرض الرمز أدناه للتاجر إذا كنت موافقًا.</span>
+      </div>
+      <div class="qr-box">
+        <div class="qr-corners"><span></span><span></span><span></span><span></span></div>
+        <canvas class="qr-cv" id="qrC" width="200" height="200"></canvas>
+        <div class="qr-token" id="tokC"></div>
+        <div class="ex" id="exC">
+          <b>انتهت صلاحية الرمز</b>
+          <p>الرمز صالح لدقيقتين فقط ولاستخدام واحد</p>
+          <button class="btn btn-ink btn-sm" style="width:auto;padding-inline:22px" onclick="regen('C')">إنشاء رمز جديد</button>
+        </div>
+      </div>
+      <div class="center"><span class="timer"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.5 2"/></svg><span id="tC">01:59</span></span></div>
+      <p class="center muted" style="font-size:12px;font-weight:800;margin:12px 0 12px">رمز لمرة واحدة، مرتبط بك وبالتاجر وبهذا الطلب تحديدًا</p>
+      <button class="btn btn-ghost btn-sm" onclick="setRole('merchant','m-scan')">العودة إلى جهاز التاجر — الماسح (محاكاة)</button>
+    </div>
+
+    <!-- ======== CUSTOMER: PAY ======== -->
+    <div class="screen" id="c-pay">
+      <div class="topline">
+        <button class="back" onclick="go('c-account')"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m9 6 6 6-6 6"/></svg></button>
+        <div class="h1">سداد المستحق</div>
+      </div>
+      <div class="card center">
+        <div class="muted" style="font-size:12px;font-weight:800" id="payMerch"></div>
+        <div style="font-size:30px;font-weight:900;font-variant-numeric:tabular-nums;margin:4px 0 2px" id="payOut"></div>
+        <div class="muted" style="font-size:11.5px;font-weight:700">الرصيد المستحق حاليًا</div>
+      </div>
+      <div class="seg">
+        <button id="segFull" class="on" onclick="setPayMode('full')">كامل المبلغ</button>
+        <button id="segCust" onclick="setPayMode('custom')">مبلغ مخصص</button>
+      </div>
+      <div class="field hide" id="customWrap">
+        <label>المبلغ (ر.س)</label>
+        <input class="input input-lg" id="payCustomInp" type="tel" inputmode="numeric" placeholder="0">
+      </div>
+      <button class="btn pay-apple" onclick="processPay('apple')" style="margin-bottom:10px">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="currentColor"><path d="M17.05 12.54c-.03-2.55 2.08-3.77 2.17-3.83-1.18-1.73-3.02-1.97-3.68-2-1.56-.16-3.05.92-3.85.92-.79 0-2.02-.9-3.32-.87-1.71.03-3.29.99-4.17 2.52-1.78 3.08-.45 7.64 1.28 10.14.85 1.22 1.86 2.6 3.18 2.55 1.28-.05 1.76-.83 3.31-.83s1.98.83 3.33.8c1.38-.02 2.25-1.25 3.09-2.48.97-1.42 1.37-2.8 1.39-2.87-.03-.01-2.67-1.02-2.73-4.05zM14.5 4.9c.7-.86 1.18-2.05 1.05-3.23-1.01.04-2.24.68-2.97 1.53-.65.75-1.23 1.96-1.07 3.12 1.13.09 2.28-.57 2.99-1.42z"/></svg>
+        Apple Pay
+      </button>
+      <button class="btn btn-ghost" onclick="processPay('card')">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><rect x="2" y="5" width="20" height="14" rx="2.5"/><path d="M2 10h20"/></svg>
+        بطاقة Visa / Mastercard
+      </button>
+      <div class="gateway-note">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="10" width="16" height="11" rx="2.5"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg>
+        دفع آمن عبر بوابة Moyasar / Tap (محاكاة)
+      </div>
+    </div>
+
+    <!-- ======== CUSTOMER: PAY SUCCESS ======== -->
+    <div class="screen" id="c-pay-success">
+      <div class="success-wrap">
+        <div class="big-check">
+          <svg width="46" height="46" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
+        </div>
+        <div class="h1">تم الدفع بنجاح</div>
+        <p class="sub">وصل تأكيد بوابة الدفع (Webhook) وتم تحديث رصيدك وإشعار التاجر</p>
+      </div>
+      <div class="card">
+        <div class="mini-kv">
+          <div>المبلغ المدفوع<b id="psAmt" style="color:var(--green-tx)"></b></div>
+          <div>الرصيد المتبقي<b id="psRest"></b></div>
+          <div>طريقة الدفع<b id="psMethod"></b></div>
+          <div>مرجع العملية<b id="psRef" style="direction:ltr;font-size:12px"></b></div>
+        </div>
+      </div>
+      <button class="btn btn-ink" onclick="go('c-account')">العودة إلى الحساب</button>
+    </div>
+
+    <!-- ======== CUSTOMER: PROFILE QR ======== -->
+    <div class="screen" id="c-qr">
+      <div class="h1">رمزي التعريفي</div>
+      <p class="sub">رمز دائم يستخدمه التاجر للتعرف عليك عند بدء عملية شراء</p>
+      <div class="qr-box" style="padding-top:22px">
+        <div class="qr-corners"><span></span><span></span><span></span><span></span></div>
+        <div class="center" style="margin-bottom:12px">
+          <div style="font-size:16px;font-weight:900">أحمد محمد</div>
+          <div class="muted" style="font-size:12.5px;font-weight:800;direction:ltr">0550 123 456</div>
+        </div>
+        <canvas class="qr-cv" id="qrProfile" width="200" height="200"></canvas>
+        <div class="qr-token">sajjel://id/0550123456</div>
+      </div>
+      <div class="warnbox warn-amber" style="margin-top:14px">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 8v5"/><circle cx="12" cy="16.5" r=".9" fill="currentColor" stroke="none"/></svg>
+        <span>هذا الرمز <b>للتعريف فقط</b> — لا يعتمد أي عملية شراء. كل عملية تتطلب رمز موافقة مؤقتًا منفصلًا.</span>
+      </div>
+    </div>
+
+    <!-- ======== CUSTOMER: PROFILE ======== -->
+    <div class="screen" id="c-profile">
+      <div class="h1">حسابي</div>
+      <p class="sub">بيانات المستخدم في النموذج الأولي</p>
+      <div class="card">
+        <div class="cust-top">
+          <div class="avatar">أ</div>
+          <div><div class="nm">أحمد محمد</div><div class="mb">0550 123 456</div></div>
+        </div>
+        <div class="divider"></div>
+        <div class="mini-kv">
+          <div>الدور<b>عميل</b></div>
+          <div>البريد<b style="direction:ltr;font-size:12px">ahmad@sajjel.sa</b></div>
+          <div>التوثيق<b>جوال + OTP</b></div>
+          <div>الحالة<b style="color:var(--green-tx)">نشط</b></div>
+        </div>
+      </div>
+      <button class="btn btn-ghost" onclick="go('s-welcome')">تسجيل الخروج</button>
+    </div>
+
+  </div><!-- /stage -->
+
+  <!-- bottom nav -->
+  <div class="bottomnav hide" id="bottomnav"></div>
+
+  <!-- toast -->
+  <div class="toast" id="toast"><span id="toastTxt"></span></div>
+
+  <!-- processing overlay -->
+  <div class="overlay" id="ovl"><div class="ov-card"><div class="spin"></div><span id="ovlTxt"></span></div></div>
+
+  <!-- bill / invoice viewer -->
+  <div class="billview" id="billView" onclick="if(event.target===this)closeBill()">
+    <div class="bv-card">
+      <div class="bv-head"><b id="bvName">الفاتورة</b><button class="bv-x" onclick="closeBill()">✕</button></div>
+      <div class="bv-body" id="bvBody"></div>
+    </div>
+  </div>
+
+</div>
+<script>
+/* ============ helpers ============ */
+const $=id=>document.getElementById(id);
+const fmt=n=>Number(n).toLocaleString('en-US');
+const intVal=el=>parseInt(String(el.value).replace(/[^0-9]/g,''))||0;
+const mmss=s=>{const m=Math.floor(s/60),x=s%60;return '0'+m+':'+String(x).padStart(2,'0');};
+const tok=()=>Math.random().toString(16).slice(2)+Date.now().toString(16);
+const MONTHS=['يناير','فبراير','مارس','أبريل','مايو','يونيو','يوليو','أغسطس','سبتمبر','أكتوبر','نوفمبر','ديسمبر'];
+const TODAY='18 أغسطس';
+function dueFromDays(days){const d=new Date(2026,7,18);d.setDate(d.getDate()+Number(days));return d.getDate()+' '+MONTHS[d.getMonth()]+' '+d.getFullYear();}
+function hash(str){let h=9;for(let i=0;i<str.length;i++){h=Math.imul(h^str.charCodeAt(i),387420489)>>>0;}return h||1;}
+function mulberry32(a){return function(){a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296;};}
+
+/* ============ state ============ */
+const S={
+  role:null,screen:'s-welcome',pendingRole:null,
+  merchant:{name:'بقالة الريان',defLimit:1000,defDays:30},
+  order:['ahmed','khalid','salem'],
+  pending:null,scanMode:'approval',stash:null,
+  cNotifs:[],mNotifs:[],unread:{m:0,c:0},nid:0,
+  sel:null,curAcct:null,curMerch:'rayan',payMode:'full',
+  iv:{},qrProfDrawn:false,billTmp:null,bid:0
+};
+const BILLS={};
+const C={
+  ahmed:{id:'ahmed',name:'أحمد محمد',mobile:'0550 123 456',balance:800,limitOv:null,daysOv:null,
+    due:'25 أغسطس 2026',overdue:false,overdueDays:0,
+    tx:[{d:'12 أغسطس',t:'دفعة',a:-200},{d:'5 أغسطس',t:'مشتريات',a:1000}]},
+  khalid:{id:'khalid',name:'خالد علي',mobile:'0555 987 210',balance:0,limitOv:null,daysOv:null,
+    due:'—',overdue:false,overdueDays:0,
+    tx:[{d:'2 أغسطس',t:'دفعة',a:-350},{d:'28 يوليو',t:'مشتريات',a:350}]},
+  salem:{id:'salem',name:'سالم العتيبي',mobile:'0533 456 789',balance:1250,limitOv:1500,daysOv:null,
+    due:'10 أغسطس 2026',overdue:true,overdueDays:8,
+    tx:[{d:'10 يوليو',t:'مواد بناء',a:1250}]}
+};
+const CM={
+  rayan:{id:'rayan',name:'بقالة الريان',dyn:true},
+  noor:{id:'noor',name:'سوق النور',balance:0,due:'—',overdue:false,
+    tx:[{d:'20 يوليو',t:'دفعة',a:-350},{d:'11 يوليو',t:'مشتريات',a:350}]},
+  duha:{id:'duha',name:'مخبز الضحى',balance:420,due:'10 أغسطس 2026',overdue:true,
+    tx:[{d:'1 أغسطس',t:'مشتريات',a:420}]}
+};
+const CM_ORDER=['rayan','noor','duha'];
+
+const limitOf=c=>c.limitOv!=null?c.limitOv:S.merchant.defLimit;
+const daysOf=c=>c.daysOv!=null?c.daysOv:S.merchant.defDays;
+function statusOf(o){
+  if(o.balance<=0)return{k:'green',t:'مسدد'};
+  if(o.overdue)return{k:'red',t:'متأخر'};
+  if(o.balance>=limitOf(o))return{k:'dark',t:'بلغ الحد'};
+  return{k:'blue',t:'دين نشط'};
+}
+function mStatusOf(m){const b=mBal(m);if(b<=0)return{k:'green',t:'مسدد'};if(mOver(m))return{k:'red',t:'متأخر'};return{k:'blue',t:'دين نشط'};}
+const mBal=m=>m.dyn?C.ahmed.balance:m.balance;
+const mDue=m=>m.dyn?C.ahmed.due:m.due;
+const mOver=m=>m.dyn?C.ahmed.overdue:m.overdue;
+const pill=s=>'<span class="pill st-'+s.k+'"><span class="d"></span>'+s.t+'</span>';
+
+/* ============ navigation ============ */
+function go(id){
+  document.querySelectorAll('.screen').forEach(e=>e.classList.remove('active'));
+  const el=$(id);el.classList.add('active');el.scrollTop=0;S.screen=id;
+  const auth=id.indexOf('s-')===0;
+  $('appbar').classList.toggle('hide',auth);
+  $('bottomnav').classList.toggle('hide',auth);
+  switch(id){
+    case 'm-dash':renderMDash();break;
+    case 'm-account':renderMAcct();break;
+    case 'm-new':renderNew();break;
+    case 'm-notifs':renderMNotifs();break;
+    case 'c-dash':renderCDash();break;
+    case 'c-account':renderCAcct();break;
+    case 'c-notifs':renderCNotifs();break;
+    case 'c-qr':if(!S.qrProfDrawn){drawQR('qrProfile','sajjel-id-ahmad-0550123456');S.qrProfDrawn=true;}break;
+  }
+  if(!auth)renderNav();
+}
+function setRole(r,target){
+  S.role=r;
+  $('rsM').classList.toggle('on',r==='merchant');
+  $('rsC').classList.toggle('on',r==='customer');
+  go(target||(r==='merchant'?'m-dash':'c-dash'));
+}
+function openBell(){go(S.role==='merchant'?'m-notifs':'c-notifs');}
+
+/* nav bar */
+const IC={
+  home:'<svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="m3 10.5 9-7.5 9 7.5"/><path d="M5.5 9.5V20h13V9.5"/></svg>',
+  plus:'<svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 8.5v7M8.5 12h7"/></svg>',
+  uplus:'<svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round"><circle cx="9.5" cy="8" r="3.5"/><path d="M3.5 20c1-3.4 3.5-4.7 6-4.7s5 1.3 6 4.7"/><path d="M18.5 8v6M15.5 11h6"/></svg>',
+  gear:'<svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round"><circle cx="12" cy="12" r="3.2"/><path d="M12 2.5v3M12 18.5v3M2.5 12h3M18.5 12h3M5.2 5.2l2.1 2.1M16.7 16.7l2.1 2.1M18.8 5.2l-2.1 2.1M7.3 16.7l-2.1 2.1"/></svg>',
+  qr:'<svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><path d="M14 14h3v3h-3zM21 14v2M14 21h2M19 19h2v2"/></svg>',
+  bell:'<svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8a6 6 0 1 0-12 0c0 7-3 8-3 8h18s-3-1-3-8"/><path d="M10.3 21a2 2 0 0 0 3.4 0"/></svg>',
+  user:'<svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round"><circle cx="12" cy="8" r="3.6"/><path d="M4.5 20.5c1.3-4 4.5-5.3 7.5-5.3s6.2 1.3 7.5 5.3"/></svg>'
+};
+function renderNav(){
+  if(!S.role)return;
+  const items=S.role==='merchant'?[
+    {i:IC.home,l:'الرئيسية',t:'m-dash'},
+    {i:IC.plus,l:'عملية جديدة',t:'m-new',fn:"startNewPurchase()"},
+    {i:IC.uplus,l:'إضافة عميل',t:'m-add'},
+    {i:IC.gear,l:'الإعدادات',t:'m-settings'}
+  ]:[
+    {i:IC.home,l:'الرئيسية',t:'c-dash'},
+    {i:IC.qr,l:'رمزي',t:'c-qr'},
+    {i:IC.bell,l:'الإشعارات',t:'c-notifs',b:S.unread.c},
+    {i:IC.user,l:'حسابي',t:'c-profile'}
+  ];
+  $('bottomnav').innerHTML=items.map(it=>{
+    const on=S.screen===it.t?' on':'';
+    const bd=it.b>0?'<span class="nbadge">'+it.b+'</span>':'';
+    const act=it.fn||"go('"+it.t+"')";
+    return '<button class="nav-item'+on+'" onclick="'+act+'">'+it.i+bd+'<span>'+it.l+'</span></button>';
+  }).join('');
+  const key=S.role==='merchant'?'m':'c';
+  const n=S.unread[key];
+  $('bellBadge').classList.toggle('hide',n<=0);
+  $('bellBadge').textContent=n;
+}
+function updateBadges(){if(S.role)renderNav();}
+
+/* ============ auth ============ */
+function startAs(r){
+  S.pendingRole=r;
+  $('otpSub').textContent=r==='merchant'
+    ?'أدخل الرمز المُرسل إلى 0550 111 222 (بقالة الريان)'
+    :'أدخل الرمز المُرسل إلى 0550 123 456 (أحمد محمد)';
+  go('s-otp');
+  setTimeout(()=>{const b=document.querySelector('.otpbox');if(b)b.focus();},80);
+}
+function confirmOtp(){setRole(S.pendingRole||'merchant');toast('تم تسجيل الدخول بنجاح');}
+
+/* ============ merchant dashboard ============ */
+function renderMDash(){
+  let out=0,over=0;
+  S.order.forEach(k=>{out+=C[k].balance;if(C[k].overdue)over+=C[k].balance;});
+  $('stCust').textContent=S.order.length;
+  $('stOut').textContent=fmt(out);
+  $('stOver').textContent=fmt(over);
+  $('custCount').textContent=S.order.length+' عملاء';
+  const av=['','a2','a3'];
+  $('custList').innerHTML=S.order.map((k,i)=>{
+    const c=C[k],st=statusOf(c);
+    return '<div class="card cust-card" onclick="openAcct(\''+k+'\')">'
+      +'<div class="cust-top"><div class="avatar '+av[i%3]+'">'+c.name[0]+'</div>'
+      +'<div style="flex:1"><div class="nm">'+c.name+'</div><div class="mb">'+c.mobile+'</div></div>'+pill(st)+'</div>'
+      +'<div class="kvrow"><span>الرصيد</span><b class="big'+(st.k==='red'?' rd':'')+'">'+fmt(c.balance)+' ر.س</b></div>'
+      +'<div class="kvrow"><span>تاريخ الاستحقاق</span><b>'+(c.balance>0?c.due:'—')+'</b></div>'
+      +'</div>';
+  }).join('');
+}
+function openAcct(id){S.curAcct=id;go('m-account');}
+function renderMAcct(){
+  const c=C[S.curAcct]||C.ahmed,st=statusOf(c);
+  const lim=limitOf(c),rem=Math.max(0,lim-c.balance);
+  $('acctHero').innerHTML='<div class="hero"><div class="hero-head">'
+    +'<div><div class="hero-name">'+c.name+'</div><div class="hero-mb">'+c.mobile+'</div></div>'+pill(st)+'</div>'
+    +'<div style="margin-top:12px" class="lbl">الرصيد الحالي</div>'
+    +'<div class="amt">'+fmt(c.balance)+' <small>ر.س</small></div>'
+    +'<div class="hero-grid">'
+    +'<div><span>حد الائتمان'+(c.limitOv!=null?' ✦':'')+'</span><b>'+fmt(lim)+' ر.س</b></div>'
+    +'<div><span>المتاح</span><b>'+fmt(rem)+' ر.س</b></div>'
+    +'<div><span>الاستحقاق</span><b>'+(c.balance>0?c.due:'—')+'</b></div>'
+    +'</div></div>';
+  $('acctNewBtn').onclick=()=>startNewPurchase(S.curAcct);
+  $('acctSetBtn').onclick=()=>openCustSettings(S.curAcct);
+  $('txListM').innerHTML=c.tx.length?c.tx.map(txRow).join(''):'<div class="empty" style="padding:20px">لا توجد معاملات بعد</div>';
+}
+function txRow(t){
+  const debit=t.a>0,amt=Math.abs(t.a);
+  const bill=t.billId?'<br><button class="tag tag-bill" onclick="viewBill(\''+t.billId+'\')"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m21 11.5-8.8 8.8a5.1 5.1 0 0 1-7.2-7.2L13.5 4.6a3.4 3.4 0 0 1 4.8 4.8L9.7 18a1.7 1.7 0 0 1-2.4-2.4l8-8"/></svg>الفاتورة</button>':'';
+  return '<div class="tx"><div><div class="t-t">'+t.t+'</div><div class="t-d">'+t.d+'</div></div>'
+    +'<div class="t-left"><div class="t-amt'+(debit?'':' cr')+'">'+(debit?'+':'−')+fmt(amt)+' ر.س</div>'
+    +'<span class="tag '+(debit?'tag-debt':'tag-paid')+'">'+(debit?'دين':'سداد')+'</span>'+bill+'</div></div>';
+}
+
+/* ============ new purchase ============ */
+function startNewPurchase(pref){
+  if(pref!==undefined)S.sel=pref;
+  $('amtInp').value='';$('descInp').value='';
+  clearBill();
+  go('m-new');
+}
+function renderNew(){
+  $('custChips').innerHTML=S.order.map(k=>{
+    const on=S.sel===k?' on':'';
+    return '<button class="chip'+on+'" onclick="selectCust(\''+k+'\')">'+C[k].name+'</button>';
+  }).join('');
+  const has=!!S.sel;
+  $('statusPanel').classList.toggle('hide',!has);
+  $('statusEmpty').classList.toggle('hide',has);
+  if(!has)return;
+  const c=C[S.sel],st=statusOf(c),lim=limitOf(c);
+  $('spAv').textContent=c.name[0];
+  $('spName').textContent=c.name;
+  $('spMobile').textContent=c.mobile;
+  $('spPill').innerHTML=pill(st);
+  $('spBal').textContent=fmt(c.balance)+' ر.س';
+  $('spLimit').textContent=fmt(lim)+' ر.س';
+  $('spDue').textContent=c.balance>0?c.due:'—';
+  $('spRemain').textContent=fmt(Math.max(0,lim-c.balance))+' ر.س';
+  $('newNote').innerHTML=c.overdue
+    ?'<div class="warnbox warn-amber" style="padding:11px 13px"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3 2.5 20h19L12 3z"/><path d="M12 10v4.5"/></svg><span>هذا العميل متأخر عن السداد منذ '+c.overdueDays+' أيام — سيظهر تنبيه قبل الإتمام.</span></div>':'';
+  renderProj();
+}
+function selectCust(id){S.sel=id;if(S.screen==='m-new')renderNew();}
+function renderProj(){
+  if(!S.sel)return;
+  const c=C[S.sel],lim=limitOf(c),v=intVal($('amtInp')),el=$('projLine');
+  if(v<=0){el.className='proj';el.innerHTML='أدخل المبلغ لعرض الرصيد المتوقع';return;}
+  const proj=c.balance+v,over=proj>lim;
+  el.className='proj'+(over?' over':'');
+  el.innerHTML=over
+    ?'الرصيد المتوقع <b>'+fmt(proj)+' ر.س</b> يتجاوز حد الائتمان <b>'+fmt(lim)+' ر.س</b> — ستُحظر العملية'
+    :'الرصيد بعد الشراء: <b>'+fmt(proj)+' ر.س</b> من حد <b>'+fmt(lim)+' ر.س</b> · يتبقى <b>'+fmt(lim-proj)+' ر.س</b>';
+}
+function submitPurchase(){
+  if(!S.sel){toast('اختر العميل أولًا');return;}
+  const c=C[S.sel],v=intVal($('amtInp'));
+  if(v<=0){toast('أدخل مبلغًا صحيحًا');return;}
+  const desc=$('descInp').value.trim()||'مشتريات',lim=limitOf(c);
+  if(c.balance+v>lim){
+    $('liMax').textContent=fmt(lim)+' ر.س';
+    $('liCur').textContent=fmt(c.balance)+' ر.س';
+    $('liNew').textContent='+'+fmt(v)+' ر.س';
+    $('liProj').textContent=fmt(c.balance+v)+' ر.س';
+    go('m-limit');return;
+  }
+  if(c.overdue){
+    $('woOut').textContent=fmt(c.balance)+' ر.س';
+    $('woDue').textContent=c.due;
+    $('woDays').textContent=c.overdueDays+' أيام';
+    $('woNew').textContent='+'+fmt(v)+' ر.س';
+    S.stash={amt:v,desc:desc};
+    go('m-warn-overdue');return;
+  }
+  proceedSend(v,desc);
+}
+function continueAnyway(){proceedSend(S.stash.amt,S.stash.desc);}
+function proceedSend(v,desc){
+  const c=C[S.sel];
+  S.pending={type:'purchase',cust:S.sel,amount:v,desc:desc,bill:S.billTmp,token:tok(),expired:false,shown:false};
+  addCNotif({kind:'purchase',text:'طلب شراء من بقالة الريان — '+fmt(v)+' ر.س',action:true});
+  $('waitTitle').textContent='بانتظار موافقة العميل';
+  $('waitSub').textContent='أُرسل إشعار إلى جوال '+c.name+' لتأكيد شراء بقيمة '+fmt(v)+' ر.س';
+  $('waitHint').innerHTML='<b>على جهازين حقيقيين:</b> يفتح العميل الإشعار ويعرض رمز الموافقة، ثم يمسحه التاجر. هنا بدّل إلى وضع «عميل» بالأعلى ثم عُد إلى الماسح.';
+  go('m-wait');
+}
+function cancelPending(){
+  if(S.pending){
+    const t=S.pending.type;
+    S.cNotifs=S.cNotifs.filter(x=>!(x.action&&x.kind===t));
+    S.unread.c=S.cNotifs.filter(x=>x.unread).length;
+  }
+  stopTimers();S.pending=null;clearBill();updateBadges();
+  toast('تم إلغاء الطلب');go('m-dash');
+}
+
+/* ============ connection ============ */
+function sendConnection(){
+  const m=$('addMobile').value.trim()||'05XXXXXXXX';
+  S.pending={type:'connection',mobile:m,newName:'فيصل الدوسري',token:tok(),expired:false,shown:false};
+  addCNotif({kind:'connection',text:'بقالة الريان تريد إنشاء حساب معك',action:true});
+  $('waitTitle').textContent='بانتظار موافقة العميل على الربط';
+  $('waitSub').textContent='أُرسل طلب ربط حساب إلى الرقم '+m;
+  $('waitHint').innerHTML='<b>محاكاة:</b> في الواقع يظهر الطلب على جهاز العميل الجديد. هنا بدّل إلى وضع «عميل» لعرض رمز الموافقة ثم عُد إلى الماسح.';
+  go('m-wait');
+}
+
+/* ============ scanner ============ */
+function openScanner(mode){
+  S.scanMode=mode||'approval';
+  $('scanModeTxt').textContent=S.scanMode==='profile'
+    ?'وضع المسح: الرمز التعريفي الدائم — للتعرف على العميل فقط'
+    :'وضع المسح: رمز الموافقة المؤقت — وجّه الكاميرا نحو جهاز العميل';
+  go('m-scan');
+}
+function simulateScan(){
+  if(S.scanMode==='profile'){
+    S.scanMode='approval';
+    S.sel='ahmed';
+    go('m-new');
+    toast('تم التعرف على العميل: أحمد محمد');
+    return;
+  }
+  const p=S.pending;
+  if(!p){toast('لا يوجد طلب بانتظار المسح — أنشئ عملية أو طلب ربط أولًا');return;}
+  if(!p.shown){toast('لم يفتح العميل شاشة الرمز بعد — انتقل إلى وضع «عميل» أولًا');return;}
+  if(p.expired){toast('انتهت صلاحية الرمز — اطلب من العميل إنشاء رمز جديد');return;}
+  if(p.type==='purchase'){
+    const c=C[p.cust];
+    c.balance+=p.amount;
+    const t={d:TODAY,t:p.desc,a:p.amount};
+    if(p.bill){const bId='b'+(++S.bid);BILLS[bId]=p.bill;t.billId=bId;}
+    c.tx.unshift(t);
+    if(!c.overdue)c.due=dueFromDays(daysOf(c));
+    markNotifDone('purchase');
+    clearBill();
+    $('succTitle').textContent='تم تأكيد الشراء';
+    $('succSub').textContent='تحقق الخادم من الرمز وأُنشئت العملية وتحدّث رصيد العميل';
+    $('succRows').innerHTML='<div>العميل<b>'+c.name+'</b></div>'
+      +'<div>المبلغ<b>+'+fmt(p.amount)+' ر.س</b></div>'
+      +'<div>الرصيد الجديد<b>'+fmt(c.balance)+' ر.س</b></div>'
+      +'<div>تاريخ الاستحقاق<b>'+c.due+'</b></div>'
+      +(p.bill?'<div>الفاتورة<b>مرفقة ✓</b></div>':'');
+  }else{
+    C.faisal={id:'faisal',name:p.newName,mobile:p.mobile,balance:0,limitOv:null,daysOv:null,
+      due:'—',overdue:false,overdueDays:0,tx:[]};
+    if(S.order.indexOf('faisal')<0)S.order.push('faisal');
+    markNotifDone('connection');
+    $('succTitle').textContent='تم إنشاء الحساب';
+    $('succSub').textContent='ارتبط العميل بمتجرك ويمكنك الآن تسجيل مشتريات له';
+    $('succRows').innerHTML='<div>العميل<b>'+p.newName+'</b></div>'
+      +'<div>الجوال<b style="direction:ltr">'+p.mobile+'</b></div>'
+      +'<div>حد الائتمان<b>'+fmt(S.merchant.defLimit)+' ر.س (موروث)</b></div>'
+      +'<div>الرصيد<b>0 ر.س</b></div>';
+  }
+  stopTimers();S.pending=null;
+  go('m-success');
+}
+function markNotifDone(kind){
+  const n=S.cNotifs.find(x=>x.action&&x.kind===kind);
+  if(n){n.action=false;n.text+=' — تم ✅';}
+}
+
+/* ============ QR + timers ============ */
+function drawQR(id,token){
+  const cv=$(id),ctx=cv.getContext('2d'),n=25,s=8;
+  cv.width=n*s;cv.height=n*s;
+  ctx.fillStyle='#ffffff';ctx.fillRect(0,0,n*s,n*s);
+  const rnd=mulberry32(hash(token));
+  const dark='#2C3947';
+  const box=(x,y,w,h)=>ctx.fillRect(x*s,y*s,w*s,h*s);
+  const finder=(fx,fy)=>{ctx.fillStyle=dark;box(fx,fy,7,7);ctx.fillStyle='#fff';box(fx+1,fy+1,5,5);ctx.fillStyle=dark;box(fx+2,fy+2,3,3);};
+  finder(0,0);finder(n-7,0);finder(0,n-7);
+  ctx.fillStyle=dark;
+  for(let i=8;i<n-8;i++){if(i%2===0){box(i,6,1,1);box(6,i,1,1);}}
+  const zone=(x,y)=>(x<8&&y<8)||(x>=n-8&&y<8)||(x<8&&y>=n-8)||(x===6||y===6);
+  for(let y=0;y<n;y++)for(let x=0;x<n;x++){
+    if(zone(x,y))continue;
+    if(rnd()<0.44)box(x,y,1,1);
+  }
+}
+function startCountdown(sfx){
+  clearInterval(S.iv[sfx]);
+  let s=119;
+  const el=$('t'+sfx),tm=el.parentElement;
+  const tick=()=>{
+    el.textContent=mmss(Math.max(0,s));
+    tm.classList.toggle('low',s<=20);
+    if(s<=0){
+      clearInterval(S.iv[sfx]);
+      if(S.pending)S.pending.expired=true;
+      $('ex'+sfx).classList.add('show');
+    }
+    s--;
+  };
+  tick();S.iv[sfx]=setInterval(tick,1000);
+}
+function regen(sfx){
+  const p=S.pending;if(!p)return;
+  p.token=tok();p.expired=false;
+  drawQR(sfx==='P'?'qrP':'qrC',p.token);
+  $('tok'+sfx).textContent='sajjel://approve/'+p.token.slice(0,10);
+  $('ex'+sfx).classList.remove('show');
+  startCountdown(sfx);
+}
+function stopTimers(){clearInterval(S.iv.P);clearInterval(S.iv.C);}
+
+/* ============ customer side ============ */
+function renderCDash(){
+  let debt=0,over=0;
+  CM_ORDER.forEach(k=>{const b=mBal(CM[k]);debt+=b;if(mOver(CM[k])&&b>0)over+=b;});
+  $('cStDebt').textContent=fmt(debt);
+  $('cStMerch').textContent=CM_ORDER.length;
+  $('cStOver').textContent=fmt(over);
+  const av=['a3','','a2'];
+  $('merchList').innerHTML=CM_ORDER.map((k,i)=>{
+    const m=CM[k],b=mBal(m),st=mStatusOf(m);
+    const payBtn=b>0?'<button class="btn btn-gold btn-sm" onclick="event.stopPropagation();S.curMerch=\''+k+'\';openPay()">سداد الآن</button>':'';
+    return '<div class="card cust-card" onclick="openMerchAcct(\''+k+'\')">'
+      +'<div class="cust-top"><div class="avatar '+av[i%3]+'">'+m.name[0]+'</div>'
+      +'<div style="flex:1"><div class="nm">'+m.name+'</div>'
+      +'<div style="font-size:11.5px;color:var(--txt2);font-weight:700">'+(b>0?'الاستحقاق: '+mDue(m):'لا مستحقات')+'</div></div>'+pill(st)+'</div>'
+      +'<div class="kvrow"><span>المستحق</span><b class="big'+(st.k==='red'?' rd':'')+'">'+fmt(b)+' ر.س</b></div>'
+      +'<div class="row" style="margin-top:9px"><button class="btn btn-soft btn-sm" onclick="event.stopPropagation();openMerchAcct(\''+k+'\')">عرض الحساب</button>'+payBtn+'</div>'
+      +'</div>';
+  }).join('');
+}
+function openMerchAcct(id){S.curMerch=id;go('c-account');}
+function renderCAcct(){
+  const m=CM[S.curMerch],b=mBal(m),st=mStatusOf(m);
+  const tx=m.dyn?C.ahmed.tx:m.tx;
+  $('cAcctHero').innerHTML='<div class="hero"><div class="hero-head">'
+    +'<div><div class="hero-name">'+m.name+'</div><div class="hero-mb" style="direction:rtl;text-align:start">حساب آجل موثّق</div></div>'+pill(st)+'</div>'
+    +'<div style="margin-top:12px" class="lbl">المستحق عليك</div>'
+    +'<div class="amt">'+fmt(b)+' <small>ر.س</small></div>'
+    +'<div class="hero-grid">'
+    +'<div><span>الاستحقاق</span><b>'+(b>0?mDue(m):'—')+'</b></div>'
+    +'<div><span>المعاملات</span><b>'+tx.length+'</b></div>'
+    +'<div><span>الحالة</span><b>'+st.t+'</b></div>'
+    +'</div>'
+    +(b>0?'<button class="btn btn-gold" style="margin-top:16px;position:relative;z-index:1" onclick="openPay()">سداد الآن</button>':'')
+    +'</div>';
+  $('txListC').innerHTML=tx.length?tx.map(txRow).join(''):'<div class="empty" style="padding:20px">لا توجد معاملات بعد</div>';
+}
+
+/* ============ approvals (customer) ============ */
+function openPurchaseConfirm(){
+  const p=S.pending;
+  if(!p||p.type!=='purchase'){toast('لا يوجد طلب شراء نشط');return;}
+  p.shown=true;
+  const c=C[p.cust];
+  $('ppAmt').textContent=fmt(p.amount)+' ر.س';
+  $('ppDesc').textContent=p.desc;
+  $('ppAfter').textContent=fmt(c.balance+p.amount)+' ر.س';
+  $('ppBillRow').classList.toggle('hide',!p.bill);
+  $('tokP').textContent='sajjel://approve/'+p.token.slice(0,10);
+  $('exP').classList.remove('show');
+  drawQR('qrP',p.token);
+  startCountdown('P');
+  go('c-purchase');
+}
+function openConnect(){
+  const p=S.pending;
+  if(!p||p.type!=='connection'){toast('لا يوجد طلب ربط نشط');return;}
+  p.shown=true;
+  $('tokC').textContent='sajjel://approve/'+p.token.slice(0,10);
+  $('exC').classList.remove('show');
+  drawQR('qrC',p.token);
+  startCountdown('C');
+  go('c-connect');
+}
+
+/* ============ payments ============ */
+function openPay(){
+  const m=CM[S.curMerch],b=mBal(m);
+  if(b<=0){toast('لا يوجد مستحق على هذا الحساب');return;}
+  $('payMerch').textContent=m.name;
+  $('payOut').textContent=fmt(b)+' ر.س';
+  $('payCustomInp').value='';
+  setPayMode('full');
+  go('c-pay');
+}
+function setPayMode(md){
+  S.payMode=md;
+  $('segFull').classList.toggle('on',md==='full');
+  $('segCust').classList.toggle('on',md==='custom');
+  $('customWrap').classList.toggle('hide',md!=='custom');
+  if(md==='custom')setTimeout(()=>$('payCustomInp').focus(),60);
+}
+function processPay(method){
+  const m=CM[S.curMerch],b=mBal(m);
+  const amt=S.payMode==='full'?b:intVal($('payCustomInp'));
+  if(amt<=0){toast('أدخل مبلغًا صحيحًا');return;}
+  if(amt>b){toast('المبلغ أكبر من الرصيد المستحق');return;}
+  const ov=$('ovl'),tx=$('ovlTxt');
+  ov.classList.add('show');
+  tx.textContent='جارٍ الاتصال ببوابة الدفع…';
+  setTimeout(()=>{tx.textContent='تفويض العملية لدى المُصدر…';},750);
+  setTimeout(()=>{tx.textContent='استلام تأكيد الدفع (Webhook)…';},1500);
+  setTimeout(()=>{
+    ov.classList.remove('show');
+    let newBal;
+    if(m.dyn){
+      const a=C.ahmed;
+      a.balance-=amt;
+      if(a.balance<=0){a.balance=0;a.overdue=false;a.overdueDays=0;}
+      a.tx.unshift({d:TODAY,t:'دفعة',a:-amt});
+      newBal=a.balance;
+      addMNotif({kind:'payment',text:'أحمد محمد دفع '+fmt(amt)+' ر.س — المتبقي '+fmt(newBal)+' ر.س'});
+    }else{
+      m.balance=Math.max(0,m.balance-amt);
+      if(m.balance===0)m.overdue=false;
+      m.tx.unshift({d:TODAY,t:'دفعة',a:-amt});
+      newBal=m.balance;
+    }
+    $('psAmt').textContent='−'+fmt(amt)+' ر.س';
+    $('psRest').textContent=fmt(newBal)+' ر.س'+(newBal===0?' — مسدد 🟢':'');
+    $('psMethod').textContent=method==='apple'?'Apple Pay':'بطاقة Visa';
+    $('psRef').textContent='PAY-'+tok().slice(0,8).toUpperCase();
+    go('c-pay-success');
+    toast('وصل إشعار الدفعة إلى التاجر فورًا');
+  },2250);
+}
+
+/* ============ bill / invoice ============ */
+const DOCSVG='<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2.5H6.5A1.5 1.5 0 0 0 5 4v16a1.5 1.5 0 0 0 1.5 1.5h11A1.5 1.5 0 0 0 19 20V7.5L14 2.5z"/><path d="M14 2.5V7.5H19"/><path d="M8.5 13h7M8.5 16.5h7"/></svg>';
+function handleBill(inp){
+  const f=inp.files&&inp.files[0];
+  inp.value='';
+  if(!f)return;
+  if(f.size>4*1024*1024){toast('حجم الملف كبير — الحد ٤ ميجابايت');return;}
+  S.billTmp={name:f.name,type:f.type,img:null};
+  if(f.type&&f.type.indexOf('image/')===0){
+    const r=new FileReader();
+    r.onload=()=>{if(S.billTmp){S.billTmp.img=r.result;renderBillPrev();}};
+    r.readAsDataURL(f);
+  }
+  renderBillPrev();
+  toast('أُرفقت الفاتورة وستُرسل مع العملية');
+}
+function renderBillPrev(){
+  const has=!!S.billTmp;
+  $('billDrop').classList.toggle('hide',has);
+  $('billPrev').classList.toggle('hide',!has);
+  if(!has)return;
+  $('billNm').textContent=S.billTmp.name;
+  $('billTh').innerHTML=S.billTmp.img?'<img src="'+S.billTmp.img+'" alt="">':DOCSVG;
+}
+function clearBill(){S.billTmp=null;renderBillPrev();}
+function openBillView(b){
+  if(!b){toast('لا توجد فاتورة مرفقة');return;}
+  $('bvName').textContent='الفاتورة المرفقة';
+  $('bvBody').innerHTML=b.img?'<img src="'+b.img+'" alt="الفاتورة">':'<div class="bv-doc">'+DOCSVG+'<span>'+b.name+'</span><span style="color:var(--txt2);font-weight:700">ملف PDF — تُعرض المعاينة في التطبيق الفعلي</span></div>';
+  $('billView').classList.add('show');
+}
+function viewBill(id){openBillView(BILLS[id]);}
+function viewBillTmp(){openBillView(S.pending&&S.pending.bill);}
+function closeBill(){$('billView').classList.remove('show');}
+
+/* ============ notifications ============ */
+function addCNotif(o){o.id='n'+(++S.nid);o.time='الآن';o.unread=true;S.cNotifs.unshift(o);S.unread.c++;updateBadges();}
+function addMNotif(o){o.id='n'+(++S.nid);o.time='الآن';o.unread=true;S.mNotifs.unshift(o);S.unread.m++;updateBadges();}
+const NIC={
+  purchase:'<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M6 7h12l-1.2 12.2a1.8 1.8 0 0 1-1.8 1.6H9a1.8 1.8 0 0 1-1.8-1.6L6 7z"/><path d="M9 10V6a3 3 0 0 1 6 0v4"/></svg>',
+  connection:'<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round"><circle cx="9.5" cy="8" r="3.5"/><path d="M3.5 20c1-3.4 3.5-4.7 6-4.7s5 1.3 6 4.7"/><path d="M18.5 8v6M15.5 11h6"/></svg>',
+  payment:'<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>',
+  overdue:'<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3 2.5 20h19L12 3z"/><path d="M12 10v4.5"/><circle cx="12" cy="17.4" r=".9" fill="currentColor" stroke="none"/></svg>'
+};
+function notifItem(o){
+  const live=o.action&&S.pending&&S.pending.type===o.kind;
+  const cls=live?' act':'';
+  const on=live?' onclick="notifAct(\''+o.kind+'\')"':'';
+  const ic=o.kind==='payment'?'g':(o.kind==='overdue'?'o':'');
+  const arrow=live?'<span class="n-go"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m15 6-6 6 6 6"/></svg></span>':'';
+  return '<div class="notif'+cls+'"'+on+'><span class="n-ic '+ic+'">'+(NIC[o.kind]||NIC.payment)+'</span>'
+    +'<div><div class="n-tx">'+o.text+'</div><div class="n-tm">'+o.time+(live?' · بانتظار موافقتك':'')+'</div></div>'+arrow+'</div>';
+}
+function notifAct(kind){kind==='purchase'?openPurchaseConfirm():openConnect();}
+function renderCNotifs(){
+  S.unread.c=0;S.cNotifs.forEach(x=>x.unread=false);updateBadges();
+  $('cNotifList').innerHTML=S.cNotifs.length?S.cNotifs.map(notifItem).join('')
+    :'<div class="empty">'+IC.bell.replace('width="21" height="21"','width="34" height="34"')+'لا إشعارات حاليًا<br>ستظهر هنا طلبات الربط والمشتريات</div>';
+}
+function renderMNotifs(){
+  S.unread.m=0;S.mNotifs.forEach(x=>x.unread=false);updateBadges();
+  $('mNotifList').innerHTML=S.mNotifs.length?S.mNotifs.map(notifItem).join('')
+    :'<div class="empty">'+IC.bell.replace('width="21" height="21"','width="34" height="34"')+'لا إشعارات حاليًا<br>ستظهر هنا المدفوعات المستلمة وتنبيهات التأخر</div>';
+}
+
+/* ============ settings ============ */
+function saveMerchantSettings(){
+  S.merchant.defLimit=intVal($('defLimitInp'))||1000;
+  S.merchant.defDays=intVal($('defDaysInp'))||30;
+  toast('حُفظت الإعدادات الافتراضية');
+}
+function openCustSettings(id){
+  S.curAcct=id;
+  const c=C[id];
+  $('csName').textContent='إعدادات '+c.name;
+  $('csLimitChk').checked=c.limitOv!=null;
+  $('csLimitInp').value=c.limitOv!=null?c.limitOv:S.merchant.defLimit;
+  $('csDaysChk').checked=c.daysOv!=null;
+  $('csDaysInp').value=c.daysOv!=null?c.daysOv:S.merchant.defDays;
+  syncCs();
+  go('m-cust-settings');
+}
+function syncCs(){
+  const lc=$('csLimitChk').checked,dc=$('csDaysChk').checked;
+  $('csLimitInp').disabled=!lc;
+  $('csDaysInp').disabled=!dc;
+  if(!lc)$('csLimitInp').value=S.merchant.defLimit;
+  if(!dc)$('csDaysInp').value=S.merchant.defDays;
+  $('csLimitNote').textContent=lc?'قيمة مخصصة لهذا العميل':'موروث من إعدادات التاجر ('+fmt(S.merchant.defLimit)+' ر.س)';
+  $('csDaysNote').textContent=dc?'قيمة مخصصة لهذا العميل':'موروث من إعدادات التاجر ('+S.merchant.defDays+' يوم)';
+}
+function saveCustSettings(){
+  const c=C[S.curAcct];
+  c.limitOv=$('csLimitChk').checked?(intVal($('csLimitInp'))||S.merchant.defLimit):null;
+  c.daysOv=$('csDaysChk').checked?(intVal($('csDaysInp'))||S.merchant.defDays):null;
+  toast('حُفظت إعدادات العميل');
+  go('m-account');
+}
+function resetCustSettings(){
+  const c=C[S.curAcct];
+  c.limitOv=null;c.daysOv=null;
+  $('csLimitChk').checked=false;$('csDaysChk').checked=false;
+  syncCs();
+  toast('أُعيدت الإعدادات إلى الافتراضي');
+}
+function demoOverdue(){
+  const a=C.ahmed;
+  if(a.balance<=0){toast('رصيد أحمد صفر — أنشئ عملية شراء أولًا');return;}
+  a.overdue=true;a.overdueDays=3;a.due='15 أغسطس 2026';
+  addMNotif({kind:'overdue',text:'أحمد محمد لديه رصيد متأخر '+fmt(a.balance)+' ر.س'});
+  toast('فُعّلت حالة التأخر لأحمد — جرّب الآن عملية شراء جديدة له');
+}
+
+/* ============ toast ============ */
+let toastT;
+function toast(msg){
+  $('toastTxt').textContent=msg;
+  $('toast').classList.add('show');
+  clearTimeout(toastT);
+  toastT=setTimeout(()=>$('toast').classList.remove('show'),3000);
+}
+
+/* ============ init ============ */
+$('amtInp').addEventListener('input',renderProj);
+$('csBackBtn').onclick=()=>go('m-account');
+$('liEditBtn').onclick=()=>{if(S.sel)openCustSettings(S.sel);};
+document.querySelectorAll('.otpbox').forEach((b,i,arr)=>{
+  b.addEventListener('input',()=>{b.value=b.value.replace(/[^0-9]/g,'');if(b.value&&arr[i+1])arr[i+1].focus();});
+  b.addEventListener('keydown',e=>{if(e.key==='Backspace'&&!b.value&&arr[i-1])arr[i-1].focus();});
+});
+go('s-welcome');
+</script>
+</body>
+</html>
