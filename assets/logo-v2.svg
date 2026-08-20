@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1300 640" role="img" aria-label="سجّل">
+  <rect width="1300" height="640" fill="#EDE9E6"/>
+  <g fill="none" stroke="#5C4F4A" stroke-linecap="round" stroke-linejoin="round">
+    <!-- connected word: seen entry sweep, two teeth, continuous baseline into the lam bowl -->
+    <path stroke-width="60" d="M 1253 262 Q 1253 400 1158 400 C 1158 262 1066 262 1066 400 C 1066 262 974 262 974 400 L 430 400 C 430 525 235 525 235 392"/>
+    <!-- lam ascender rising from the baseline -->
+    <path stroke-width="60" d="M 430 400 L 430 132"/>
+    <!-- checkmark in place of jeem, vertex merging into the baseline -->
+    <path stroke-width="68" d="M 588 298 L 700 408 L 858 168"/>
+    <!-- shadda, echoing the seen teeth -->
+    <path stroke-width="20" d="M 835 48 Q 835 98 792 98 C 792 50 748 50 748 98 C 748 50 704 50 704 98"/>
+  </g>
+  <!-- jeem dot hanging under the baseline -->
+  <circle cx="700" cy="505" r="36" fill="#5C4F4A"/>
+</svg>
