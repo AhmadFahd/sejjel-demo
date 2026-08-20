@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1300 640" role="img" aria-label="سجّل">
+  <rect width="1300" height="640" fill="#5C4F4A"/>
+  <g fill="none" stroke="#EDE9E6" stroke-linecap="round" stroke-linejoin="round">
+    <!-- seen: rising entry sweep, two teeth, baseline connector -->
+    <path stroke-width="64" d="M 1255 285 Q 1255 440 1158 440 C 1158 292 1062 292 1062 440 C 1062 292 966 292 966 440 L 880 440"/>
+    <!-- lam: ascender and bowl with upturned hook -->
+    <path stroke-width="64" d="M 352 130 L 352 360 C 352 515 135 515 135 375"/>
+    <!-- checkmark in place of jeem -->
+    <path stroke-width="74" d="M 515 350 L 645 470 L 828 200"/>
+    <!-- shadda, echoing the seen teeth -->
+    <path stroke-width="22" d="M 838 78 Q 838 128 788 128 C 788 76 740 76 740 128 C 740 76 692 76 692 128"/>
+  </g>
+  <!-- jeem dot -->
+  <circle cx="645" cy="562" r="38" fill="#EDE9E6"/>
+</svg>
