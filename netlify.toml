@@ -12,7 +12,12 @@
 
 # The prototype changes often; don't let the browser pin an old copy.
 [[headers]]
-  for = "/index.html"
+  for = "/*.html"
+  [headers.values]
+    Cache-Control = "public, max-age=0, must-revalidate"
+
+[[headers]]
+  for = "/identity/*"
   [headers.values]
     Cache-Control = "public, max-age=0, must-revalidate"
 
@@ -20,3 +25,19 @@
   for = "/*.svg"
   [headers.values]
     Cache-Control = "public, max-age=86400"
+
+# Serve the brand identity at /identity without changing the URL.
+[[redirects]]
+  from = "/identity"
+  to = "/brand/identity-ar.html"
+  status = 200
+
+[[redirects]]
+  from = "/identity/"
+  to = "/brand/identity-ar.html"
+  status = 200
+
+[[redirects]]
+  from = "/identity/min"
+  to = "/brand/identity-min-ar.html"
+  status = 200
