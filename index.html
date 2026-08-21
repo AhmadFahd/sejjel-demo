@@ -312,6 +312,27 @@ body{
 </style>
 </head>
 <body>
+<!-- brand symbols: icon (check + dot + shadda) and full wordmark -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <symbol id="b-icon" viewBox="472 78 368 482">
+      <g fill="currentColor">
+        <path d="M 722 93 L 729.24 91.43 A 13 13 0 0 1 745 104.13 V 122.5 A 22 22 0 0 1 723 144.5 H 720.6 A 22 22 0 0 1 705.56 138.56 A 19 19 0 0 1 687 153.5 H 682 A 19 19 0 0 1 663 134.5 V 113.94 A 5 5 0 0 1 667.41 108.98 L 682.88 107.13 A 1 1 0 0 1 684 108.13 V 126.5 A 5.5 5.5 0 0 0 689.5 132 A 5.5 5.5 0 0 0 695 126.5 V 102.75 A 1 1 0 0 1 695.73 101.79 L 711.23 97.36 A 1 1 0 0 1 712.5 98.33 V 118.25 A 4.75 4.75 0 0 0 717.25 123 A 4.75 4.75 0 0 0 722 118.25 Z"/>
+        <path d="M 595.96 374.06 A 2 2 0 0 1 593.32 374.18 L 515.48 311.58 A 18.8 18.8 0 0 0 488.95 337.89 L 576.71 448.89 A 24.2 24.2 0 0 0 614.4 449.23 L 826.47 190.61 A 14.2 14.2 0 0 0 805.62 171.39 Z"/>
+        <circle cx="597" cy="515.5" r="29.75"/>
+      </g>
+    </symbol>
+    <symbol id="b-wordmark" viewBox="0 0 1290 572">
+      <g fill="currentColor">
+        <path d="M 276.83 136.27 A 3 3 0 0 1 281 139.03 V 348 A 35 35 0 0 0 316 383 H 432.21 A 20 20 0 0 1 447.9 390.6 L 483 435 H 279.42 A 87 87 0 0 1 193 512 H 102 A 87 87 0 0 1 15 425 V 369.65 A 38 38 0 0 1 38.15 334.67 L 63.83 323.77 A 3 3 0 0 1 68 326.53 V 419 A 42 42 0 0 0 110 461 H 184 A 42 42 0 0 0 226 419 V 179.03 A 32 32 0 0 1 245.5 149.57 Z"/>
+        <path d="M 725 435 L 761.64 390.32 A 20 20 0 0 1 777.1 383 H 906 A 27 27 0 0 0 933 356 V 322.33 A 32 32 0 0 1 952.5 292.87 L 979.83 281.27 A 3 3 0 0 1 984 284.03 V 356 A 27 27 0 0 0 1011 383 H 1046 A 27 27 0 0 0 1073 356 V 322.33 A 32 32 0 0 1 1092.5 292.87 L 1119.83 281.27 A 3 3 0 0 1 1124 284.03 V 356 A 27 27 0 0 0 1151 383 H 1187 A 27 27 0 0 0 1214 356 V 322.33 A 32 32 0 0 1 1233.5 292.87 L 1260.83 281.27 A 3 3 0 0 1 1265 284.03 V 363 A 72 72 0 0 1 1193 435 H 1145 A 72 72 0 0 1 1098.5 417.97 A 72 72 0 0 1 1052 435 H 1005 A 72 72 0 0 1 958.5 417.97 A 72 72 0 0 1 912 435 Z"/>
+        <path d="M 722 93 L 729.24 91.43 A 13 13 0 0 1 745 104.13 V 122.5 A 22 22 0 0 1 723 144.5 H 720.6 A 22 22 0 0 1 705.56 138.56 A 19 19 0 0 1 687 153.5 H 682 A 19 19 0 0 1 663 134.5 V 113.94 A 5 5 0 0 1 667.41 108.98 L 682.88 107.13 A 1 1 0 0 1 684 108.13 V 126.5 A 5.5 5.5 0 0 0 689.5 132 A 5.5 5.5 0 0 0 695 126.5 V 102.75 A 1 1 0 0 1 695.73 101.79 L 711.23 97.36 A 1 1 0 0 1 712.5 98.33 V 118.25 A 4.75 4.75 0 0 0 717.25 123 A 4.75 4.75 0 0 0 722 118.25 Z"/>
+        <path d="M 595.96 374.06 A 2 2 0 0 1 593.32 374.18 L 515.48 311.58 A 18.8 18.8 0 0 0 488.95 337.89 L 576.71 448.89 A 24.2 24.2 0 0 0 614.4 449.23 L 826.47 190.61 A 14.2 14.2 0 0 0 805.62 171.39 Z"/>
+        <circle cx="597" cy="515.5" r="29.75"/>
+      </g>
+    </symbol>
+  </defs>
+</svg>
 <div class="phone" id="app">
 
   <!-- status bar -->
@@ -327,11 +348,7 @@ body{
   <!-- app bar -->
   <div class="appbar hide" id="appbar">
     <div class="logo-badge">
-      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <rect x="5" y="3" width="14" height="18" rx="2.5"/>
-        <path d="M9 8h6.5M9 12h6.5M9 16h3"/>
-        <path d="M13.6 16.6l1.7 1.7 3.2-3.6" stroke-width="2.4"/>
-      </svg>
+      <svg width="21" height="27" viewBox="0 0 368 482"><use href="#b-icon"/></svg>
     </div>
     <div>
       <div class="brand">سجّل</div>
@@ -352,13 +369,11 @@ body{
     <!-- ======== WELCOME ======== -->
     <div class="screen" id="s-welcome">
       <div class="w-logo">
-        <svg width="46" height="46" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <rect x="5" y="3" width="14" height="18" rx="2.5"/>
-          <path d="M9 8h6.5M9 12h6.5M9 16h3"/>
-          <path d="M13.6 16.6l1.7 1.7 3.2-3.6" stroke-width="2.4"/>
-        </svg>
+        <svg width="42" height="55" viewBox="0 0 368 482"><use href="#b-icon"/></svg>
       </div>
-      <div class="w-name">سجّل</div>
+      <div class="w-name" role="img" aria-label="سجّل" style="color:#EDE9E6">
+        <svg width="216" height="96" viewBox="0 0 1290 572" style="display:block;margin:0 auto"><use href="#b-wordmark"/></svg>
+      </div>
       <div class="w-en">SAJJEL</div>
       <p class="w-tag">دفتر الديون الرقمي بين التاجر والعميل<br>ربط آمن · توثيق ثنائي · سداد إلكتروني</p>
 
