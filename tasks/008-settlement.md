@@ -5,7 +5,7 @@ Use case: UC-10. Status: done in prototype, payment is simulated.
 ## Flow
 
 1. Customer taps سداد الآن and picks full or a custom amount from a segmented control.
-2. Picks Apple Pay or Visa.
+2. Picks Apple Pay, مدى, or Visa.
 3. A staged overlay simulates the gateway in about 2.2 seconds, including a webhook step.
 4. Success screen: amount paid, remaining balance, method, and a reference in the form PAY-XXXXXXXX.
 
@@ -19,6 +19,10 @@ Use case: UC-10. Status: done in prototype, payment is simulated.
 
 - Partial payment leaves the right remainder on both sides.
 - Full payment moves the customer to مسدد.
+
+## The other path
+
+A customer who has not installed the app pays from a web link instead. See [015](015-web-checkout-and-whatsapp.md).
 
 ## Open for MVP
 

@@ -15,5 +15,11 @@ One file per task. POC use cases are in [../POC.md](../POC.md); the prototype th
 | 009 | [Invoice attachment](009-invoice-attachment.md) | UC-11 |
 | 010 | [Notifications](010-notifications.md) | UC-12 |
 | 011 | [Limits and settings](011-limits-and-settings.md) | UC-13 |
+| 012 | [Hide and show amounts](012-amount-visibility.md) | UC-14 |
+| 013 | [Transactions counter](013-transactions-counter.md) | UC-15 |
+| 014 | [Merchant QR on the home screen](014-merchant-home-qr.md) | UC-16 |
+| 015 | [Web checkout and the WhatsApp payment link](015-web-checkout-and-whatsapp.md) | UC-17 |
+| 016 | [Credit limit progress bar](016-credit-limit-progress.md) | UC-18 |
+| 017 | [Unified pay-day](017-payday.md) | UC-19 |
 
-Status: all eleven are implemented in the prototype. Nothing here is built against a backend.
+Status: all seventeen are implemented in the prototype. Nothing here is built against a backend.
