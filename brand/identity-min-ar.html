@@ -1,5 +1,5 @@
 <title>سِجِّل — الهوية المختصرة</title>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Baloo+Bhaijaan+2:wght@600;700&family=IBM+Plex+Sans+Arabic:wght@400;500;700&family=IBM+Plex+Mono:wght@400&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&family=IBM+Plex+Mono:wght@400&display=swap">
 <style>
   :root {
     --ground: #F3EFEB; --surface: #EDE9E6; --ink: #3E3531; --brand: #5C4F4A;
@@ -18,18 +18,18 @@
   * { box-sizing: border-box; }
   body {
     margin: 0; background: var(--ground); color: var(--ink);
-    font-family: "IBM Plex Sans Arabic", "Segoe UI", Tahoma, sans-serif;
+    font-family: "Cairo", "Segoe UI", Tahoma, sans-serif;
     font-size: 1rem; line-height: 1.9;
   }
   .page { direction: rtl; max-width: 760px; margin: 0 auto; padding: 56px 24px 72px; }
   h1 {
-    font-family: "Baloo Bhaijaan 2", "IBM Plex Sans Arabic", sans-serif;
-    color: var(--brand); font-size: 2.2rem; font-weight: 700; margin: 0 0 4px; line-height: 1.4;
+    font-family: "Cairo", sans-serif;
+    color: var(--brand); font-size: 2.2rem; font-weight: 900; margin: 0 0 4px; line-height: 1.4;
   }
   .sub { color: var(--muted); font-size: .92rem; margin: 0 0 32px; }
   h2 {
-    font-family: "Baloo Bhaijaan 2", sans-serif; color: var(--brand);
-    font-size: 1.1rem; font-weight: 600; margin: 30px 0 10px;
+    font-family: "Cairo", sans-serif; color: var(--brand);
+    font-size: 1.1rem; font-weight: 800; margin: 30px 0 10px;
   }
   .row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
   .panel {
@@ -53,6 +53,14 @@
   li { margin-bottom: 8px; }
   .pattern { border-radius: 12px; border: 1px solid var(--line); overflow: hidden; line-height: 0; }
   .pattern svg { width: 100%; height: 110px; display: block; }
+  .typebox {
+    border-radius: 12px; border: 1px solid var(--line); background: var(--surface);
+    padding: 18px 20px; display: flex; flex-direction: column; gap: 2px;
+  }
+  .typebox .t-name { font-family: "IBM Plex Mono", monospace; font-size: .78rem; color: var(--muted); direction: ltr; text-align: right; margin-bottom: 4px; }
+  .typebox .t-900 { font-weight: 900; font-size: 1.5rem; color: var(--brand); }
+  .typebox .t-700 { font-weight: 700; font-size: 1.1rem; }
+  .typebox .t-400 { font-weight: 400; font-size: .95rem; }
   footer { margin-top: 36px; padding-top: 14px; border-top: 1px solid var(--line); font-size: .85rem; color: var(--muted); }
   footer a { color: var(--muted); }
 </style>
@@ -95,6 +103,14 @@
   <div class="chips">
     <div class="chip"><div class="c" style="background:#5C4F4A"></div><div class="t"><span>البُنّي الداكن</span><span class="hex">#5C4F4A</span></div></div>
     <div class="chip"><div class="c" style="background:#EDE9E6;border-bottom:1px solid var(--line)"></div><div class="t"><span>العجيني</span><span class="hex">#EDE9E6</span></div></div>
+  </div>
+
+  <h2>الخط</h2>
+  <div class="typebox">
+    <div class="t-name">Cairo — Google Fonts</div>
+    <div class="t-900">العناوين بوزن ٩٠٠</div>
+    <div class="t-700">العناوين الفرعية والأزرار بوزن ٧٠٠</div>
+    <div class="t-400">النصوص بوزن ٤٠٠ — بالعربية واللاتينية والأرقام: 0123 · ٠١٢٣. الشعار مرسوم ولا يُكتب بالخط.</div>
   </div>
 
   <h2>القواعد</h2>

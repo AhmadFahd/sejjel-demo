@@ -1,5 +1,5 @@
 <title>هوية سِجِّل</title>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Baloo+Bhaijaan+2:wght@500;600;700&family=IBM+Plex+Sans+Arabic:wght@400;500;700&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;700;800;900&family=IBM+Plex+Mono:wght@400;500&display=swap">
 <style>
   :root {
     --ground: #F3EFEB;
@@ -42,7 +42,7 @@
     margin: 0;
     background: var(--ground);
     color: var(--ink);
-    font-family: "IBM Plex Sans Arabic", "Segoe UI", Tahoma, sans-serif;
+    font-family: "Cairo", "Segoe UI", Tahoma, sans-serif;
     font-size: 1.02rem;
     line-height: 1.95;
   }
@@ -50,12 +50,13 @@
   .measure { max-width: 68ch; }
 
   h1, h2, h3 {
-    font-family: "Baloo Bhaijaan 2", "IBM Plex Sans Arabic", sans-serif;
+    font-family: "Cairo", "Segoe UI", Tahoma, sans-serif;
+    font-weight: 800;
     color: var(--brand);
     text-wrap: balance;
     line-height: 1.4;
   }
-  h1 { font-size: clamp(2.4rem, 6vw, 3.6rem); font-weight: 700; margin: 0; }
+  h1 { font-size: clamp(2.4rem, 6vw, 3.6rem); font-weight: 900; margin: 0; }
   h2 { font-size: 1.6rem; font-weight: 600; margin: 0 0 12px; }
   h3 { font-size: 1.15rem; font-weight: 600; margin: 0 0 6px; }
   p { margin: 0 0 14px; }
@@ -72,7 +73,7 @@
   section { padding: 56px 0 8px; }
   section + section { border-top: 1px solid var(--line); }
   .sec-no {
-    font-family: "Baloo Bhaijaan 2", sans-serif;
+    font-family: "Cairo", sans-serif;
     color: var(--muted); font-size: 1rem; font-weight: 600; display: block;
   }
 
@@ -141,6 +142,16 @@
   .apptile.t2 { background: #5C4F4A; color: #EDE9E6; border-color: #5C4F4A; }
   .apptile svg { width: 54px; height: auto; }
 
+  .typebox {
+    background: var(--surface); border: 1px solid var(--line); border-radius: 14px;
+    padding: 26px 30px; margin: 22px 0 10px; display: flex; flex-direction: column; gap: 6px;
+  }
+  .typebox .t-name { font-weight: 900; font-size: .95rem; color: var(--muted); direction: ltr; text-align: right; }
+  .typebox .t-900 { font-weight: 900; font-size: 1.9rem; color: var(--brand); line-height: 1.6; }
+  .typebox .t-700 { font-weight: 700; font-size: 1.25rem; }
+  .typebox .t-400 { font-weight: 400; font-size: 1rem; max-width: 60ch; }
+  .typebox .t-lat { font-weight: 500; font-size: .95rem; color: var(--muted); direction: ltr; text-align: right; margin-top: 6px; }
+
   table { border-collapse: collapse; width: 100%; margin: 18px 0; background: var(--surface); border-radius: 12px; overflow: hidden; }
   th, td { text-align: right; padding: 11px 16px; border-bottom: 1px solid var(--line); }
   th { color: var(--brand); font-weight: 700; font-size: .92rem; background: var(--surface-2); }
@@ -180,7 +191,7 @@
   <header class="hero">
     <span class="kicker">دليل الهوية البصرية · الإصدار الأول · ٢٠٢٦</span>
     <h1>هوية سِجِّل</h1>
-    <p class="hero-lede">«سِجِّل» علامة مبنية على فعل واحد: التوثيق. الكلمة مرسومة بخط هندسي مدوّر الأطراف، ويحل محل حرف الجيم علامةُ صحّ تحمل نقطته وشدّته. هذا الدليل يحدد استخدام الشعار بنسختيه، ونظام اللونين، والنمط الزخرفي المشتق من العلامة.</p>
+    <p class="hero-lede">«سِجِّل» علامة مبنية على فعل واحد: التوثيق. الكلمة مرسومة بخط هندسي مدوّر الأطراف، ويحل محل حرف الجيم علامةُ صحّ تحمل نقطته وشدّته. هذا الدليل يحدد استخدام الشعار بنسختيه، ونظام اللونين، وخط الهوية، والنمط الزخرفي المشتق من العلامة.</p>
   </header>
 
   <section>
@@ -242,6 +253,26 @@
 
   <section>
     <span class="sec-no">٤</span>
+    <h2>الخط</h2>
+    <div class="measure">
+      <p>خط الهوية هو <b>Cairo</b> (Google Fonts)، للواجهات والمطبوعات والنصوص كافة، بالعربية واللاتينية. ثلاثة أوزان تكفي: <b>٩٠٠ للعناوين</b>، <b>٧٠٠ للعناوين الفرعية والأزرار</b>، <b>٤٠٠ للنصوص</b>. الشعار نفسه مرسوم يدوياً ولا يُكتب بأي خط.</p>
+    </div>
+    <div class="typebox">
+      <div class="t-name">Cairo</div>
+      <div class="t-900">سجّل كل قيد، ووثّقه بعلامة واحدة</div>
+      <div class="t-700">دفتر الديون الرقمي بين التاجر والعميل</div>
+      <div class="t-400">ربط آمن، توثيق ثنائي، وسداد إلكتروني — كل عملية تبدأ بموافقة الطرفين وتنتهي بقيد موثّق.</div>
+      <div class="t-lat">Sajjel — ABC abc 0123456789 · ٠١٢٣٤٥٦٧٨٩</div>
+    </div>
+    <ul class="rules measure">
+      <li>لا يُستخدم وزن أخف من ٤٠٠، ولا يُماط الخط ولا يُضغط.</li>
+      <li>لا تباعد بين حروف النص العربي؛ التمييز بالوزن والحجم واللون.</li>
+      <li>عند تعذر تحميل الخط تُعتمد بدائل النظام: Segoe UI ثم Tahoma.</li>
+    </ul>
+  </section>
+
+  <section>
+    <span class="sec-no">٥</span>
     <h2>المساحة الآمنة والحدود الدنيا</h2>
     <div class="measure">
       <p>وحدة القياس هي <b>«ن»: قطر نقطة الجيم</b>. تُترك مساحة فارغة لا يقل عرضها عن «ن» حول الشعار من كل جهة، لا يدخلها نص ولا عنصر رسومي ولا حافة قصّ.</p>
@@ -251,7 +282,7 @@
         <rect x="8" y="8" width="1394" height="676" rx="18" fill="none" stroke="#8C7F77" stroke-width="3" stroke-dasharray="14 12"/>
         <g style="color:#5C4F4A"><svg x="60" y="60" width="1290" height="572" viewBox="0 0 1290 572"><use href="#wordmark"/></svg></g>
         <rect x="10" y="300" width="50" height="50" fill="#8C7F77" opacity=".35"/>
-        <text x="35" y="395" text-anchor="middle" font-family="IBM Plex Sans Arabic, sans-serif" font-size="38" fill="#8C7F77">ن</text>
+        <text x="35" y="395" text-anchor="middle" font-family="Cairo, sans-serif" font-size="38" fill="#8C7F77">ن</text>
       </svg>
     </div>
     <p class="caption">المخطط توضيحي؛ الالتزام بالنسبة لا بالأرقام المطلقة.</p>
@@ -262,7 +293,7 @@
   </section>
 
   <section>
-    <span class="sec-no">٥</span>
+    <span class="sec-no">٦</span>
     <h2>الاستخدام الخاطئ</h2>
     <p class="measure">كل ما يلي ممنوع، على أي وسيط:</p>
     <div class="dont-grid">
@@ -294,7 +325,7 @@
   </section>
 
   <section>
-    <span class="sec-no">٦</span>
+    <span class="sec-no">٧</span>
     <h2>النمط</h2>
     <div class="measure">
       <p>النمط مشتق من الأيقونة نفسها، ويُستخدم كخلفية هادئة تربط التطبيقات ببعضها: أغلفة، بطاقات، فواصل صفحات، تغليف. القاعدة: <b>النمط ملمس، لا رسالة</b> — يبقى بتباين منخفض (٦٪ إلى ١٠٪ من لون العلامة على الأرضية) ولا يوضع خلف نص طويل.</p>
@@ -350,7 +381,7 @@
   </section>
 
   <section>
-    <span class="sec-no">٧</span>
+    <span class="sec-no">٨</span>
     <h2>مرجع الملفات</h2>
     <table>
       <tr><th>الملف</th><th>الاستخدام</th></tr>
