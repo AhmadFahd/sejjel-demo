@@ -309,6 +309,88 @@ body{
 .bv-body{max-height:400px;overflow:auto;background:#F0ECE8}
 .bv-body img{width:100%;display:block}
 .bv-doc{padding:38px 20px;display:flex;flex-direction:column;align-items:center;gap:10px;color:var(--steel);font-weight:800;font-size:12.5px;text-align:center;direction:ltr;word-break:break-all}
+
+/* ---------- amount visibility ---------- */
+.head-row{display:flex;align-items:center;gap:10px;margin:4px 0}
+.head-row .h1{margin:0;flex:1}
+.eye{width:36px;height:36px;flex:none;border:0;border-radius:12px;background:#fff;color:var(--steel);
+  display:grid;place-items:center;cursor:pointer;box-shadow:0 2px 8px rgba(58,72,66,.1)}
+.eye:active{transform:scale(.95)}
+
+/* ---------- unified pay-day ---------- */
+.payday{display:flex;align-items:center;gap:10px;background:linear-gradient(135deg,#F6EFE4,#FFFDF8);
+  border:1.5px solid var(--gold);border-radius:15px;padding:11px 13px;margin-bottom:12px}
+.payday .pd-ic{width:36px;height:36px;flex:none;border-radius:12px;background:var(--gold);color:#fff;display:grid;place-items:center}
+.payday b{display:block;font-size:13px;font-weight:900;color:var(--ink);line-height:1.5}
+.payday span{font-size:11px;font-weight:800;color:#8A6540;line-height:1.5}
+.payday.on-dark{background:rgba(255,255,255,.13);border-color:rgba(255,255,255,.28);margin:12px 0 0;position:relative;z-index:1}
+.payday.on-dark .pd-ic{background:var(--gold);color:var(--ink)}
+.payday.on-dark b{color:#fff}
+.payday.on-dark span{color:#E0BE96}
+
+/* ---------- transactions counter ---------- */
+.counter{display:flex;align-items:center;gap:12px;padding:13px 14px}
+.counter .c-ic{width:42px;height:42px;flex:none;border-radius:13px;background:#F4EAE0;color:#8A6540;display:grid;place-items:center}
+.counter .c-main b{display:block;font-size:19px;font-weight:900;color:var(--ink);font-variant-numeric:tabular-nums;line-height:1.25}
+.counter .c-main span{font-size:11.5px;font-weight:800;color:var(--txt2)}
+.c-splits{margin-inline-start:auto;display:flex;gap:14px;text-align:center}
+.c-splits b{display:block;font-size:15px;font-weight:900;color:var(--steel);font-variant-numeric:tabular-nums}
+.c-splits span{font-size:10.5px;font-weight:800;color:var(--txt2)}
+
+/* ---------- merchant quick QR ---------- */
+.qq{display:flex;align-items:center;gap:13px}
+.qq-txt{flex:1;min-width:0}
+.qq-txt b{display:block;font-size:14.5px;font-weight:900;color:var(--ink)}
+.qq-txt p{margin:4px 0 8px;font-size:11.5px;font-weight:700;color:var(--txt2);line-height:1.65}
+.qq-uri{font-size:10px;color:#A2938C;direction:ltr;text-align:right;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-weight:600}
+.qq-code{flex:none;background:#fff;border:1.5px solid var(--gold);border-radius:15px;padding:8px}
+.qq-code canvas{display:block;width:106px;height:106px;image-rendering:pixelated}
+
+/* ---------- credit limit progress ---------- */
+.limbar{margin-top:13px}
+.limbar .lb-top{display:flex;justify-content:space-between;gap:10px;font-size:11px;font-weight:800;color:var(--txt2);margin-bottom:6px}
+.limbar .lb-top b{font-size:13px;color:var(--ink);font-variant-numeric:tabular-nums;margin-inline-start:4px}
+.limbar .lb-track{height:10px;border-radius:999px;background:#E2DBD5;overflow:hidden}
+.limbar .lb-fill{height:100%;border-radius:999px;transition:width .45s ease}
+.limbar .lb-note{font-size:11px;font-weight:800;margin-top:7px;color:var(--txt2)}
+.lb-ok .lb-fill{background:linear-gradient(90deg,#7FAE93,var(--green))}
+.lb-warm .lb-fill{background:linear-gradient(90deg,#E0BE96,var(--gold))}
+.lb-hot .lb-fill{background:linear-gradient(90deg,var(--gold),var(--amber))}
+.lb-full .lb-fill{background:linear-gradient(90deg,var(--amber),var(--red))}
+.lb-hot .lb-note,.lb-full .lb-note{color:var(--red-tx)}
+.limbar.on-dark{position:relative;z-index:1}
+.limbar.on-dark .lb-top,.limbar.on-dark .lb-note{color:#C2D2CB}
+.limbar.on-dark .lb-top b{color:#fff}
+.limbar.on-dark .lb-track{background:rgba(255,255,255,.2)}
+.limbar.on-dark.lb-hot .lb-note,.limbar.on-dark.lb-full .lb-note{color:#F0CFC2}
+
+/* ---------- whatsapp payment link ---------- */
+.btn-wa{background:#25D366;color:#0B3E23}
+.wa{position:absolute;inset:0;z-index:86;background:rgba(58,72,66,.72);backdrop-filter:blur(3px);display:none;align-items:flex-end}
+.wa.show{display:flex}
+.wa-card{width:100%;max-height:88%;overflow:auto;background:var(--mist);border-start-start-radius:22px;border-start-end-radius:22px}
+.wa-head{display:flex;align-items:center;gap:10px;background:#075E54;color:#fff;padding:12px 14px}
+.wa-av{width:36px;height:36px;flex:none;border-radius:50%;background:#25D366;color:#0B3E23;display:grid;place-items:center;font-weight:900}
+.wa-head b{font-size:14px;font-weight:900}
+.wa-head .wa-to{display:block;font-size:11px;color:#BFE3D8;font-weight:700;direction:ltr;text-align:right}
+.wa-x{margin-inline-start:auto;width:30px;height:30px;flex:none;border:0;border-radius:9px;background:rgba(255,255,255,.16);color:#fff;font-weight:900;cursor:pointer}
+.wa-body{padding:16px 14px 10px;background:#EFE6DC}
+.wa-bubble{background:#DCF8C6;border-radius:15px;padding:11px 13px;font-size:12.5px;font-weight:700;color:#213A2A;line-height:2;white-space:pre-line;box-shadow:0 1px 2px rgba(0,0,0,.12)}
+.wa-link{color:#0A6EBD;text-decoration:underline;direction:ltr;display:inline-block;word-break:break-all}
+.wa-tm{text-align:end;font-size:10px;color:#6B8A72;font-weight:800;margin-top:5px}
+.wa-acts{padding:14px}
+
+/* ---------- web checkout (outside the app) ---------- */
+#w-pay,#w-success{background:linear-gradient(180deg,#DFD8D3,var(--mist) 26%)}
+.browser{display:flex;align-items:center;gap:9px;background:#fff;border-radius:13px;padding:9px 12px;margin-bottom:14px;box-shadow:0 2px 10px rgba(58,72,66,.12)}
+.browser .url{flex:1;min-width:0;font-size:11.5px;font-weight:700;color:var(--txt2);direction:ltr;text-align:left;
+  font-family:ui-monospace,SFMono-Regular,Menlo,monospace;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.wc-brand{display:flex;align-items:center;gap:10px;margin-bottom:13px}
+.wc-brand .logo-badge{width:36px;height:36px;border-radius:12px}
+.wc-brand b{font-size:15px;font-weight:900;color:var(--ink);line-height:1.3}
+.wc-brand span{display:block;font-size:10.5px;font-weight:800;color:var(--txt2)}
+.wc-amt{font-size:31px;font-weight:900;color:var(--ink);font-variant-numeric:tabular-nums;margin:5px 0 3px}
+.pay-mada{background:#0E4D3C;color:#fff}
 </style>
 </head>
 <body>
@@ -409,7 +491,10 @@ body{
 
     <!-- ======== MERCHANT: DASHBOARD ======== -->
     <div class="screen" id="m-dash">
-      <div class="h1">لوحة التاجر</div>
+      <div class="head-row">
+        <div class="h1">لوحة التاجر</div>
+        <button class="eye" id="eyeM" onclick="toggleAmt()" aria-label="إخفاء أو إظهار المبالغ"></button>
+      </div>
       <p class="sub">بقالة الريان — مرحبًا بك 👋</p>
 
       <div class="hint" id="demoHint">
@@ -418,11 +503,24 @@ body{
         <button class="x" onclick="this.parentElement.remove()">✕</button>
       </div>
 
+      <div id="mPayday"></div>
+
+      <div class="card qq" id="mQrCard">
+        <div class="qq-txt">
+          <b>رمز متجرك</b>
+          <p>اعرضه للعميل ليمسحه من جواله فيفتح حسابه معك أو يبدأ عملية شراء — دون شاشات وسيطة.</p>
+          <div class="qq-uri">sajjel://m/rayan</div>
+        </div>
+        <div class="qq-code"><canvas id="qrMerch" width="200" height="200"></canvas></div>
+      </div>
+
       <div class="stats">
         <div class="stat"><b id="stCust">3</b><span>العملاء</span></div>
         <div class="stat gold"><b id="stOut">0</b><span>المستحق (ر.س)</span></div>
         <div class="stat red"><b id="stOver">0</b><span>المتأخر (ر.س)</span></div>
       </div>
+
+      <div class="card counter" id="mCounter"></div>
 
       <div class="list-title">العملاء <small id="custCount"></small></div>
       <div id="custList"></div>
@@ -432,9 +530,14 @@ body{
     <div class="screen" id="m-account">
       <div class="topline">
         <button class="back" onclick="go('m-dash')"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m9 6 6 6-6 6"/></svg></button>
-        <div class="h1">حساب العميل</div>
+        <div class="h1" style="flex:1">حساب العميل</div>
+        <button class="eye" id="eyeMA" onclick="toggleAmt()" aria-label="إخفاء أو إظهار المبالغ"></button>
       </div>
       <div id="acctHero"></div>
+      <button class="btn btn-wa" id="acctWaBtn" onclick="waDebt()" style="margin-bottom:10px">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a10 10 0 0 0-8.6 15L2 22l5.2-1.4A10 10 0 1 0 12 2zm5.5 14.1c-.2.6-1.2 1.2-1.7 1.2-.4 0-1 .1-1.6-.1-2.6-1-4.3-3.7-4.4-3.9-.1-.2-1-1.4-1-2.6 0-1.2.6-1.8.9-2 .2-.2.5-.3.7-.3h.5c.2 0 .4 0 .6.5l.8 1.9c.1.2.1.4 0 .6l-.3.5-.4.4c-.1.1-.3.3-.1.6.2.3.8 1.3 1.7 2.1 1.1 1 2 1.3 2.3 1.4.3.1.4.1.6-.1l.9-1c.2-.2.4-.2.6-.1l1.8.9c.2.1.4.2.5.3.1.2.1.7-.1 1.3z"/></svg>
+        إرسال رابط سداد بالواتساب
+      </button>
       <div class="row" style="margin-bottom:14px">
         <button class="btn btn-primary btn-sm" id="acctNewBtn">＋ عملية جديدة</button>
         <button class="btn btn-soft btn-sm" id="acctSetBtn">إعدادات العميل</button>
@@ -495,7 +598,12 @@ body{
           </div>
         </div>
         <div class="proj" id="projLine">أدخل المبلغ لعرض الرصيد المتوقع</div>
-        <button class="btn btn-ink" onclick="submitPurchase()">إرسال طلب الشراء</button>
+        <button class="btn btn-ink" onclick="submitPurchase()" style="margin-bottom:10px">إرسال طلب الشراء</button>
+        <button class="btn btn-wa" onclick="waPurchase()">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a10 10 0 0 0-8.6 15L2 22l5.2-1.4A10 10 0 1 0 12 2zm5.5 14.1c-.2.6-1.2 1.2-1.7 1.2-.4 0-1 .1-1.6-.1-2.6-1-4.3-3.7-4.4-3.9-.1-.2-1-1.4-1-2.6 0-1.2.6-1.8.9-2 .2-.2.5-.3.7-.3h.5c.2 0 .4 0 .6.5l.8 1.9c.1.2.1.4 0 .6l-.3.5-.4.4c-.1.1-.3.3-.1.6.2.3.8 1.3 1.7 2.1 1.1 1 2 1.3 2.3 1.4.3.1.4.1.6-.1l.9-1c.2-.2.4-.2.6-.1l1.8.9c.2.1.4.2.5.3.1.2.1.7-.1 1.3z"/></svg>
+          إرسال رابط سداد بالواتساب
+        </button>
+        <p class="center muted" style="font-size:11px;font-weight:700;margin:10px 2px 0;line-height:1.7">للعميل غير المحمّل للتطبيق: يصله رابط سداد ويب يفتح صفحة دفع مباشرة.</p>
       </div>
       <div id="statusEmpty" class="empty">اختر عميلًا لعرض حالة حسابه وإتمام العملية</div>
     </div>
@@ -670,13 +778,18 @@ body{
 
     <!-- ======== CUSTOMER: DASHBOARD ======== -->
     <div class="screen" id="c-dash">
-      <div class="h1">لوحة العميل</div>
+      <div class="head-row">
+        <div class="h1">لوحة العميل</div>
+        <button class="eye" id="eyeC" onclick="toggleAmt()" aria-label="إخفاء أو إظهار المبالغ"></button>
+      </div>
       <p class="sub">أهلًا أحمد — هذه حساباتك لدى التجّار</p>
+      <div id="cPayday"></div>
       <div class="stats">
         <div class="stat gold"><b id="cStDebt">0</b><span>إجمالي الدين (ر.س)</span></div>
         <div class="stat"><b id="cStMerch">3</b><span>التجّار</span></div>
         <div class="stat red"><b id="cStOver">0</b><span>المتأخر (ر.س)</span></div>
       </div>
+      <div class="card counter" id="cCounter"></div>
       <div class="list-title">حساباتي</div>
       <div id="merchList"></div>
     </div>
@@ -685,9 +798,11 @@ body{
     <div class="screen" id="c-account">
       <div class="topline">
         <button class="back" onclick="go('c-dash')"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m9 6 6 6-6 6"/></svg></button>
-        <div class="h1">حساب التاجر</div>
+        <div class="h1" style="flex:1">حساب التاجر</div>
+        <button class="eye" id="eyeCA" onclick="toggleAmt()" aria-label="إخفاء أو إظهار المبالغ"></button>
       </div>
       <div id="cAcctHero"></div>
+      <div id="cCredit"></div>
       <div class="list-title">المعاملات</div>
       <div class="card" id="txListC"></div>
     </div>
@@ -705,6 +820,7 @@ body{
         <button class="back" onclick="go('c-notifs')"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m9 6 6 6-6 6"/></svg></button>
         <div class="h1">تأكيد الشراء</div>
       </div>
+      <div id="ppPayday"></div>
       <div class="card">
         <div class="mini-kv">
           <div>التاجر<b>بقالة الريان</b></div>
@@ -777,6 +893,10 @@ body{
         <svg width="17" height="17" viewBox="0 0 24 24" fill="currentColor"><path d="M17.05 12.54c-.03-2.55 2.08-3.77 2.17-3.83-1.18-1.73-3.02-1.97-3.68-2-1.56-.16-3.05.92-3.85.92-.79 0-2.02-.9-3.32-.87-1.71.03-3.29.99-4.17 2.52-1.78 3.08-.45 7.64 1.28 10.14.85 1.22 1.86 2.6 3.18 2.55 1.28-.05 1.76-.83 3.31-.83s1.98.83 3.33.8c1.38-.02 2.25-1.25 3.09-2.48.97-1.42 1.37-2.8 1.39-2.87-.03-.01-2.67-1.02-2.73-4.05zM14.5 4.9c.7-.86 1.18-2.05 1.05-3.23-1.01.04-2.24.68-2.97 1.53-.65.75-1.23 1.96-1.07 3.12 1.13.09 2.28-.57 2.99-1.42z"/></svg>
         Apple Pay
       </button>
+      <button class="btn pay-mada" onclick="processPay('mada')" style="margin-bottom:10px">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><rect x="2" y="5" width="20" height="14" rx="2.5"/><path d="M2 10h20"/><path d="M6 14.5h4"/></svg>
+        مدى
+      </button>
       <button class="btn btn-ghost" onclick="processPay('card')">
         <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><rect x="2" y="5" width="20" height="14" rx="2.5"/><path d="M2 10h20"/></svg>
         بطاقة Visa / Mastercard
@@ -846,6 +966,68 @@ body{
       <button class="btn btn-ghost" onclick="go('s-welcome')">تسجيل الخروج</button>
     </div>
 
+    <!-- ======== WEB CHECKOUT (خارج التطبيق) ======== -->
+    <div class="screen" id="w-pay">
+      <div class="browser">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="10" width="16" height="11" rx="2.5"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg>
+        <span class="url" id="wcUrl">pay.sajjel.sa</span>
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M4 12a8 8 0 1 0 2.4-5.7"/><path d="M4 4v4h4"/></svg>
+      </div>
+      <div class="wc-brand">
+        <div class="logo-badge"><svg width="18" height="23" viewBox="0 0 368 482"><use href="#b-icon"/></svg></div>
+        <div><b>سجّل</b><span>صفحة سداد سريعة — بدون تحميل التطبيق</span></div>
+      </div>
+      <div class="card center">
+        <div class="muted" style="font-size:12px;font-weight:800" id="wcMerch"></div>
+        <div class="wc-amt" id="wcAmt"></div>
+        <div class="muted" style="font-size:11.5px;font-weight:700" id="wcFor"></div>
+      </div>
+      <div id="wcPayday"></div>
+      <button class="btn pay-apple" onclick="payWeb('apple')" style="margin-bottom:10px">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="currentColor"><path d="M17.05 12.54c-.03-2.55 2.08-3.77 2.17-3.83-1.18-1.73-3.02-1.97-3.68-2-1.56-.16-3.05.92-3.85.92-.79 0-2.02-.9-3.32-.87-1.71.03-3.29.99-4.17 2.52-1.78 3.08-.45 7.64 1.28 10.14.85 1.22 1.86 2.6 3.18 2.55 1.28-.05 1.76-.83 3.31-.83s1.98.83 3.33.8c1.38-.02 2.25-1.25 3.09-2.48.97-1.42 1.37-2.8 1.39-2.87-.03-.01-2.67-1.02-2.73-4.05zM14.5 4.9c.7-.86 1.18-2.05 1.05-3.23-1.01.04-2.24.68-2.97 1.53-.65.75-1.23 1.96-1.07 3.12 1.13.09 2.28-.57 2.99-1.42z"/></svg>
+        Apple Pay
+      </button>
+      <button class="btn pay-mada" onclick="payWeb('mada')" style="margin-bottom:10px">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><rect x="2" y="5" width="20" height="14" rx="2.5"/><path d="M2 10h20"/><path d="M6 14.5h4"/></svg>
+        مدى
+      </button>
+      <button class="btn btn-ghost" onclick="payWeb('card')">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><rect x="2" y="5" width="20" height="14" rx="2.5"/><path d="M2 10h20"/></svg>
+        بطاقة Visa / Mastercard
+      </button>
+      <div class="gateway-note">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="10" width="16" height="11" rx="2.5"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg>
+        دفع آمن عبر بوابة Moyasar / Tap (محاكاة)
+      </div>
+      <p class="center muted" style="font-size:11.5px;font-weight:700;margin:14px 4px 12px;line-height:1.8">فتح العميل هذا الرابط من الواتساب. لا يحتاج حسابًا ولا تطبيقًا — يدفع ويغلق الصفحة.</p>
+      <button class="btn btn-soft btn-sm" onclick="exitWeb()">العودة إلى محاكاة التطبيق</button>
+    </div>
+
+    <!-- ======== WEB CHECKOUT: SUCCESS ======== -->
+    <div class="screen" id="w-success">
+      <div class="browser">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="10" width="16" height="11" rx="2.5"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg>
+        <span class="url" id="wsUrl">pay.sajjel.sa</span>
+      </div>
+      <div class="success-wrap" style="padding-top:14px">
+        <div class="big-check">
+          <svg width="46" height="46" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
+        </div>
+        <div class="h1">تم السداد</div>
+        <p class="sub">وصل تأكيد البوابة وأُشعر التاجر فورًا</p>
+      </div>
+      <div class="card">
+        <div class="mini-kv">
+          <div>المبلغ المدفوع<b id="wsAmt" style="color:var(--green-tx)"></b></div>
+          <div>المتبقي<b id="wsRest"></b></div>
+          <div>طريقة الدفع<b id="wsMethod"></b></div>
+          <div>مرجع العملية<b id="wsRef" style="direction:ltr;font-size:12px"></b></div>
+        </div>
+      </div>
+      <div class="hint"><b>💡</b><span>يستطيع العميل تحميل تطبيق سجّل لاحقًا ليرى سجل حساباته كاملًا — لكنه ليس شرطًا للسداد.</span></div>
+      <button class="btn btn-soft btn-sm" onclick="exitWeb()">العودة إلى محاكاة التطبيق</button>
+    </div>
+
   </div><!-- /stage -->
 
   <!-- bottom nav -->
@@ -856,6 +1038,25 @@ body{
 
   <!-- processing overlay -->
   <div class="overlay" id="ovl"><div class="ov-card"><div class="spin"></div><span id="ovlTxt"></span></div></div>
+
+  <!-- whatsapp payment link sheet -->
+  <div class="wa" id="waSheet" onclick="if(event.target===this)closeWA()">
+    <div class="wa-card">
+      <div class="wa-head">
+        <span class="wa-av"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a10 10 0 0 0-8.6 15L2 22l5.2-1.4A10 10 0 1 0 12 2zm5.5 14.1c-.2.6-1.2 1.2-1.7 1.2-.4 0-1 .1-1.6-.1-2.6-1-4.3-3.7-4.4-3.9-.1-.2-1-1.4-1-2.6 0-1.2.6-1.8.9-2 .2-.2.5-.3.7-.3h.5c.2 0 .4 0 .6.5l.8 1.9c.1.2.1.4 0 .6l-.3.5-.4.4c-.1.1-.3.3-.1.6.2.3.8 1.3 1.7 2.1 1.1 1 2 1.3 2.3 1.4.3.1.4.1.6-.1l.9-1c.2-.2.4-.2.6-.1l1.8.9c.2.1.4.2.5.3.1.2.1.7-.1 1.3z"/></svg></span>
+        <div><b id="waName">العميل</b><span class="wa-to" id="waTo"></span></div>
+        <button class="wa-x" onclick="closeWA()">✕</button>
+      </div>
+      <div class="wa-body">
+        <div class="wa-bubble" id="waMsg"></div>
+        <div class="wa-tm">9:41 ✓✓</div>
+      </div>
+      <div class="wa-acts">
+        <button class="btn btn-wa" onclick="waSend()" style="margin-bottom:9px"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a10 10 0 0 0-8.6 15L2 22l5.2-1.4A10 10 0 1 0 12 2zm5.5 14.1c-.2.6-1.2 1.2-1.7 1.2-.4 0-1 .1-1.6-.1-2.6-1-4.3-3.7-4.4-3.9-.1-.2-1-1.4-1-2.6 0-1.2.6-1.8.9-2 .2-.2.5-.3.7-.3h.5c.2 0 .4 0 .6.5l.8 1.9c.1.2.1.4 0 .6l-.3.5-.4.4c-.1.1-.3.3-.1.6.2.3.8 1.3 1.7 2.1 1.1 1 2 1.3 2.3 1.4.3.1.4.1.6-.1l.9-1c.2-.2.4-.2.6-.1l1.8.9c.2.1.4.2.5.3.1.2.1.7-.1 1.3z"/></svg>فتح واتساب بالرسالة الجاهزة</button>
+        <button class="btn btn-ghost btn-sm" onclick="waOpenLink()">معاينة الرابط كما يفتحه العميل (محاكاة)</button>
+      </div>
+    </div>
+  </div>
 
   <!-- bill / invoice viewer -->
   <div class="billview" id="billView" onclick="if(event.target===this)closeBill()">
@@ -875,7 +1076,15 @@ const mmss=s=>{const m=Math.floor(s/60),x=s%60;return '0'+m+':'+String(x).padSta
 const tok=()=>Math.random().toString(16).slice(2)+Date.now().toString(16);
 const MONTHS=['يناير','فبراير','مارس','أبريل','مايو','يونيو','يوليو','أغسطس','سبتمبر','أكتوبر','نوفمبر','ديسمبر'];
 const TODAY='18 أغسطس';
-function dueFromDays(days){const d=new Date(2026,7,18);d.setDate(d.getDate()+Number(days));return d.getDate()+' '+MONTHS[d.getMonth()]+' '+d.getFullYear();}
+const PAYDAY=27;                                   /* يوم السداد الموحد — يوم الرواتب */
+const dateTxt=d=>d.getDate()+' '+MONTHS[d.getMonth()]+' '+d.getFullYear();
+/* كل مدة سداد تُقرَّب إلى أول يوم رواتب يليها */
+function dueFromDays(days){
+  const d=new Date(2026,7,18);d.setDate(d.getDate()+Number(days));
+  if(d.getDate()>PAYDAY)d.setMonth(d.getMonth()+1);
+  d.setDate(PAYDAY);
+  return dateTxt(d);
+}
 function hash(str){let h=9;for(let i=0;i<str.length;i++){h=Math.imul(h^str.charCodeAt(i),387420489)>>>0;}return h||1;}
 function mulberry32(a){return function(){a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296;};}
 
@@ -887,25 +1096,26 @@ const S={
   pending:null,scanMode:'approval',stash:null,
   cNotifs:[],mNotifs:[],unread:{m:0,c:0},nid:0,
   sel:null,curAcct:null,curMerch:'rayan',payMode:'full',
-  iv:{},qrProfDrawn:false,billTmp:null,bid:0
+  iv:{},qrProfDrawn:false,qrMerchDrawn:false,billTmp:null,bid:0,
+  hideAmt:false,wa:null
 };
 const BILLS={};
 const C={
   ahmed:{id:'ahmed',name:'أحمد محمد',mobile:'0550 123 456',balance:800,limitOv:null,daysOv:null,
-    due:'25 أغسطس 2026',overdue:false,overdueDays:0,
+    due:'27 أغسطس 2026',overdue:false,overdueDays:0,
     tx:[{d:'12 أغسطس',t:'دفعة',a:-200},{d:'5 أغسطس',t:'مشتريات',a:1000}]},
   khalid:{id:'khalid',name:'خالد علي',mobile:'0555 987 210',balance:0,limitOv:null,daysOv:null,
     due:'—',overdue:false,overdueDays:0,
     tx:[{d:'2 أغسطس',t:'دفعة',a:-350},{d:'28 يوليو',t:'مشتريات',a:350}]},
   salem:{id:'salem',name:'سالم العتيبي',mobile:'0533 456 789',balance:1250,limitOv:1500,daysOv:null,
-    due:'10 أغسطس 2026',overdue:true,overdueDays:8,
+    due:'27 يوليو 2026',overdue:true,overdueDays:22,
     tx:[{d:'10 يوليو',t:'مواد بناء',a:1250}]}
 };
 const CM={
   rayan:{id:'rayan',name:'بقالة الريان',dyn:true},
-  noor:{id:'noor',name:'سوق النور',balance:0,due:'—',overdue:false,
+  noor:{id:'noor',name:'سوق النور',balance:0,limit:500,due:'—',overdue:false,
     tx:[{d:'20 يوليو',t:'دفعة',a:-350},{d:'11 يوليو',t:'مشتريات',a:350}]},
-  duha:{id:'duha',name:'مخبز الضحى',balance:420,due:'10 أغسطس 2026',overdue:true,
+  duha:{id:'duha',name:'مخبز الضحى',balance:420,limit:600,due:'27 يوليو 2026',overdue:true,
     tx:[{d:'1 أغسطس',t:'مشتريات',a:420}]}
 };
 const CM_ORDER=['rayan','noor','duha'];
@@ -922,15 +1132,76 @@ function mStatusOf(m){const b=mBal(m);if(b<=0)return{k:'green',t:'مسدد'};if(
 const mBal=m=>m.dyn?C.ahmed.balance:m.balance;
 const mDue=m=>m.dyn?C.ahmed.due:m.due;
 const mOver=m=>m.dyn?C.ahmed.overdue:m.overdue;
+const mLim=m=>m.dyn?limitOf(C.ahmed):m.limit;
 const pill=s=>'<span class="pill st-'+s.k+'"><span class="d"></span>'+s.t+'</span>';
+
+/* ============ إخفاء المبالغ ============ */
+const MASK='•••• ر.س';
+const money=n=>S.hideAmt?MASK:fmt(n)+' ر.س';       /* مبلغ بالعملة */
+const numv=n=>S.hideAmt?'••••':fmt(n);             /* رقم مجرد داخل كرت العملة */
+const signed=(sign,n)=>S.hideAmt?MASK:sign+fmt(n)+' ر.س';
+const EYE_ON='<svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.6-6.5 10-6.5S22 12 22 12s-3.6 6.5-10 6.5S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg>';
+const EYE_OFF='<svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4l16 16"/><path d="M9.6 9.6a3 3 0 0 0 4.2 4.2"/><path d="M6.6 6.7C3.9 8.4 2 12 2 12s3.6 6.5 10 6.5c1.8 0 3.4-.5 4.7-1.2"/><path d="M19.4 15.7C21.1 14.2 22 12 22 12s-3.6-6.5-10-6.5c-.9 0-1.7.1-2.5.3"/></svg>';
+function toggleAmt(){
+  S.hideAmt=!S.hideAmt;
+  renderScreen(S.screen);
+  toast(S.hideAmt?'أُخفيت المبالغ':'أُظهرت المبالغ');
+}
+function paintEyes(){
+  const ic=S.hideAmt?EYE_OFF:EYE_ON;
+  ['eyeM','eyeC','eyeMA','eyeCA'].forEach(id=>{const e=$(id);if(e)e.innerHTML=ic;});
+}
+
+/* ============ يوم السداد الموحد ============ */
+const CAL_SVG='<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="5" width="17" height="16" rx="3"/><path d="M3.5 10h17M8.5 3v4M15.5 3v4"/></svg>';
+function paydayStrip(dark){
+  return '<div class="payday'+(dark?' on-dark':'')+'"><span class="pd-ic">'+CAL_SVG+'</span>'
+    +'<div><b>تاريخ الاستحقاق الموحد: '+PAYDAY+' من كل شهر</b>'
+    +'<span>يوم الرواتب — كل المستحقات تُجمَع على هذا اليوم</span></div></div>';
+}
+
+/* ============ شريط حد الائتمان ============ */
+function limitBar(used,lim,dark){
+  if(!lim||lim<=0)return '';
+  const pct=Math.min(100,Math.round(used/lim*100)),rem=Math.max(0,lim-used);
+  const k=pct>=100?'lb-full':pct>=85?'lb-hot':pct>=60?'lb-warm':'lb-ok';
+  const note=pct>=100?'بلغت الحد الائتماني بالكامل — لا يمكن تسجيل مشتريات جديدة'
+    :pct>=85?'اقتربت من استهلاك الحد ('+pct+'%) — يُنصح بالسداد'
+    :pct>=60?'استُهلك '+pct+'% من الحد'
+    :'المستهلك '+pct+'% من الحد';
+  /* في الكرت الداكن يظهر الحد والمتاح في الشبكة أعلاه، فلا يتكرران هنا */
+  const top=dark?'':'<div class="lb-top"><span>حد الائتمان<b>'+money(lim)+'</b></span><span>المتاح<b>'+money(rem)+'</b></span></div>';
+  return '<div class="limbar '+k+(dark?' on-dark':'')+'">'+top
+    +'<div class="lb-track"><div class="lb-fill" style="width:'+pct+'%"></div></div>'
+    +'<div class="lb-note">'+note+'</div></div>';
+}
+
+/* ============ عدّاد العمليات ============ */
+const STACK_SVG='<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3 3 7.5 12 12l9-4.5L12 3z"/><path d="M3 12.2 12 16.7l9-4.5"/><path d="M3 16.9 12 21.4l9-4.5"/></svg>';
+function txStats(list){
+  let buy=0,pay=0;
+  list.forEach(t=>{if(t.a>0)buy++;else if(t.a<0)pay++;});
+  return{total:buy+pay,buy:buy,pay:pay};
+}
+function counterCard(st,label,buyLbl,payLbl){
+  return STACK_SVG.replace('<svg','<span class="c-ic"><svg').replace('</svg>','</svg></span>')
+    +'<div class="c-main"><b>'+fmt(st.total)+' عملية</b><span>'+label+'</span></div>'
+    +'<div class="c-splits"><div><b>'+fmt(st.buy)+'</b><span>'+buyLbl+'</span></div>'
+    +'<div><b>'+fmt(st.pay)+'</b><span>'+payLbl+'</span></div></div>';
+}
 
 /* ============ navigation ============ */
 function go(id){
   document.querySelectorAll('.screen').forEach(e=>e.classList.remove('active'));
   const el=$(id);el.classList.add('active');el.scrollTop=0;S.screen=id;
-  const auth=id.indexOf('s-')===0;
-  $('appbar').classList.toggle('hide',auth);
-  $('bottomnav').classList.toggle('hide',auth);
+  /* الشاشات s- شاشات دخول، والشاشات w- صفحة ويب خارج التطبيق: كلاهما بلا شريط تطبيق */
+  const bare=id.indexOf('s-')===0||id.indexOf('w-')===0;
+  $('appbar').classList.toggle('hide',bare);
+  $('bottomnav').classList.toggle('hide',bare);
+  renderScreen(id);
+  if(!bare)renderNav();
+}
+function renderScreen(id){
   switch(id){
     case 'm-dash':renderMDash();break;
     case 'm-account':renderMAcct();break;
@@ -941,7 +1212,7 @@ function go(id){
     case 'c-notifs':renderCNotifs();break;
     case 'c-qr':if(!S.qrProfDrawn){drawQR('qrProfile','sajjel-id-ahmad-0550123456');S.qrProfDrawn=true;}break;
   }
-  if(!auth)renderNav();
+  paintEyes();
 }
 function setRole(r,target){
   S.role=r;
@@ -1000,19 +1271,22 @@ function confirmOtp(){setRole(S.pendingRole||'merchant');toast('تم تسجيل 
 
 /* ============ merchant dashboard ============ */
 function renderMDash(){
-  let out=0,over=0;
-  S.order.forEach(k=>{out+=C[k].balance;if(C[k].overdue)over+=C[k].balance;});
+  let out=0,over=0,all=[];
+  S.order.forEach(k=>{out+=C[k].balance;if(C[k].overdue)over+=C[k].balance;all=all.concat(C[k].tx);});
   $('stCust').textContent=S.order.length;
-  $('stOut').textContent=fmt(out);
-  $('stOver').textContent=fmt(over);
+  $('stOut').textContent=numv(out);
+  $('stOver').textContent=numv(over);
   $('custCount').textContent=S.order.length+' عملاء';
+  $('mPayday').innerHTML=paydayStrip(false);
+  $('mCounter').innerHTML=counterCard(txStats(all),'إجمالي العمليات المكتملة والمستقبَلة','شراء','سداد');
+  if(!S.qrMerchDrawn){drawQR('qrMerch','sajjel-merchant-rayan');S.qrMerchDrawn=true;}
   const av=['','a2','a3'];
   $('custList').innerHTML=S.order.map((k,i)=>{
     const c=C[k],st=statusOf(c);
     return '<div class="card cust-card" onclick="openAcct(\''+k+'\')">'
       +'<div class="cust-top"><div class="avatar '+av[i%3]+'">'+c.name[0]+'</div>'
       +'<div style="flex:1"><div class="nm">'+c.name+'</div><div class="mb">'+c.mobile+'</div></div>'+pill(st)+'</div>'
-      +'<div class="kvrow"><span>الرصيد</span><b class="big'+(st.k==='red'?' rd':'')+'">'+fmt(c.balance)+' ر.س</b></div>'
+      +'<div class="kvrow"><span>الرصيد</span><b class="big'+(st.k==='red'?' rd':'')+'">'+money(c.balance)+'</b></div>'
       +'<div class="kvrow"><span>تاريخ الاستحقاق</span><b>'+(c.balance>0?c.due:'—')+'</b></div>'
       +'</div>';
   }).join('');
@@ -1023,13 +1297,17 @@ function renderMAcct(){
   const lim=limitOf(c),rem=Math.max(0,lim-c.balance);
   $('acctHero').innerHTML='<div class="hero"><div class="hero-head">'
     +'<div><div class="hero-name">'+c.name+'</div><div class="hero-mb">'+c.mobile+'</div></div>'+pill(st)+'</div>'
+    +paydayStrip(true)
     +'<div style="margin-top:12px" class="lbl">الرصيد الحالي</div>'
-    +'<div class="amt">'+fmt(c.balance)+' <small>ر.س</small></div>'
+    +'<div class="amt">'+numv(c.balance)+' <small>ر.س</small></div>'
     +'<div class="hero-grid">'
-    +'<div><span>حد الائتمان'+(c.limitOv!=null?' ✦':'')+'</span><b>'+fmt(lim)+' ر.س</b></div>'
-    +'<div><span>المتاح</span><b>'+fmt(rem)+' ر.س</b></div>'
+    +'<div><span>حد الائتمان'+(c.limitOv!=null?' ✦':'')+'</span><b>'+numv(lim)+' ر.س</b></div>'
+    +'<div><span>المتاح</span><b>'+numv(rem)+' ر.س</b></div>'
     +'<div><span>الاستحقاق</span><b>'+(c.balance>0?c.due:'—')+'</b></div>'
-    +'</div></div>';
+    +'</div>'
+    +limitBar(c.balance,lim,true)
+    +'</div>';
+  $('acctWaBtn').classList.toggle('hide',c.balance<=0);
   $('acctNewBtn').onclick=()=>startNewPurchase(S.curAcct);
   $('acctSetBtn').onclick=()=>openCustSettings(S.curAcct);
   $('txListM').innerHTML=c.tx.length?c.tx.map(txRow).join(''):'<div class="empty" style="padding:20px">لا توجد معاملات بعد</div>';
@@ -1038,7 +1316,7 @@ function txRow(t){
   const debit=t.a>0,amt=Math.abs(t.a);
   const bill=t.billId?'<br><button class="tag tag-bill" onclick="viewBill(\''+t.billId+'\')"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m21 11.5-8.8 8.8a5.1 5.1 0 0 1-7.2-7.2L13.5 4.6a3.4 3.4 0 0 1 4.8 4.8L9.7 18a1.7 1.7 0 0 1-2.4-2.4l8-8"/></svg>الفاتورة</button>':'';
   return '<div class="tx"><div><div class="t-t">'+t.t+'</div><div class="t-d">'+t.d+'</div></div>'
-    +'<div class="t-left"><div class="t-amt'+(debit?'':' cr')+'">'+(debit?'+':'−')+fmt(amt)+' ر.س</div>'
+    +'<div class="t-left"><div class="t-amt'+(debit?'':' cr')+'">'+signed(debit?'+':'−',amt)+'</div>'
     +'<span class="tag '+(debit?'tag-debt':'tag-paid')+'">'+(debit?'دين':'سداد')+'</span>'+bill+'</div></div>';
 }
 
@@ -1063,10 +1341,10 @@ function renderNew(){
   $('spName').textContent=c.name;
   $('spMobile').textContent=c.mobile;
   $('spPill').innerHTML=pill(st);
-  $('spBal').textContent=fmt(c.balance)+' ر.س';
-  $('spLimit').textContent=fmt(lim)+' ر.س';
+  $('spBal').textContent=money(c.balance);
+  $('spLimit').textContent=money(lim);
   $('spDue').textContent=c.balance>0?c.due:'—';
-  $('spRemain').textContent=fmt(Math.max(0,lim-c.balance))+' ر.س';
+  $('spRemain').textContent=money(Math.max(0,lim-c.balance));
   $('newNote').innerHTML=c.overdue
     ?'<div class="warnbox warn-amber" style="padding:11px 13px"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3 2.5 20h19L12 3z"/><path d="M12 10v4.5"/></svg><span>هذا العميل متأخر عن السداد منذ '+c.overdueDays+' أيام — سيظهر تنبيه قبل الإتمام.</span></div>':'';
   renderProj();
@@ -1237,11 +1515,13 @@ function stopTimers(){clearInterval(S.iv.P);clearInterval(S.iv.C);}
 
 /* ============ customer side ============ */
 function renderCDash(){
-  let debt=0,over=0;
-  CM_ORDER.forEach(k=>{const b=mBal(CM[k]);debt+=b;if(mOver(CM[k])&&b>0)over+=b;});
-  $('cStDebt').textContent=fmt(debt);
+  let debt=0,over=0,all=[];
+  CM_ORDER.forEach(k=>{const m=CM[k],b=mBal(m);debt+=b;if(mOver(m)&&b>0)over+=b;all=all.concat(m.dyn?C.ahmed.tx:m.tx);});
+  $('cStDebt').textContent=numv(debt);
   $('cStMerch').textContent=CM_ORDER.length;
-  $('cStOver').textContent=fmt(over);
+  $('cStOver').textContent=numv(over);
+  $('cPayday').innerHTML=paydayStrip(false);
+  $('cCounter').innerHTML=counterCard(txStats(all),'إجمالي عملياتك لدى التجّار','عملية شراء','عملية سداد');
   const av=['a3','','a2'];
   $('merchList').innerHTML=CM_ORDER.map((k,i)=>{
     const m=CM[k],b=mBal(m),st=mStatusOf(m);
@@ -1250,7 +1530,7 @@ function renderCDash(){
       +'<div class="cust-top"><div class="avatar '+av[i%3]+'">'+m.name[0]+'</div>'
       +'<div style="flex:1"><div class="nm">'+m.name+'</div>'
       +'<div style="font-size:11.5px;color:var(--txt2);font-weight:700">'+(b>0?'الاستحقاق: '+mDue(m):'لا مستحقات')+'</div></div>'+pill(st)+'</div>'
-      +'<div class="kvrow"><span>المستحق</span><b class="big'+(st.k==='red'?' rd':'')+'">'+fmt(b)+' ر.س</b></div>'
+      +'<div class="kvrow"><span>المستحق</span><b class="big'+(st.k==='red'?' rd':'')+'">'+money(b)+'</b></div>'
       +'<div class="row" style="margin-top:9px"><button class="btn btn-soft btn-sm" onclick="event.stopPropagation();openMerchAcct(\''+k+'\')">عرض الحساب</button>'+payBtn+'</div>'
       +'</div>';
   }).join('');
@@ -1261,8 +1541,9 @@ function renderCAcct(){
   const tx=m.dyn?C.ahmed.tx:m.tx;
   $('cAcctHero').innerHTML='<div class="hero"><div class="hero-head">'
     +'<div><div class="hero-name">'+m.name+'</div><div class="hero-mb" style="direction:rtl;text-align:start">حساب آجل موثّق</div></div>'+pill(st)+'</div>'
+    +paydayStrip(true)
     +'<div style="margin-top:12px" class="lbl">المستحق عليك</div>'
-    +'<div class="amt">'+fmt(b)+' <small>ر.س</small></div>'
+    +'<div class="amt">'+numv(b)+' <small>ر.س</small></div>'
     +'<div class="hero-grid">'
     +'<div><span>الاستحقاق</span><b>'+(b>0?mDue(m):'—')+'</b></div>'
     +'<div><span>المعاملات</span><b>'+tx.length+'</b></div>'
@@ -1270,6 +1551,9 @@ function renderCAcct(){
     +'</div>'
     +(b>0?'<button class="btn btn-gold" style="margin-top:16px;position:relative;z-index:1" onclick="openPay()">سداد الآن</button>':'')
     +'</div>';
+  const lim=mLim(m);
+  $('cCredit').innerHTML=lim?'<div class="card"><div class="kvrow" style="padding-top:0"><span>كرت الائتمان لدى '+m.name+'</span>'+pill(st)+'</div>'
+    +limitBar(b,lim,false)+'</div>':'';
   $('txListC').innerHTML=tx.length?tx.map(txRow).join(''):'<div class="empty" style="padding:20px">لا توجد معاملات بعد</div>';
 }
 
@@ -1279,6 +1563,7 @@ function openPurchaseConfirm(){
   if(!p||p.type!=='purchase'){toast('لا يوجد طلب شراء نشط');return;}
   p.shown=true;
   const c=C[p.cust];
+  $('ppPayday').innerHTML=paydayStrip(false);
   $('ppAmt').textContent=fmt(p.amount)+' ر.س';
   $('ppDesc').textContent=p.desc;
   $('ppAfter').textContent=fmt(c.balance+p.amount)+' ر.س';
@@ -1345,11 +1630,95 @@ function processPay(method){
     }
     $('psAmt').textContent='−'+fmt(amt)+' ر.س';
     $('psRest').textContent=fmt(newBal)+' ر.س'+(newBal===0?' — مسدد 🟢':'');
-    $('psMethod').textContent=method==='apple'?'Apple Pay':'بطاقة Visa';
+    $('psMethod').textContent=methodTxt(method);
     $('psRef').textContent='PAY-'+tok().slice(0,8).toUpperCase();
     go('c-pay-success');
     toast('وصل إشعار الدفعة إلى التاجر فورًا');
   },2250);
+}
+
+/* ============ رابط سداد بالواتساب ============ */
+const methodTxt=m=>m==='apple'?'Apple Pay':m==='mada'?'مدى':'بطاقة Visa';
+const waNumber=m=>'+966'+String(m).replace(/[^0-9]/g,'').replace(/^0/,'');
+function waText(o){
+  return o.kind==='purchase'
+    ?'مرحبًا '+o.name+' 👋\nطلب سداد من بقالة الريان بقيمة '+fmt(o.amount)+' ر.س ('+o.desc+').\n'
+      +'ادفع مباشرة من الرابط بـ Apple Pay أو مدى — بلا تحميل تطبيق:\n'+o.url
+    :'مرحبًا '+o.name+' 👋\nتذكير بمستحقك لدى بقالة الريان: '+fmt(o.amount)+' ر.س.\n'
+      +'تاريخ الاستحقاق الموحد: '+PAYDAY+' من كل شهر (يوم الرواتب).\nرابط السداد المباشر:\n'+o.url;
+}
+function openWA(o){
+  o.ref=tok().slice(0,8).toUpperCase();
+  o.url='https://pay.sajjel.sa/r/'+o.ref;
+  S.wa=o;
+  $('waName').textContent=o.name;
+  $('waTo').textContent=waNumber(o.mobile);
+  $('waMsg').innerHTML=waText(o).replace(o.url,'<span class="wa-link">'+o.url+'</span>');
+  $('waSheet').classList.add('show');
+}
+function waPurchase(){
+  if(!S.sel){toast('اختر العميل أولًا');return;}
+  const v=intVal($('amtInp'));
+  if(v<=0){toast('أدخل مبلغًا صحيحًا');return;}
+  const c=C[S.sel];
+  openWA({kind:'purchase',cust:c.id,name:c.name,mobile:c.mobile,amount:v,desc:$('descInp').value.trim()||'مشتريات'});
+}
+function waDebt(){
+  const c=C[S.curAcct]||C.ahmed;
+  if(c.balance<=0){toast('لا يوجد مستحق على هذا العميل');return;}
+  openWA({kind:'debt',cust:c.id,name:c.name,mobile:c.mobile,amount:c.balance});
+}
+function waSend(){
+  const o=S.wa;if(!o)return;
+  const url='https://wa.me/'+waNumber(o.mobile).replace('+','')+'?text='+encodeURIComponent(waText(o));
+  try{window.open(url,'_blank');}catch(e){}
+  toast('فُتح واتساب برسالة جاهزة تحتوي رابط السداد');
+}
+function closeWA(){$('waSheet').classList.remove('show');}
+function waOpenLink(){closeWA();openWebCheckout();}
+
+/* ============ صفحة السداد على الويب (خارج التطبيق) ============ */
+function openWebCheckout(){
+  const o=S.wa;if(!o){toast('لا يوجد رابط سداد نشط');return;}
+  $('wcUrl').textContent='pay.sajjel.sa/r/'+o.ref;
+  $('wsUrl').textContent='pay.sajjel.sa/r/'+o.ref;
+  $('wcMerch').textContent='مطالبة من بقالة الريان';
+  $('wcAmt').textContent=fmt(o.amount)+' ر.س';
+  $('wcFor').textContent=o.kind==='purchase'?'سداد فوري — '+o.desc:'سداد مستحق باسم '+o.name;
+  $('wcPayday').innerHTML=paydayStrip(false);
+  go('w-pay');
+}
+function payWeb(method){
+  const o=S.wa;if(!o)return;
+  const ov=$('ovl'),tx=$('ovlTxt');
+  ov.classList.add('show');
+  tx.textContent='فتح صفحة الدفع الآمنة…';
+  setTimeout(()=>{tx.textContent='تفويض العملية لدى المُصدر…';},750);
+  setTimeout(()=>{tx.textContent='استلام تأكيد الدفع (Webhook)…';},1500);
+  setTimeout(()=>{
+    ov.classList.remove('show');
+    const c=C[o.cust];let rest=0;
+    if(o.kind==='debt'&&c){
+      c.balance=Math.max(0,c.balance-o.amount);
+      if(c.balance===0){c.overdue=false;c.overdueDays=0;}
+      c.tx.unshift({d:TODAY,t:'دفعة عبر رابط ويب',a:-o.amount});
+      rest=c.balance;
+      addMNotif({kind:'payment',text:c.name+' دفع '+fmt(o.amount)+' ر.س عبر رابط الواتساب — المتبقي '+fmt(rest)+' ر.س'});
+    }else{
+      addMNotif({kind:'payment',text:'سداد فوري عبر رابط الواتساب من '+o.name+' — '+fmt(o.amount)+' ر.س'});
+    }
+    $('wsAmt').textContent='−'+fmt(o.amount)+' ر.س';
+    $('wsRest').textContent=o.kind==='debt'?fmt(rest)+' ر.س'+(rest===0?' — مسدد 🟢':''):'لا دين — سداد فوري';
+    $('wsMethod').textContent=methodTxt(method);
+    $('wsRef').textContent='PAY-'+o.ref;
+    go('w-success');
+    toast('وصل إشعار الدفعة إلى التاجر فورًا');
+  },2250);
+}
+function exitWeb(){
+  S.wa=null;
+  const r=S.role||'merchant';
+  setRole(r,r==='merchant'?'m-dash':'c-dash');
 }
 
 /* ============ bill / invoice ============ */
@@ -1460,7 +1829,7 @@ function resetCustSettings(){
 function demoOverdue(){
   const a=C.ahmed;
   if(a.balance<=0){toast('رصيد أحمد صفر — أنشئ عملية شراء أولًا');return;}
-  a.overdue=true;a.overdueDays=3;a.due='15 أغسطس 2026';
+  a.overdue=true;a.overdueDays=22;a.due='27 يوليو 2026';
   addMNotif({kind:'overdue',text:'أحمد محمد لديه رصيد متأخر '+fmt(a.balance)+' ر.س'});
   toast('فُعّلت حالة التأخر لأحمد — جرّب الآن عملية شراء جديدة له');
 }
