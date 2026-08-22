@@ -8,7 +8,8 @@ Use case: UC-04. Status: done in prototype.
 2. Enters the amount. A projected-balance line updates live and flags a limit breach.
 3. Optional description.
 4. Optional invoice or receipt (task 009).
-5. Submit. Routing: over limit → block screen; customer overdue → warning with متابعة على أي حال; otherwise straight to the QR handshake (task 005).
+5. Submit. The button is the primary field action — one press goes straight to the scanner. Routing: over limit → block screen; customer overdue → locked until the merchant ticks the manual override; otherwise straight to the QR handshake (task 005).
+6. WhatsApp is the secondary route, for a customer who is not standing at the counter.
 
 ## Acceptance
 

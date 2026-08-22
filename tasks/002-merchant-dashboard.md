@@ -6,7 +6,7 @@ Use cases: UC-02, UC-03. Status: done in prototype.
 
 - Three stats: number of customers, total outstanding, number overdue.
 - Customer cards, each with name, balance, and a status pill.
-- Status pills: 🟢 مسدد, 🔵 دين نشط, 🔴 متأخر, ⚫ بلغ الحد. An amber "due soon" style exists in CSS but no seed customer uses it and nothing computes it.
+- Status pills: 🟢 مسدد, 🔵 حساب قائم, 🔴 تجاوز الموعد, ⚫ بلغ الحد. An amber "due soon" style exists in CSS but no seed customer uses it and nothing computes it.
 
 ## Account view
 

@@ -6,9 +6,9 @@ Every purchase needs the customer's consent. Consent is a QR the customer shows 
 
 ## Flow
 
-1. Merchant submits the purchase and waits on a pending screen.
+1. Merchant submits the purchase and lands on the scanner, with the customer and the amount shown above the viewfinder. The waiting screen is one tap away for an absent customer.
 2. Customer gets an actionable notification, opens the approval screen: amount, description, balance after, and the invoice link if one is attached.
-3. The screen draws a QR generated from a one-time token and starts a 2:00 countdown. It pulses red under 20 seconds.
+3. The screen draws a QR generated from a one-time token and starts a 2:00 countdown, shown as a progress bar that runs green → amber → red alongside the timer pill. It pulses red under 20 seconds. Tapping the code opens it full screen for a weak camera or a counter scanner.
 4. On expiry an overlay covers the code with a regenerate button that issues a new token.
 5. Merchant scans. The balance is applied, the transaction is added, the due date is recomputed from the term, and the merchant gets a summary.
 
