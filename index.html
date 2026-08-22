@@ -62,7 +62,7 @@ body{
 @keyframes slideIn{from{opacity:0;transform:translateX(-12px)}to{opacity:1;transform:none}}
 
 .bottomnav{flex:none;height:68px;background:#fff;border-top:1px solid var(--line);
-  display:grid;grid-template-columns:repeat(4,1fr)}
+  display:grid;grid-auto-flow:column;grid-auto-columns:1fr}
 .nav-item{position:relative;border:0;background:none;display:flex;flex-direction:column;align-items:center;gap:3px;
   font-family:inherit;font-size:10.5px;color:#A2938C;font-weight:800;cursor:pointer;padding-top:11px}
 .nav-item.on{color:var(--steel)}
@@ -180,6 +180,21 @@ body{
 .tag{display:inline-block;font-size:10px;font-weight:900;padding:2px 8px;border-radius:6px;margin-top:2px}
 .tag-debt{background:#F4EAE0;color:#8A6540}
 .tag-paid{background:var(--green-bg);color:var(--green-tx)}
+
+/* ---------- سجل العمليات (التاجر) ---------- */
+.searchwrap{position:relative;margin-bottom:8px}
+.searchwrap svg{position:absolute;top:50%;inset-inline-start:13px;transform:translateY(-50%);color:#A2938C;pointer-events:none}
+.searchwrap .input{padding-inline-start:42px}
+.logrow{padding:13px 14px;margin-bottom:9px}
+.log-av{width:36px;height:36px;font-size:14px}
+.log-top{display:flex;align-items:center;gap:10px}
+.log-top .nm{font-size:14px;font-weight:900;color:var(--ink);line-height:1.3}
+.log-amt{font-size:15px;font-weight:900;font-variant-numeric:tabular-nums;direction:ltr;color:var(--ink)}
+.log-amt.cr{color:var(--green-tx)}
+.log-meta{display:grid;grid-template-columns:1fr 1fr;gap:7px 14px;margin-top:10px;padding-top:10px;
+  border-top:1px solid var(--line);font-size:10.5px;font-weight:800;color:var(--txt2)}
+.log-meta b{display:block;font-size:12.5px;font-weight:900;color:var(--ink);font-variant-numeric:tabular-nums;margin-top:1px}
+.log-meta b.num{direction:ltr;text-align:end}
 
 /* ---------- alerts / hints ---------- */
 .warnbox{border-radius:16px;padding:14px;display:flex;gap:11px;align-items:flex-start;margin-bottom:12px;font-weight:700;font-size:13px;line-height:1.65}
@@ -554,7 +569,7 @@ body{
         <div class="stat red"><b id="stOver">0</b><span><i class="ind hide" id="stOverInd">▲</i>تجاوز الموعد (ر.س)</span></div>
       </div>
 
-      <div class="card counter" id="mCounter"></div>
+      <div class="card counter cust-card" id="mCounter" onclick="go('m-log')"></div>
 
       <div class="list-title">العملاء <small id="custCount"></small></div>
       <div id="custList"></div>
@@ -790,6 +805,21 @@ body{
       <div class="h1">إشعارات التاجر</div>
       <p class="sub">المدفوعات المستلمة وتنبيهات تجاوز الموعد</p>
       <div id="mNotifList"></div>
+    </div>
+
+    <!-- ======== MERCHANT: OPERATIONS LOG ======== -->
+    <div class="screen" id="m-log">
+      <div class="head-row">
+        <div class="h1">سجل العمليات</div>
+        <button class="eye" id="eyeML" onclick="toggleAmt()" aria-label="إخفاء أو إظهار المبالغ"></button>
+      </div>
+      <p class="sub">جميع عمليات البيع الآجل والسداد على حسابات عملائك</p>
+      <div class="searchwrap">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20.5 20.5-4-4"/></svg>
+        <input class="input" id="logSearch" type="search" placeholder="ابحث بالاسم أو الجوال أو الهوية أو المبلغ" oninput="renderMLog()">
+      </div>
+      <div class="list-title">العمليات <small id="logCount"></small></div>
+      <div id="logList"></div>
     </div>
 
     <!-- ======== CUSTOMER: DASHBOARD ======== -->
@@ -1105,6 +1135,7 @@ const mmss=s=>{const m=Math.floor(s/60),x=s%60;return '0'+m+':'+String(x).padSta
 const tok=()=>Math.random().toString(16).slice(2)+Date.now().toString(16);
 const MONTHS=['يناير','فبراير','مارس','أبريل','مايو','يونيو','يوليو','أغسطس','سبتمبر','أكتوبر','نوفمبر','ديسمبر'];
 const TODAY='18 أغسطس';
+const NOWT='9:41 ص';                               /* وقت العمليات الجديدة في النموذج */
 const PAYDAY=27;                                   /* يوم السداد الموحد — يوم الرواتب */
 const dateTxt=d=>d.getDate()+' '+MONTHS[d.getMonth()]+' '+d.getFullYear();
 /* كل مدة سداد تُقرَّب إلى أول يوم رواتب يليها */
@@ -1130,15 +1161,15 @@ const S={
 };
 const BILLS={};
 const C={
-  ahmed:{id:'ahmed',name:'أحمد محمد',mobile:'0550 123 456',balance:800,limitOv:null,daysOv:null,
+  ahmed:{id:'ahmed',name:'أحمد محمد',mobile:'0550 123 456',nid:'1074952683',balance:800,limitOv:null,daysOv:null,
     due:'27 أغسطس 2026',overdue:false,overdueDays:0,
-    tx:[{d:'12 أغسطس',t:'دفعة',a:-200},{d:'5 أغسطس',t:'مشتريات',a:1000}]},
-  khalid:{id:'khalid',name:'خالد علي',mobile:'0555 987 210',balance:0,limitOv:null,daysOv:null,
+    tx:[{d:'12 أغسطس',tm:'8:24 م',t:'دفعة',a:-200},{d:'5 أغسطس',tm:'11:05 ص',t:'مشتريات',a:1000}]},
+  khalid:{id:'khalid',name:'خالد علي',mobile:'0555 987 210',nid:'1088347215',balance:0,limitOv:null,daysOv:null,
     due:'—',overdue:false,overdueDays:0,
-    tx:[{d:'2 أغسطس',t:'دفعة',a:-350},{d:'28 يوليو',t:'مشتريات',a:350}]},
-  salem:{id:'salem',name:'سالم العتيبي',mobile:'0533 456 789',balance:1250,limitOv:1500,daysOv:null,
+    tx:[{d:'2 أغسطس',tm:'4:47 م',t:'دفعة',a:-350},{d:'28 يوليو',tm:'1:12 م',t:'مشتريات',a:350}]},
+  salem:{id:'salem',name:'سالم العتيبي',mobile:'0533 456 789',nid:'1029536471',balance:1250,limitOv:1500,daysOv:null,
     due:'27 يوليو 2026',overdue:true,overdueDays:22,
-    tx:[{d:'10 يوليو',t:'مواد بناء',a:1250}]}
+    tx:[{d:'10 يوليو',tm:'10:33 ص',t:'مواد بناء',a:1250}]}
 };
 const CM={
   rayan:{id:'rayan',name:'بقالة الريان',dyn:true},
@@ -1178,7 +1209,7 @@ function toggleAmt(){
 }
 function paintEyes(){
   const ic=S.hideAmt?EYE_OFF:EYE_ON;
-  ['eyeM','eyeC','eyeMA','eyeCA'].forEach(id=>{const e=$(id);if(e)e.innerHTML=ic;});
+  ['eyeM','eyeC','eyeMA','eyeCA','eyeML'].forEach(id=>{const e=$(id);if(e)e.innerHTML=ic;});
 }
 
 /* ============ يوم السداد الموحد ============ */
@@ -1267,6 +1298,7 @@ function renderScreen(id){
   switch(id){
     case 'm-dash':renderMDash();break;
     case 'm-account':renderMAcct();break;
+    case 'm-log':renderMLog();break;
     case 'm-new':renderNew();break;
     case 'm-notifs':renderMNotifs();break;
     case 'c-dash':renderCDash();break;
@@ -1292,13 +1324,15 @@ const IC={
   gear:'<svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round"><circle cx="12" cy="12" r="3.2"/><path d="M12 2.5v3M12 18.5v3M2.5 12h3M18.5 12h3M5.2 5.2l2.1 2.1M16.7 16.7l2.1 2.1M18.8 5.2l-2.1 2.1M7.3 16.7l-2.1 2.1"/></svg>',
   qr:'<svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><path d="M14 14h3v3h-3zM21 14v2M14 21h2M19 19h2v2"/></svg>',
   bell:'<svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8a6 6 0 1 0-12 0c0 7-3 8-3 8h18s-3-1-3-8"/><path d="M10.3 21a2 2 0 0 0 3.4 0"/></svg>',
-  user:'<svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round"><circle cx="12" cy="8" r="3.6"/><path d="M4.5 20.5c1.3-4 4.5-5.3 7.5-5.3s6.2 1.3 7.5 5.3"/></svg>'
+  user:'<svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round"><circle cx="12" cy="8" r="3.6"/><path d="M4.5 20.5c1.3-4 4.5-5.3 7.5-5.3s6.2 1.3 7.5 5.3"/></svg>',
+  list:'<svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M8.5 6.5H21M8.5 12H21M8.5 17.5H21"/><circle cx="3.8" cy="6.5" r="1.1" fill="currentColor" stroke="none"/><circle cx="3.8" cy="12" r="1.1" fill="currentColor" stroke="none"/><circle cx="3.8" cy="17.5" r="1.1" fill="currentColor" stroke="none"/></svg>'
 };
 function renderNav(){
   if(!S.role)return;
   const items=S.role==='merchant'?[
     {i:IC.home,l:'الرئيسية',t:'m-dash'},
     {i:IC.plus,l:'عملية جديدة',t:'m-new',fn:"startNewPurchase()"},
+    {i:IC.list,l:'سجل العمليات',t:'m-log'},
     {i:IC.uplus,l:'إضافة عميل',t:'m-add'},
     {i:IC.gear,l:'الإعدادات',t:'m-settings'}
   ]:[
@@ -1381,6 +1415,43 @@ function txRow(t){
   return '<div class="tx"><div><div class="t-t">'+t.t+'</div><div class="t-d">'+t.d+'</div></div>'
     +'<div class="t-left"><div class="t-amt'+(debit?'':' cr')+'">'+signed(debit?'+':'−',amt)+'</div>'
     +'<span class="tag '+(debit?'tag-debt':'tag-paid')+'">'+(debit?'آجل':'سداد')+'</span>'+bill+'</div></div>';
+}
+
+/* ============ سجل العمليات ============ */
+const normDigits=s=>String(s).replace(/[٠-٩]/g,d=>'٠١٢٣٤٥٦٧٨٩'.indexOf(d));
+/* مفتاح ترتيب زمني من نص التاريخ العربي: "12 أغسطس" أو "27 يوليو 2026" */
+function txSort(t){
+  const p=String(t.d).split(' ');
+  const day=parseInt(p[0])||1,mo=MONTHS.indexOf(p[1]),yr=parseInt(p[2])||2026;
+  return (yr*100+(mo<0?0:mo+1))*100+day;
+}
+function logRow(r){
+  const c=r.c,t=r.t,debit=t.a>0,amt=Math.abs(t.a);
+  return '<div class="card logrow cust-card" onclick="openAcct(\''+c.id+'\')">'
+    +'<div class="log-top"><div class="avatar log-av">'+c.name[0]+'</div>'
+    +'<div style="flex:1"><div class="nm">'+c.name+'</div>'
+    +'<span class="tag '+(debit?'tag-debt':'tag-paid')+'">'+(debit?'آجل':'سداد')+'</span></div>'
+    +'<div class="log-amt'+(debit?'':' cr')+'">'+signed(debit?'+':'−',amt)+'</div></div>'
+    +'<div class="log-meta">'
+    +'<div>التاريخ والوقت<b>'+t.d+(t.tm?' · '+t.tm:'')+'</b></div>'
+    +'<div>البيان<b>'+t.t+'</b></div>'
+    +'<div>رقم الجوال<b class="num">'+c.mobile+'</b></div>'
+    +'<div>رقم الهوية<b class="num">'+(c.nid||'—')+'</b></div>'
+    +'</div></div>';
+}
+function renderMLog(){
+  const q=normDigits(($('logSearch').value||'').trim().toLowerCase());
+  let rows=[];
+  S.order.forEach(k=>{const c=C[k];c.tx.forEach(t=>rows.push({c:c,t:t}));});
+  rows.sort((a,b)=>txSort(b.t)-txSort(a.t));
+  if(q)rows=rows.filter(r=>{
+    const hay=normDigits((r.c.name+' '+r.c.mobile+' '+r.c.mobile.replace(/\s/g,'')
+      +' '+(r.c.nid||'')+' '+r.t.t+' '+r.t.d+' '+(r.t.tm||'')+' '+Math.abs(r.t.a)).toLowerCase());
+    return hay.indexOf(q)>=0;
+  });
+  $('logCount').textContent=rows.length+' عملية';
+  $('logList').innerHTML=rows.length?rows.map(logRow).join('')
+    :'<div class="empty">لا توجد عمليات مطابقة لبحثك</div>';
 }
 
 /* ============ new purchase ============ */
@@ -1504,7 +1575,7 @@ function simulateScan(){
   if(p.type==='purchase'){
     const c=C[p.cust];
     c.balance+=p.amount;
-    const t={d:TODAY,t:p.desc,a:p.amount};
+    const t={d:TODAY,tm:NOWT,t:p.desc,a:p.amount};
     if(p.bill){const bId='b'+(++S.bid);BILLS[bId]=p.bill;t.billId=bId;}
     c.tx.unshift(t);
     if(!c.overdue)c.due=dueFromDays(daysOf(c));
@@ -1518,7 +1589,7 @@ function simulateScan(){
       +'<div>تاريخ الاستحقاق<b>'+c.due+'</b></div>'
       +(p.bill?'<div>الفاتورة<b>مرفقة ✓</b></div>':'');
   }else{
-    C.faisal={id:'faisal',name:p.newName,mobile:p.mobile,balance:0,limitOv:null,daysOv:null,
+    C.faisal={id:'faisal',name:p.newName,mobile:p.mobile,nid:'1056829374',balance:0,limitOv:null,daysOv:null,
       due:'—',overdue:false,overdueDays:0,tx:[]};
     if(S.order.indexOf('faisal')<0)S.order.push('faisal');
     markNotifDone('connection');
@@ -1693,7 +1764,7 @@ function processPay(method){
       const a=C.ahmed;
       a.balance-=amt;
       if(a.balance<=0){a.balance=0;a.overdue=false;a.overdueDays=0;}
-      a.tx.unshift({d:TODAY,t:'دفعة',a:-amt});
+      a.tx.unshift({d:TODAY,tm:NOWT,t:'دفعة',a:-amt});
       newBal=a.balance;
       addMNotif({kind:'payment',text:'أحمد محمد دفع '+fmt(amt)+' ر.س — المتبقي '+fmt(newBal)+' ر.س'});
     }else{
@@ -1775,7 +1846,7 @@ function payWeb(method){
     if(o.kind==='debt'&&c){
       c.balance=Math.max(0,c.balance-o.amount);
       if(c.balance===0){c.overdue=false;c.overdueDays=0;}
-      c.tx.unshift({d:TODAY,t:'دفعة عبر رابط ويب',a:-o.amount});
+      c.tx.unshift({d:TODAY,tm:NOWT,t:'دفعة عبر رابط ويب',a:-o.amount});
       rest=c.balance;
       addMNotif({kind:'payment',text:c.name+' دفع '+fmt(o.amount)+' ر.س عبر رابط الواتساب — المتبقي '+fmt(rest)+' ر.س'});
     }else{
