@@ -124,7 +124,7 @@ body{
 .btn-primary{background:var(--steel);color:#fff}
 .btn-ink{background:var(--ink);color:#fff}
 .btn-gold{background:linear-gradient(135deg,#DDB68F,var(--gold));color:var(--ink)}
-.btn-pay{background:linear-gradient(135deg,#B07E4C,#8E6136);color:#fff;box-shadow:0 6px 16px rgba(142,97,54,.32)}
+.btn-pay{background:linear-gradient(135deg,#4E8062,#3A6349);color:#fff;box-shadow:0 6px 16px rgba(58,99,73,.34)}
 .btn-soft{background:#E2DBD5;color:var(--ink)}
 .btn-ghost{background:#fff;color:var(--steel);border:1.5px solid #D3C8C1}
 .btn-danger{background:var(--red);color:#fff}
@@ -394,6 +394,36 @@ body{
 .wc-brand span{display:block;font-size:10.5px;font-weight:800;color:var(--txt2)}
 .wc-amt{font-size:31px;font-weight:900;color:var(--ink);font-variant-numeric:tabular-nums;margin:5px 0 3px}
 .pay-mada{background:#0E4D3C;color:#fff}
+/* ---------- الاستخدام الميداني: مسح سريع · قفل التجاوز · تكبير الرمز ---------- */
+.btn:disabled{opacity:.42;filter:grayscale(.4);cursor:not-allowed;box-shadow:none}
+.btn:disabled:active{transform:none}
+.btn-scan{background:linear-gradient(135deg,#4E8062,#3A6349);color:#fff;padding:17px;font-size:16px;
+  box-shadow:0 8px 20px rgba(58,99,73,.32)}
+.hero .btn-pay{background:#fff;color:#2F5A41;box-shadow:0 8px 18px rgba(0,0,0,.22)}
+.chip .cdot{display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--red);
+  margin-inline-start:6px;vertical-align:2px}
+.chip.late{border-color:var(--red);background:var(--red-bg);color:var(--red-tx)}
+.chip.late.on{background:var(--red);border-color:var(--red);color:#fff}
+.chip.late.on .cdot{background:#fff}
+.ovr{display:flex;align-items:flex-start;gap:10px;background:#fff;border:1.5px solid var(--red);
+  border-radius:14px;padding:12px 13px;margin-bottom:12px;font-size:12.5px;font-weight:800;
+  color:var(--red-tx);line-height:1.7;cursor:pointer}
+.ovr input{width:19px;height:19px;flex:none;margin-top:2px;accent-color:var(--red)}
+.mini-kv .hl b{font-size:19px;color:var(--green-tx)}
+.hero-grid .hl span{color:#CDE6D6}
+.hero-grid .hl b{font-size:18px;color:#A9E3BE}
+.qr-prog{width:248px;margin:12px auto 0;height:8px;border-radius:99px;background:#DED6D0;overflow:hidden}
+.qr-prog i{display:block;height:100%;width:100%;border-radius:99px;background:var(--green);transition:width 1s linear}
+.qr-prog.warn i{background:var(--amber)}
+.qr-prog.low i{background:var(--red)}
+.qr-cta{text-align:center;font-size:14px;font-weight:900;color:var(--ink);margin:13px 14px;line-height:1.7}
+.qr-tap{text-align:center;font-size:11px;font-weight:800;color:#8A7B74;margin-top:9px}
+.qr-cv,.qq-code canvas{cursor:zoom-in}
+.qrfs{position:absolute;inset:0;z-index:70;background:#fff;display:none;flex-direction:column;
+  align-items:center;justify-content:center;gap:16px;padding:22px}
+.qrfs.show{display:flex}
+.qrfs canvas{width:min(86vw,330px);height:min(86vw,330px);image-rendering:pixelated}
+.qrfs .cap{font-size:15px;font-weight:900;color:var(--ink);text-align:center;line-height:1.7}
 </style>
 </head>
 <body>
@@ -515,7 +545,7 @@ body{
           <p>اعرض الرمز للعميل للربط المباشر وبدء الشراء بسلاسة.</p>
           <div class="qq-uri">sajjel://m/rayan</div>
         </div>
-        <div class="qq-code"><canvas id="qrMerch" width="200" height="200"></canvas></div>
+        <div class="qq-code"><canvas id="qrMerch" width="200" height="200" onclick="openQRFS('qrMerch','رمز ربط الحساب — بقالة الريان')"></canvas></div>
       </div>
 
       <div class="stats">
@@ -561,7 +591,7 @@ body{
         <div class="chips" id="custChips"></div>
         <button class="btn btn-ghost btn-sm" onclick="openScanner('profile')">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><path d="M14 14h3v3h-3zM21 14v2M14 21h2M19 19h2v2"/></svg>
-          مسح الرمز التعريفي للعميل
+          مسح بطاقة التعرف للعميل
         </button>
       </div>
 
@@ -577,7 +607,7 @@ body{
             <div>الرصيد الحالي<b id="spBal"></b></div>
             <div>حد الائتمان<b id="spLimit"></b></div>
             <div>تاريخ الاستحقاق<b id="spDue"></b></div>
-            <div>المتاح<b id="spRemain"></b></div>
+            <div class="hl">المتاح<b id="spRemain"></b></div>
           </div>
         </div>
 
@@ -602,37 +632,14 @@ body{
           </div>
         </div>
         <div class="proj" id="projLine">أدخل المبلغ لعرض الرصيد المتوقع</div>
-        <button class="btn btn-ink" onclick="submitPurchase()" style="margin-bottom:10px">إرسال طلب الشراء</button>
-        <button class="btn btn-wa" onclick="waPurchase()">
+        <button class="btn btn-scan" id="sendBtn" onclick="submitPurchase()" style="margin-bottom:10px"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><path d="M14 14h3v3h-3zM21 14v2M14 21h2M19 19h2v2"/></svg>مسح رمز العميل وإتمام العملية</button>
+        <button class="btn btn-wa btn-sm" onclick="waPurchase()">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a10 10 0 0 0-8.6 15L2 22l5.2-1.4A10 10 0 1 0 12 2zm5.5 14.1c-.2.6-1.2 1.2-1.7 1.2-.4 0-1 .1-1.6-.1-2.6-1-4.3-3.7-4.4-3.9-.1-.2-1-1.4-1-2.6 0-1.2.6-1.8.9-2 .2-.2.5-.3.7-.3h.5c.2 0 .4 0 .6.5l.8 1.9c.1.2.1.4 0 .6l-.3.5-.4.4c-.1.1-.3.3-.1.6.2.3.8 1.3 1.7 2.1 1.1 1 2 1.3 2.3 1.4.3.1.4.1.6-.1l.9-1c.2-.2.4-.2.6-.1l1.8.9c.2.1.4.2.5.3.1.2.1.7-.1 1.3z"/></svg>
-          إرسال رابط سداد بالواتساب
+          العميل غير حاضر؟ أرسل رابط واتساب
         </button>
-        <p class="center muted" style="font-size:11px;font-weight:700;margin:10px 2px 0;line-height:1.7">للعميل غير المحمّل للتطبيق: يصله رابط سداد ويب يفتح صفحة دفع مباشرة.</p>
+        <p class="center muted" style="font-size:11px;font-weight:700;margin:10px 2px 0;line-height:1.7">المسار الافتراضي: امسح رمز العميل عند الكاشير. رابط الواتساب للعميل غير الحاضر أو غير المحمّل للتطبيق.</p>
       </div>
       <div id="statusEmpty" class="empty">اختر عميلًا لعرض حالة حسابه وإتمام العملية</div>
-    </div>
-
-    <!-- ======== MERCHANT: OVERDUE WARNING ======== -->
-    <div class="screen" id="m-warn-overdue">
-      <div class="success-wrap" style="padding-top:22px">
-        <div class="big-check" style="background:var(--amber-bg);color:var(--amber)">
-          <svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3 2.5 20h19L12 3z"/><path d="M12 10v4.5"/><circle cx="12" cy="17.4" r=".9" fill="currentColor" stroke="none"/></svg>
-        </div>
-        <div class="h1">لدى العميل مبلغ تجاوز موعده</div>
-        <p class="sub">راجع الحساب قبل تسجيل عملية آجلة جديدة</p>
-      </div>
-      <div class="card">
-        <div class="mini-kv">
-          <div>الرصيد المستحق<b id="woOut" style="color:var(--red-tx)"></b></div>
-          <div>تاريخ الاستحقاق<b id="woDue"></b></div>
-          <div>مدة التجاوز<b id="woDays" style="color:var(--red-tx)"></b></div>
-          <div>الشراء الجديد<b id="woNew"></b></div>
-        </div>
-      </div>
-      <div class="row">
-        <button class="btn btn-soft" onclick="go('m-new')">إلغاء</button>
-        <button class="btn btn-danger" onclick="continueAnyway()">المتابعة رغم ذلك</button>
-      </div>
     </div>
 
     <!-- ======== MERCHANT: LIMIT EXCEEDED ======== -->
@@ -687,11 +694,16 @@ body{
         <div class="h1">مسح الرمز</div>
       </div>
       <p class="sub" id="scanModeTxt">وجّه الكاميرا نحو رمز QR على جهاز العميل</p>
+      <div class="card hide" id="scanPend"></div>
       <div class="scanner">
         <div class="scan-box"><i></i><i></i><i></i><i></i><div class="scan-line"></div></div>
         <div class="scan-cap">الرمز صالح لدقيقتين ولاستخدام واحد فقط</div>
       </div>
       <button class="btn btn-gold" onclick="simulateScan()">✓ محاكاة مسح الرمز</button>
+      <div class="row" style="margin-top:10px">
+        <button class="btn btn-ghost btn-sm" onclick="setRole('customer','c-notifs')">جهاز العميل (محاكاة)</button>
+        <button class="btn btn-soft btn-sm" onclick="go('m-wait')">شاشة الانتظار</button>
+      </div>
       <p class="center muted" style="font-size:11.5px;font-weight:700;margin-top:12px">يتحقق الخادم من: الصلاحية · عدم الاستخدام السابق · تطابق التاجر والعميل والعملية</p>
     </div>
 
@@ -834,9 +846,10 @@ body{
           <div id="ppBillRow" class="hide">الفاتورة<b><button class="bill-link" onclick="viewBillTmp()">عرض الفاتورة المرفقة</button></b></div>
         </div>
       </div>
+      <div class="list-title" style="justify-content:center">رمز تأكيد الشراء — صالح لدقيقتين</div>
       <div class="qr-box">
         <div class="qr-corners"><span></span><span></span><span></span><span></span></div>
-        <canvas class="qr-cv" id="qrP" width="200" height="200"></canvas>
+        <canvas class="qr-cv" id="qrP" width="200" height="200" onclick="openQRFS('qrP','رمز تأكيد الشراء — اعرضه للتاجر')"></canvas>
         <div class="qr-token" id="tokP"></div>
         <div class="ex" id="exP">
           <b>انتهت صلاحية الرمز</b>
@@ -844,8 +857,10 @@ body{
           <button class="btn btn-ink btn-sm" style="width:auto;padding-inline:22px" onclick="regen('P')">إنشاء رمز جديد</button>
         </div>
       </div>
-      <div class="center"><span class="timer"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.5 2"/></svg><span id="tP">01:59</span></span></div>
-      <p class="center muted" style="font-size:12px;font-weight:800;margin:12px 0 12px">اعرض هذه الشاشة للتاجر ليمسح الرمز ويؤكد العملية</p>
+      <div class="qr-prog" id="pgP"><i></i></div>
+      <div class="center" style="margin-top:10px"><span class="timer"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.5 2"/></svg><span id="tP">01:59</span></span></div>
+      <p class="qr-cta">اعرض هذا الرمز للتاجر للتوثيق اللحظي</p>
+      <p class="qr-tap">اضغط على الرمز لتكبيره على كامل الشاشة</p>
       <button class="btn btn-ghost btn-sm" onclick="setRole('merchant','m-scan')">العودة إلى جهاز التاجر — الماسح (محاكاة)</button>
     </div>
 
@@ -861,7 +876,7 @@ body{
       </div>
       <div class="qr-box">
         <div class="qr-corners"><span></span><span></span><span></span><span></span></div>
-        <canvas class="qr-cv" id="qrC" width="200" height="200"></canvas>
+        <canvas class="qr-cv" id="qrC" width="200" height="200" onclick="openQRFS('qrC','رمز الموافقة على الربط — اعرضه للتاجر')"></canvas>
         <div class="qr-token" id="tokC"></div>
         <div class="ex" id="exC">
           <b>انتهت صلاحية الرمز</b>
@@ -869,8 +884,10 @@ body{
           <button class="btn btn-ink btn-sm" style="width:auto;padding-inline:22px" onclick="regen('C')">إنشاء رمز جديد</button>
         </div>
       </div>
-      <div class="center"><span class="timer"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.5 2"/></svg><span id="tC">01:59</span></span></div>
-      <p class="center muted" style="font-size:12px;font-weight:800;margin:12px 0 12px">رمز لمرة واحدة، مرتبط بك وبالتاجر وبهذا الطلب تحديدًا</p>
+      <div class="qr-prog" id="pgC"><i></i></div>
+      <div class="center" style="margin-top:10px"><span class="timer"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.5 2"/></svg><span id="tC">01:59</span></span></div>
+      <p class="qr-cta">اعرض هذا الرمز للتاجر للتوثيق اللحظي</p>
+      <p class="qr-tap">رمز لمرة واحدة · اضغط عليه لتكبيره</p>
       <button class="btn btn-ghost btn-sm" onclick="setRole('merchant','m-scan')">العودة إلى جهاز التاجر — الماسح (محاكاة)</button>
     </div>
 
@@ -933,20 +950,21 @@ body{
 
     <!-- ======== CUSTOMER: PROFILE QR ======== -->
     <div class="screen" id="c-qr">
-      <div class="h1">رمزي التعريفي</div>
-      <p class="sub">رمز دائم يستخدمه التاجر للتعرف عليك عند بدء عملية شراء</p>
+      <div class="h1">بطاقة التعرف</div>
+      <p class="sub">رقم حسابك الدائم — يمسحه التاجر ليعرف من أنت قبل بدء العملية. لا يعتمد أي شراء.</p>
       <div class="qr-box" style="padding-top:22px">
         <div class="qr-corners"><span></span><span></span><span></span><span></span></div>
         <div class="center" style="margin-bottom:12px">
           <div style="font-size:16px;font-weight:900">أحمد محمد</div>
           <div class="muted" style="font-size:12.5px;font-weight:800;direction:ltr">0550 123 456</div>
         </div>
-        <canvas class="qr-cv" id="qrProfile" width="200" height="200"></canvas>
+        <canvas class="qr-cv" id="qrProfile" width="200" height="200" onclick="openQRFS('qrProfile','بطاقة التعرف — رقم حسابك الدائم')"></canvas>
         <div class="qr-token">sajjel://id/0550123456</div>
       </div>
+      <p class="qr-tap">اضغط على البطاقة لتكبيرها على كامل الشاشة</p>
       <div class="warnbox warn-amber" style="margin-top:14px">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 8v5"/><circle cx="12" cy="16.5" r=".9" fill="currentColor" stroke="none"/></svg>
-        <span>هذا الرمز <b>للتعريف فقط</b> — لا يعتمد أي عملية شراء. كل عملية تتطلب رمز موافقة مؤقتًا منفصلًا.</span>
+        <span>هذه <b>بطاقة التعرف فقط</b> — لا تعتمد أي عملية شراء. كل عملية تتطلب <b>رمز تأكيد الشراء</b> المؤقت (صالح لدقيقتين) من شاشة الطلب.</span>
       </div>
     </div>
 
@@ -1062,6 +1080,13 @@ body{
     </div>
   </div>
 
+  <!-- تكبير رمز QR على كامل الشاشة -->
+  <div class="qrfs" id="qrfs" onclick="closeQRFS()">
+    <canvas id="qrfsCv" width="400" height="400"></canvas>
+    <div class="cap" id="qrfsCap"></div>
+    <button class="btn btn-ink btn-sm" style="width:auto;padding-inline:28px">إغلاق</button>
+  </div>
+
   <!-- bill / invoice viewer -->
   <div class="billview" id="billView" onclick="if(event.target===this)closeBill()">
     <div class="bv-card">
@@ -1097,7 +1122,7 @@ const S={
   role:null,screen:'s-welcome',pendingRole:null,
   merchant:{name:'بقالة الريان',defLimit:1000,defDays:30},
   order:['ahmed','khalid','salem'],
-  pending:null,scanMode:'approval',stash:null,
+  pending:null,scanMode:'approval',ovr:false,ac:null,
   cNotifs:[],mNotifs:[],unread:{m:0,c:0},nid:0,
   sel:null,curAcct:null,curMerch:'rayan',payMode:'full',
   iv:{},qrProfDrawn:false,qrMerchDrawn:false,billTmp:null,bid:0,
@@ -1204,7 +1229,40 @@ function go(id){
   $('bottomnav').classList.toggle('hide',bare);
   renderScreen(id);
   if(!bare)renderNav();
+  if(id==='m-success'||id==='c-pay-success'||id==='w-success')chime();
 }
+/* نغمة خفيفة + رجّة للطرفين عند نجاح التوثيق */
+function chime(){
+  try{
+    const AC=window.AudioContext||window.webkitAudioContext;
+    if(AC){
+      S.ac=S.ac||new AC();
+      const t0=S.ac.currentTime;
+      [880,1318].forEach((f,i)=>{
+        const o=S.ac.createOscillator(),g=S.ac.createGain(),t=t0+i*0.13;
+        o.type='sine';o.frequency.value=f;
+        g.gain.setValueAtTime(0,t);
+        g.gain.linearRampToValueAtTime(.16,t+0.02);
+        g.gain.exponentialRampToValueAtTime(.0001,t+0.3);
+        o.connect(g);g.connect(S.ac.destination);
+        o.start(t);o.stop(t+0.32);
+      });
+    }
+  }catch(e){}
+  if(navigator.vibrate)navigator.vibrate([18,45,30]);
+}
+/* تكبير أي رمز QR على كامل الشاشة */
+function openQRFS(srcId,cap){
+  const src=$(srcId),dst=$('qrfsCv');
+  dst.width=src.width*2;dst.height=src.height*2;
+  const ctx=dst.getContext('2d');
+  ctx.imageSmoothingEnabled=false;
+  ctx.fillStyle='#fff';ctx.fillRect(0,0,dst.width,dst.height);
+  ctx.drawImage(src,0,0,dst.width,dst.height);
+  $('qrfsCap').textContent=cap;
+  $('qrfs').classList.add('show');
+}
+function closeQRFS(){$('qrfs').classList.remove('show');}
 function renderScreen(id){
   switch(id){
     case 'm-dash':renderMDash();break;
@@ -1245,7 +1303,7 @@ function renderNav(){
     {i:IC.gear,l:'الإعدادات',t:'m-settings'}
   ]:[
     {i:IC.home,l:'الرئيسية',t:'c-dash'},
-    {i:IC.qr,l:'رمزي',t:'c-qr'},
+    {i:IC.qr,l:'بطاقتي',t:'c-qr'},
     {i:IC.bell,l:'الإشعارات',t:'c-notifs',b:S.unread.c},
     {i:IC.user,l:'حسابي',t:'c-profile'}
   ];
@@ -1307,7 +1365,7 @@ function renderMAcct(){
     +'<div class="amt">'+numv(c.balance)+' <small>ر.س</small></div>'
     +'<div class="hero-grid">'
     +'<div><span>حد الائتمان'+(c.limitOv!=null?' ✦':'')+'</span><b>'+numv(lim)+' ر.س</b></div>'
-    +'<div><span>المتاح</span><b>'+numv(rem)+' ر.س</b></div>'
+    +'<div class="hl"><span>المتاح للشراء</span><b>'+numv(rem)+' ر.س</b></div>'
     +'<div><span>الاستحقاق</span><b>'+(c.balance>0?c.due:'—')+'</b></div>'
     +'</div>'
     +limitBar(c.balance,lim,true)
@@ -1328,6 +1386,7 @@ function txRow(t){
 /* ============ new purchase ============ */
 function startNewPurchase(pref){
   if(pref!==undefined)S.sel=pref;
+  S.ovr=false;
   $('amtInp').value='';$('descInp').value='';
   clearBill();
   go('m-new');
@@ -1335,7 +1394,9 @@ function startNewPurchase(pref){
 function renderNew(){
   $('custChips').innerHTML=S.order.map(k=>{
     const on=S.sel===k?' on':'';
-    return '<button class="chip'+on+'" onclick="selectCust(\''+k+'\')">'+C[k].name+'</button>';
+    const late=C[k].overdue?' late':'';
+    const dot=C[k].overdue?'<span class="cdot"></span>':'';
+    return '<button class="chip'+late+on+'" onclick="selectCust(\''+k+'\')">'+C[k].name+dot+'</button>';
   }).join('');
   const has=!!S.sel;
   $('statusPanel').classList.toggle('hide',!has);
@@ -1351,10 +1412,14 @@ function renderNew(){
   $('spDue').textContent=c.balance>0?c.due:'—';
   $('spRemain').textContent=money(Math.max(0,lim-c.balance));
   $('newNote').innerHTML=c.overdue
-    ?'<div class="warnbox warn-amber" style="padding:11px 13px"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3 2.5 20h19L12 3z"/><path d="M12 10v4.5"/></svg><span>تجاوز هذا العميل موعد السداد منذ '+c.overdueDays+' أيام — سيظهر تنبيه قبل الإتمام.</span></div>':'';
+    ?'<div class="warnbox warn-red" style="padding:12px 13px"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3 2.5 20h19L12 3z"/><path d="M12 10v4.5"/></svg><span><b>حساب تجاوز موعد السداد.</b> رصيد '+money(c.balance)+' منذ '+c.overdueDays+' يومًا — استحقاق '+c.due+'. العملية مقفلة حتى تختار التجاوز اليدوي.</span></div>'
+     +'<label class="ovr"><input type="checkbox" id="ovrChk"'+(S.ovr?' checked':'')+' onchange="setOverride(this.checked)"><span>تجاوز يدوي صريح — أتحمّل مسؤولية تسجيل عملية آجلة جديدة على هذا الحساب.</span></label>'
+    :'';
+  $('sendBtn').disabled=!!c.overdue&&!S.ovr;
   renderProj();
 }
-function selectCust(id){S.sel=id;if(S.screen==='m-new')renderNew();}
+function selectCust(id){S.sel=id;S.ovr=false;if(S.screen==='m-new')renderNew();}
+function setOverride(v){S.ovr=v;$('sendBtn').disabled=!!C[S.sel].overdue&&!v;}
 function renderProj(){
   if(!S.sel)return;
   const c=C[S.sel],lim=limitOf(c),v=intVal($('amtInp')),el=$('projLine');
@@ -1377,17 +1442,9 @@ function submitPurchase(){
     $('liProj').textContent=fmt(c.balance+v)+' ر.س';
     go('m-limit');return;
   }
-  if(c.overdue){
-    $('woOut').textContent=fmt(c.balance)+' ر.س';
-    $('woDue').textContent=c.due;
-    $('woDays').textContent=c.overdueDays+' أيام';
-    $('woNew').textContent='+'+fmt(v)+' ر.س';
-    S.stash={amt:v,desc:desc};
-    go('m-warn-overdue');return;
-  }
+  if(c.overdue&&!S.ovr){toast('الحساب تجاوز موعد السداد — فعّل التجاوز اليدوي للمتابعة');return;}
   proceedSend(v,desc);
 }
-function continueAnyway(){proceedSend(S.stash.amt,S.stash.desc);}
 function proceedSend(v,desc){
   const c=C[S.sel];
   S.pending={type:'purchase',cust:S.sel,amount:v,desc:desc,bill:S.billTmp,token:tok(),expired:false,shown:false};
@@ -1395,7 +1452,8 @@ function proceedSend(v,desc){
   $('waitTitle').textContent='بانتظار موافقة العميل';
   $('waitSub').textContent='أُرسل إشعار إلى جوال '+c.name+' لتأكيد شراء بقيمة '+fmt(v)+' ر.س';
   $('waitHint').innerHTML='<b>على جهازين حقيقيين:</b> يفتح العميل الإشعار ويعرض رمز الموافقة، ثم يمسحه التاجر. هنا بدّل إلى وضع «عميل» بالأعلى ثم عُد إلى الماسح.';
-  go('m-wait');
+  openScanner('approval');
+  toast('الطلب جاهز — امسح رمز العميل الآن');
 }
 function cancelPending(){
   if(S.pending){
@@ -1422,8 +1480,13 @@ function sendConnection(){
 function openScanner(mode){
   S.scanMode=mode||'approval';
   $('scanModeTxt').textContent=S.scanMode==='profile'
-    ?'وضع المسح: الرمز التعريفي الدائم — للتعرف على العميل فقط'
-    :'وضع المسح: رمز الموافقة المؤقت — وجّه الكاميرا نحو جهاز العميل';
+    ?'وضع المسح: بطاقة التعرف الدائمة — للتعرف على العميل فقط'
+    :'وضع المسح: رمز تأكيد الشراء المؤقت — وجّه الكاميرا نحو جهاز العميل';
+  const p=S.pending,show=S.scanMode==='approval'&&!!p;
+  $('scanPend').classList.toggle('hide',!show);
+  if(show)$('scanPend').innerHTML='<div class="mini-kv">'+(p.type==='purchase'
+    ?'<div>العميل<b>'+C[p.cust].name+'</b></div><div class="hl">مبلغ العملية<b>'+money(p.amount)+'</b></div>'
+    :'<div>طلب ربط<b>'+p.newName+'</b></div><div>الجوال<b style="direction:ltr">'+p.mobile+'</b></div>')+'</div>';
   go('m-scan');
 }
 function simulateScan(){
@@ -1494,11 +1557,16 @@ function drawQR(id,token){
 }
 function startCountdown(sfx){
   clearInterval(S.iv[sfx]);
-  let s=119;
-  const el=$('t'+sfx),tm=el.parentElement;
+  const TOT=119;let s=TOT;
+  const el=$('t'+sfx),tm=el.parentElement,pg=$('pg'+sfx);
   const tick=()=>{
     el.textContent=mmss(Math.max(0,s));
     tm.classList.toggle('low',s<=20);
+    if(pg){
+      pg.firstElementChild.style.width=Math.max(0,s/TOT*100)+'%';
+      pg.classList.toggle('warn',s<=60&&s>20);
+      pg.classList.toggle('low',s<=20);
+    }
     if(s<=0){
       clearInterval(S.iv[sfx]);
       if(S.pending)S.pending.expired=true;
@@ -1531,7 +1599,7 @@ function renderCDash(){
   const av=['a3','','a2'];
   $('merchList').innerHTML=CM_ORDER.map((k,i)=>{
     const m=CM[k],b=mBal(m),st=mStatusOf(m);
-    const payBtn=b>0?'<button class="btn btn-pay btn-sm" onclick="event.stopPropagation();S.curMerch=\''+k+'\';openPay()">سداد الآن</button>':'';
+    const payBtn=b>0?'<button class="btn btn-pay btn-sm" onclick="event.stopPropagation();S.curMerch=\''+k+'\';openPay()"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><rect x="2" y="5" width="20" height="14" rx="2.5"/><path d="M2 10h20"/><path d="M6 14.5h4"/></svg>سداد الآن</button>':'';
     return '<div class="card cust-card" onclick="openMerchAcct(\''+k+'\')">'
       +'<div class="cust-top"><div class="avatar '+av[i%3]+'">'+m.name[0]+'</div>'
       +'<div style="flex:1"><div class="nm">'+m.name+'</div>'
@@ -1555,7 +1623,7 @@ function renderCAcct(){
     +'<div><span>المعاملات</span><b>'+tx.length+'</b></div>'
     +'<div><span>الحالة</span><b>'+st.t+'</b></div>'
     +'</div>'
-    +(b>0?'<button class="btn btn-pay" style="margin-top:16px;position:relative;z-index:1" onclick="openPay()">سداد الآن</button>':'')
+    +(b>0?'<button class="btn btn-pay" style="margin-top:16px;position:relative;z-index:1" onclick="openPay()"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><rect x="2" y="5" width="20" height="14" rx="2.5"/><path d="M2 10h20"/><path d="M6 14.5h4"/></svg>سداد الآن</button>':'')
     +'</div>';
   const lim=mLim(m);
   $('cCredit').innerHTML=lim?'<div class="card"><div class="kvrow" style="padding-top:0"><span>كرت الائتمان لدى '+m.name+'</span>'+pill(st)+'</div>'

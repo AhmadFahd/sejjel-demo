@@ -3,8 +3,8 @@
 Use case: UC-09. Status: done in prototype.
 
 - Dashboard stats plus a card per merchant.
-- Account view per merchant: balance, due date, transaction list, and a warm-brown سداد الآن button.
-- Permanent profile QR (identity only, no amount) that a merchant scans to select the customer or to connect.
+- Account view per merchant: balance, due date, transaction list, and a deep-green سداد الآن button with a payment icon.
+- Permanent بطاقة التعرف (identity only, no amount) that a merchant scans to select the customer or to connect. Named apart from the temporary رمز تأكيد الشراء so the two are never confused at the counter.
 - Profile screen with logout.
 
 ## Acceptance
