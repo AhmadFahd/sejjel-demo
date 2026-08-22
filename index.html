@@ -15,7 +15,7 @@
   --gold:#C9996B;
   --card:#ffffff;
   --line:rgba(58,72,66,.08);
-  --txt2:#8A7A73;
+  --txt2:#6F615B;
   --green:#4E8062; --green-bg:#E7EFE9; --green-tx:#3C6249;
   --amber:#C08A3C; --amber-bg:#F6EDE0; --amber-tx:#8A6229;
   --red:#B4564C;   --red-bg:#F4E5E1;   --red-tx:#93433A;
@@ -71,7 +71,7 @@ body{
 
 /* ---------- typography & cards ---------- */
 .h1{font-size:20px;font-weight:900;color:var(--ink);margin:4px 0 4px}
-.sub{color:var(--txt2);font-size:13px;font-weight:600;margin:0 0 14px}
+.sub{color:#655751;font-size:13px;font-weight:700;margin:0 0 14px}
 .list-title{display:flex;align-items:center;justify-content:space-between;font-size:15px;font-weight:900;color:var(--ink);margin:18px 2px 8px}
 .list-title small{font-size:11.5px;color:var(--txt2);font-weight:700}
 .muted{color:var(--txt2)}
@@ -90,7 +90,9 @@ body{
 .stat b{display:block;font-size:16px;font-weight:900;color:var(--ink);font-variant-numeric:tabular-nums}
 .stat span{font-size:10.5px;font-weight:800;color:var(--txt2)}
 .stat.gold b{color:#96683E}
-.stat.red b{color:var(--red)}
+.stat.red b{color:#8E3F44}
+.stat .ind{font-style:normal;font-size:9px;line-height:1;margin-inline-end:3px;vertical-align:1px;unicode-bidi:isolate;display:inline-block}
+.stat.red .ind{color:#8E3F44}
 
 /* ---------- customer / merchant cards ---------- */
 .cust-card{cursor:pointer;transition:transform .12s}
@@ -110,7 +112,7 @@ body{
 .pill{display:inline-flex;gap:6px;align-items:center;font-size:11px;font-weight:900;padding:4px 11px;border-radius:999px;white-space:nowrap}
 .pill .d{width:7px;height:7px;border-radius:50%;background:currentColor}
 .st-green{background:var(--green-bg);color:var(--green-tx)}
-.st-blue{background:#F4EAE0;color:#8A6540}
+.st-blue{background:#E4EDF5;color:#31607E}
 .st-amber{background:var(--amber-bg);color:var(--amber-tx)}
 .st-red{background:var(--red-bg);color:var(--red-tx)}
 .st-dark{background:#E5E0DC;color:var(--ink)}
@@ -122,6 +124,7 @@ body{
 .btn-primary{background:var(--steel);color:#fff}
 .btn-ink{background:var(--ink);color:#fff}
 .btn-gold{background:linear-gradient(135deg,#DDB68F,var(--gold));color:var(--ink)}
+.btn-pay{background:linear-gradient(135deg,#B07E4C,#8E6136);color:#fff;box-shadow:0 6px 16px rgba(142,97,54,.32)}
 .btn-soft{background:#E2DBD5;color:var(--ink)}
 .btn-ghost{background:#fff;color:var(--steel);border:1.5px solid #D3C8C1}
 .btn-danger{background:var(--red);color:#fff}
@@ -508,8 +511,8 @@ body{
 
       <div class="card qq" id="mQrCard">
         <div class="qq-txt">
-          <b>رمز متجرك</b>
-          <p>اعرضه للعميل ليمسحه من جواله فيفتح حسابه معك أو يبدأ عملية شراء — دون شاشات وسيطة.</p>
+          <b>رمز ربط الحساب</b>
+          <p>اعرض الرمز للعميل للربط المباشر وبدء الشراء بسلاسة.</p>
           <div class="qq-uri">sajjel://m/rayan</div>
         </div>
         <div class="qq-code"><canvas id="qrMerch" width="200" height="200"></canvas></div>
@@ -517,8 +520,8 @@ body{
 
       <div class="stats">
         <div class="stat"><b id="stCust">3</b><span>العملاء</span></div>
-        <div class="stat gold"><b id="stOut">0</b><span>المستحق (ر.س)</span></div>
-        <div class="stat red"><b id="stOver">0</b><span>المتأخر (ر.س)</span></div>
+        <div class="stat gold"><b id="stOut">0</b><span>المبيعات الآجلة (ر.س)</span></div>
+        <div class="stat red"><b id="stOver">0</b><span><i class="ind hide" id="stOverInd">▲</i>تجاوز الموعد (ر.س)</span></div>
       </div>
 
       <div class="card counter" id="mCounter"></div>
@@ -786,9 +789,9 @@ body{
       <p class="sub">أهلًا أحمد — هذه حساباتك لدى التجّار</p>
       <div id="cPayday"></div>
       <div class="stats">
-        <div class="stat gold"><b id="cStDebt">0</b><span>إجمالي الدين (ر.س)</span></div>
+        <div class="stat gold"><b id="cStDebt">0</b><span>المبالغ المستحقة (ر.س)</span></div>
         <div class="stat"><b id="cStMerch">3</b><span>التجّار</span></div>
-        <div class="stat red"><b id="cStOver">0</b><span>المتأخر (ر.س)</span></div>
+        <div class="stat red"><b id="cStOver">0</b><span><i class="ind hide" id="cStOverInd">▲</i>تجاوز الموعد (ر.س)</span></div>
       </div>
       <div class="card counter" id="cCounter"></div>
       <div class="list-title">حساباتي</div>
@@ -1125,11 +1128,11 @@ const limitOf=c=>c.limitOv!=null?c.limitOv:S.merchant.defLimit;
 const daysOf=c=>c.daysOv!=null?c.daysOv:S.merchant.defDays;
 function statusOf(o){
   if(o.balance<=0)return{k:'green',t:'مسدد'};
-  if(o.overdue)return{k:'red',t:'متأخر'};
+  if(o.overdue)return{k:'red',t:'تجاوز الموعد'};
   if(o.balance>=limitOf(o))return{k:'dark',t:'بلغ الحد'};
-  return{k:'blue',t:'دين نشط'};
+  return{k:'blue',t:'حساب قائم'};
 }
-function mStatusOf(m){const b=mBal(m);if(b<=0)return{k:'green',t:'مسدد'};if(mOver(m))return{k:'red',t:'متأخر'};return{k:'blue',t:'دين نشط'};}
+function mStatusOf(m){const b=mBal(m);if(b<=0)return{k:'green',t:'مسدد'};if(mOver(m))return{k:'red',t:'تجاوز الموعد'};return{k:'blue',t:'حساب قائم'};}
 const mBal=m=>m.dyn?C.ahmed.balance:m.balance;
 const mDue=m=>m.dyn?C.ahmed.due:m.due;
 const mOver=m=>m.dyn?C.ahmed.overdue:m.overdue;
@@ -1158,7 +1161,7 @@ const CAL_SVG='<svg width="18" height="18" viewBox="0 0 24 24" fill="none" strok
 function paydayStrip(dark){
   return '<div class="payday'+(dark?' on-dark':'')+'"><span class="pd-ic">'+CAL_SVG+'</span>'
     +'<div><b>تاريخ الاستحقاق الموحد: '+PAYDAY+' من كل شهر</b>'
-    +'<span>يوم الرواتب — كل المستحقات تُجمَع على هذا اليوم</span></div></div>';
+    +'<span>يوم السداد الموحد — تجميع مرن لكل حساباتك لسهولة الدفع</span></div></div>';
 }
 
 /* ============ شريط حد الائتمان ============ */
@@ -1277,9 +1280,10 @@ function renderMDash(){
   $('stCust').textContent=S.order.length;
   $('stOut').textContent=numv(out);
   $('stOver').textContent=numv(over);
+  $('stOverInd').classList.toggle('hide',!(over>0));
   $('custCount').textContent=S.order.length+' عملاء';
   $('mPayday').innerHTML=paydayStrip(false);
-  $('mCounter').innerHTML=counterCard(txStats(all),'إجمالي العمليات المكتملة والمستقبَلة','شراء','سداد');
+  $('mCounter').innerHTML=counterCard(txStats(all),'سجل النشاط والعمليات','شراء','سداد');
   if(!S.qrMerchDrawn){drawQR('qrMerch','sajjel-merchant-rayan');S.qrMerchDrawn=true;}
   const av=['','a2','a3'];
   $('custList').innerHTML=S.order.map((k,i)=>{
@@ -1318,7 +1322,7 @@ function txRow(t){
   const bill=t.billId?'<br><button class="tag tag-bill" onclick="viewBill(\''+t.billId+'\')"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m21 11.5-8.8 8.8a5.1 5.1 0 0 1-7.2-7.2L13.5 4.6a3.4 3.4 0 0 1 4.8 4.8L9.7 18a1.7 1.7 0 0 1-2.4-2.4l8-8"/></svg>الفاتورة</button>':'';
   return '<div class="tx"><div><div class="t-t">'+t.t+'</div><div class="t-d">'+t.d+'</div></div>'
     +'<div class="t-left"><div class="t-amt'+(debit?'':' cr')+'">'+signed(debit?'+':'−',amt)+'</div>'
-    +'<span class="tag '+(debit?'tag-debt':'tag-paid')+'">'+(debit?'دين':'سداد')+'</span>'+bill+'</div></div>';
+    +'<span class="tag '+(debit?'tag-debt':'tag-paid')+'">'+(debit?'آجل':'سداد')+'</span>'+bill+'</div></div>';
 }
 
 /* ============ new purchase ============ */
@@ -1521,12 +1525,13 @@ function renderCDash(){
   $('cStDebt').textContent=numv(debt);
   $('cStMerch').textContent=CM_ORDER.length;
   $('cStOver').textContent=numv(over);
+  $('cStOverInd').classList.toggle('hide',!(over>0));
   $('cPayday').innerHTML=paydayStrip(false);
-  $('cCounter').innerHTML=counterCard(txStats(all),'إجمالي عملياتك لدى التجّار','عملية شراء','عملية سداد');
+  $('cCounter').innerHTML=counterCard(txStats(all),'سجل النشاط والعمليات','عملية شراء','عملية سداد');
   const av=['a3','','a2'];
   $('merchList').innerHTML=CM_ORDER.map((k,i)=>{
     const m=CM[k],b=mBal(m),st=mStatusOf(m);
-    const payBtn=b>0?'<button class="btn btn-gold btn-sm" onclick="event.stopPropagation();S.curMerch=\''+k+'\';openPay()">سداد الآن</button>':'';
+    const payBtn=b>0?'<button class="btn btn-pay btn-sm" onclick="event.stopPropagation();S.curMerch=\''+k+'\';openPay()">سداد الآن</button>':'';
     return '<div class="card cust-card" onclick="openMerchAcct(\''+k+'\')">'
       +'<div class="cust-top"><div class="avatar '+av[i%3]+'">'+m.name[0]+'</div>'
       +'<div style="flex:1"><div class="nm">'+m.name+'</div>'
@@ -1550,7 +1555,7 @@ function renderCAcct(){
     +'<div><span>المعاملات</span><b>'+tx.length+'</b></div>'
     +'<div><span>الحالة</span><b>'+st.t+'</b></div>'
     +'</div>'
-    +(b>0?'<button class="btn btn-gold" style="margin-top:16px;position:relative;z-index:1" onclick="openPay()">سداد الآن</button>':'')
+    +(b>0?'<button class="btn btn-pay" style="margin-top:16px;position:relative;z-index:1" onclick="openPay()">سداد الآن</button>':'')
     +'</div>';
   const lim=mLim(m);
   $('cCredit').innerHTML=lim?'<div class="card"><div class="kvrow" style="padding-top:0"><span>كرت الائتمان لدى '+m.name+'</span>'+pill(st)+'</div>'
@@ -1646,7 +1651,7 @@ function waText(o){
     ?'مرحبًا '+o.name+' 👋\nطلب سداد من بقالة الريان بقيمة '+fmt(o.amount)+' ر.س ('+o.desc+').\n'
       +'ادفع مباشرة من الرابط بـ Apple Pay أو مدى — بلا تحميل تطبيق:\n'+o.url
     :'مرحبًا '+o.name+' 👋\nتذكير بمستحقك لدى بقالة الريان: '+fmt(o.amount)+' ر.س.\n'
-      +'تاريخ الاستحقاق الموحد: '+PAYDAY+' من كل شهر (يوم الرواتب).\nرابط السداد المباشر:\n'+o.url;
+      +'تاريخ الاستحقاق الموحد: '+PAYDAY+' من كل شهر (يوم السداد الموحد).\nرابط السداد المباشر:\n'+o.url;
 }
 function openWA(o){
   o.ref=tok().slice(0,8).toUpperCase();

@@ -4,7 +4,7 @@ Use case: UC-15. Status: done in prototype.
 
 ## Merchant dashboard
 
-A card under the three stats counts every completed transaction across all customers, split into purchases and settlements: "5 عملية · إجمالي العمليات المكتملة والمستقبَلة". The number is derived from the ledgers, so it climbs as purchases are confirmed and payments land.
+A card under the three stats counts every completed transaction across all customers, split into purchases and settlements: "5 عملية · سجل النشاط والعمليات". The number is derived from the ledgers, so it climbs as purchases are confirmed and payments land.
 
 ## Customer dashboard
 

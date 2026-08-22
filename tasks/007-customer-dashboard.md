@@ -3,7 +3,7 @@
 Use case: UC-09. Status: done in prototype.
 
 - Dashboard stats plus a card per merchant.
-- Account view per merchant: balance, due date, transaction list, and a gold سداد الآن button.
+- Account view per merchant: balance, due date, transaction list, and a warm-brown سداد الآن button.
 - Permanent profile QR (identity only, no amount) that a merchant scans to select the customer or to connect.
 - Profile screen with logout.
 
