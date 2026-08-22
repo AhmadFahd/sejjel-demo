@@ -464,7 +464,7 @@ body{
       <p class="w-tag">دفتر الديون الرقمي بين التاجر والعميل<br>ربط آمن · توثيق ثنائي · سداد إلكتروني</p>
 
       <div class="feat"><span class="fico"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><path d="M14 14h3v3h-3zM21 14v2M14 21h2M19 19h2v2"/></svg></span>ربط الحسابات بمسح رمز مؤقت صالح لدقيقتين</div>
-      <div class="feat"><span class="fico"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></span>لا يُسجَّل دين إلا بموافقة العميل ومسح التاجر</div>
+      <div class="feat"><span class="fico"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></span>لا تُسجَّل عملية آجلة إلا بموافقة العميل ومسح التاجر</div>
       <div class="feat"><span class="fico"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><rect x="2" y="5" width="20" height="14" rx="2.5"/><path d="M2 10h20"/></svg></span>سداد كامل أو جزئي عبر Apple Pay والبطاقات</div>
 
       <div class="w-btns">
@@ -618,14 +618,14 @@ body{
         <div class="big-check" style="background:var(--amber-bg);color:var(--amber)">
           <svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3 2.5 20h19L12 3z"/><path d="M12 10v4.5"/><circle cx="12" cy="17.4" r=".9" fill="currentColor" stroke="none"/></svg>
         </div>
-        <div class="h1">العميل لديه دفعة متأخرة</div>
-        <p class="sub">راجع الحالة قبل تسجيل دين جديد على هذا العميل</p>
+        <div class="h1">لدى العميل مبلغ تجاوز موعده</div>
+        <p class="sub">راجع الحساب قبل تسجيل عملية آجلة جديدة</p>
       </div>
       <div class="card">
         <div class="mini-kv">
           <div>الرصيد المستحق<b id="woOut" style="color:var(--red-tx)"></b></div>
           <div>تاريخ الاستحقاق<b id="woDue"></b></div>
-          <div>مدة التأخر<b id="woDays" style="color:var(--red-tx)"></b></div>
+          <div>مدة التجاوز<b id="woDays" style="color:var(--red-tx)"></b></div>
           <div>الشراء الجديد<b id="woNew"></b></div>
         </div>
       </div>
@@ -776,7 +776,7 @@ body{
     <!-- ======== MERCHANT: NOTIFICATIONS ======== -->
     <div class="screen" id="m-notifs">
       <div class="h1">إشعارات التاجر</div>
-      <p class="sub">المدفوعات المستلمة وتنبيهات التأخر</p>
+      <p class="sub">المدفوعات المستلمة وتنبيهات تجاوز الموعد</p>
       <div id="mNotifList"></div>
     </div>
 
@@ -1351,7 +1351,7 @@ function renderNew(){
   $('spDue').textContent=c.balance>0?c.due:'—';
   $('spRemain').textContent=money(Math.max(0,lim-c.balance));
   $('newNote').innerHTML=c.overdue
-    ?'<div class="warnbox warn-amber" style="padding:11px 13px"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3 2.5 20h19L12 3z"/><path d="M12 10v4.5"/></svg><span>هذا العميل متأخر عن السداد منذ '+c.overdueDays+' أيام — سيظهر تنبيه قبل الإتمام.</span></div>':'';
+    ?'<div class="warnbox warn-amber" style="padding:11px 13px"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3 2.5 20h19L12 3z"/><path d="M12 10v4.5"/></svg><span>تجاوز هذا العميل موعد السداد منذ '+c.overdueDays+' أيام — سيظهر تنبيه قبل الإتمام.</span></div>':'';
   renderProj();
 }
 function selectCust(id){S.sel=id;if(S.screen==='m-new')renderNew();}
@@ -1714,7 +1714,7 @@ function payWeb(method){
       addMNotif({kind:'payment',text:'سداد فوري عبر رابط الواتساب من '+o.name+' — '+fmt(o.amount)+' ر.س'});
     }
     $('wsAmt').textContent='−'+fmt(o.amount)+' ر.س';
-    $('wsRest').textContent=o.kind==='debt'?fmt(rest)+' ر.س'+(rest===0?' — مسدد 🟢':''):'لا دين — سداد فوري';
+    $('wsRest').textContent=o.kind==='debt'?fmt(rest)+' ر.س'+(rest===0?' — مسدد 🟢':''):'لا رصيد قائم — سداد فوري';
     $('wsMethod').textContent=methodTxt(method);
     $('wsRef').textContent='PAY-'+o.ref;
     go('w-success');
@@ -1789,7 +1789,7 @@ function renderCNotifs(){
 function renderMNotifs(){
   S.unread.m=0;S.mNotifs.forEach(x=>x.unread=false);updateBadges();
   $('mNotifList').innerHTML=S.mNotifs.length?S.mNotifs.map(notifItem).join('')
-    :'<div class="empty">'+IC.bell.replace('width="21" height="21"','width="34" height="34"')+'لا إشعارات حاليًا<br>ستظهر هنا المدفوعات المستلمة وتنبيهات التأخر</div>';
+    :'<div class="empty">'+IC.bell.replace('width="21" height="21"','width="34" height="34"')+'لا إشعارات حاليًا<br>ستظهر هنا المدفوعات المستلمة وتنبيهات تجاوز الموعد</div>';
 }
 
 /* ============ settings ============ */
@@ -1836,8 +1836,8 @@ function demoOverdue(){
   const a=C.ahmed;
   if(a.balance<=0){toast('رصيد أحمد صفر — أنشئ عملية شراء أولًا');return;}
   a.overdue=true;a.overdueDays=22;a.due='27 يوليو 2026';
-  addMNotif({kind:'overdue',text:'أحمد محمد لديه رصيد متأخر '+fmt(a.balance)+' ر.س'});
-  toast('فُعّلت حالة التأخر لأحمد — جرّب الآن عملية شراء جديدة له');
+  addMNotif({kind:'overdue',text:'أحمد محمد لديه رصيد تجاوز موعده '+fmt(a.balance)+' ر.س'});
+  toast('فُعّلت حالة تجاوز الموعد لأحمد — جرّب الآن عملية شراء جديدة له');
 }
 
 /* ============ toast ============ */
