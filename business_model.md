@@ -16,7 +16,7 @@ A fee on repayment would punish the one behavior the app exists to produce. The 
 
 The core stays free: recording purchases (UC-04), the limit block (UC-05), limits and overrides (UC-13), the QR handshake (UC-07, UC-08), settlement in the app (UC-10), the payment link shared from the merchant's own WhatsApp (UC-17), the 27th everywhere (UC-19).
 
-The comparables are blunt about what a free ledger earns on its own. Khatabook and OkCredit built the free-khata category in India; OkCredit's lifetime numbers are roughly Rs 9 crore of revenue against Rs 428 crore of losses (Entrackr, Dec 2023), and The Ken's post-mortem of the category concludes that kirana-type merchants would not pay for bookkeeping software and that the monetization which survived was credit intermediation. By late 2023 Khatabook itself was framed around a loan-book target (Entrackr, Sept 2023).
+The comparables are blunt about what a free ledger earns on its own. Khatabook and OkCredit built the free-khata category in India; OkCredit's lifetime numbers are roughly Rs 9 crore of revenue against Rs 428 crore of losses (Entrackr, Dec 2023; a crore is ten million), and The Ken's post-mortem of the category concludes that kirana-type merchants would not pay for bookkeeping software and that the monetization which survived was credit intermediation. By late 2023 Khatabook itself was framed around a loan-book target (Entrackr, Sept 2023).
 
 The free ledger is a funnel. What it feeds, in the order the taps can open:
 
