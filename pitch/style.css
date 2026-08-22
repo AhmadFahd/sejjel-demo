@@ -1,0 +1,129 @@
+:root {
+  --sajjel-mist: #ede9e6;
+  --sajjel-sage: #5c766d;
+  --sajjel-tan: #c9996b;
+}
+
+html {
+  direction: rtl;
+}
+
+.slidev-layout {
+  direction: rtl;
+  text-align: right;
+  font-family: 'Cairo', sans-serif;
+  background: var(--sajjel-mist);
+  color: var(--sajjel-sage);
+  padding-left: 4rem;
+  padding-right: 4rem;
+}
+
+.slidev-layout h1,
+.slidev-layout h2,
+.slidev-layout h3 {
+  color: var(--sajjel-sage);
+  font-weight: 700;
+}
+
+.slidev-layout h1 {
+  font-size: 2.6rem;
+  line-height: 1.3;
+  margin-bottom: 1.2rem;
+  border-inline-start: 0.35rem solid var(--sajjel-tan);
+  padding-inline-start: 1rem;
+}
+
+.slidev-layout p,
+.slidev-layout li {
+  font-size: 1.35rem;
+  line-height: 1.9;
+  color: #4a5a53;
+}
+
+.slidev-layout ul {
+  padding-inline-start: 1.4rem;
+  padding-inline-end: 0;
+}
+
+.slidev-layout li {
+  margin-bottom: 0.55rem;
+}
+
+.slidev-layout li::marker {
+  color: var(--sajjel-tan);
+}
+
+.callout {
+  margin-top: 1.6rem;
+  padding: 0.7rem 1.2rem;
+  border-radius: 0.75rem;
+  background: var(--sajjel-sage);
+  color: var(--sajjel-mist) !important;
+  display: inline-block;
+  font-weight: 600;
+}
+
+/* cover and closing */
+.cover {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  gap: 0.8rem;
+}
+
+.cover h1 {
+  border: none;
+  padding: 0;
+  margin: 0;
+  font-size: 3rem;
+}
+
+.cover-logo {
+  width: 17rem;
+  margin-bottom: 1.2rem;
+}
+
+.cover-icon {
+  width: 7rem;
+  margin-bottom: 0.6rem;
+}
+
+.cover-sub {
+  font-size: 1.4rem;
+  color: #4a5a53;
+}
+
+/* fact slides: the 27 and the 50% */
+.slidev-layout.fact {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.slidev-layout.fact h2 {
+  font-size: 2.2rem;
+  margin-top: 0.4rem;
+}
+
+.slidev-layout.fact p {
+  max-width: 34rem;
+  margin-inline: auto;
+}
+
+.fact-day {
+  font-size: 9rem;
+  font-weight: 800;
+  line-height: 1;
+  color: var(--sajjel-tan);
+  direction: ltr;
+}
+
+.offer-pct {
+  font-size: 5rem;
+  vertical-align: super;
+}
