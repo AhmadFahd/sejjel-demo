@@ -57,7 +57,7 @@ No price points yet; the first numbers come out of pilot conversations with real
 
 The ledger produces underwriting data nobody has for a micro-merchant: receivables aging, repayment behavior against the 27th, customer concentration. SAMA-licensed platforms already lend to Saudi SMEs on adjacent data: Lendo (invoice financing), Forus (financing sized on POS transaction volume, the closest analogue to lending against a tab ledger), Tameed, Manafa (IBS Intelligence's overview). The SME Bank has allocated SAR 240M through Manafa, Lendo and Tameed for tickets of SAR 50,000 to 1M (Arab News).
 
-The workable shape is referral: the licensed platform holds the license and the loan book, سجّل supplies data and distribution, and earns a commission. That is where both Indian comparables ended up, Khatabook by strategy and OkCredit after regulation closed its own P2P product (Entrackr). Lending on our own book is off the table; the BNPL rules alone (below) say why.
+The workable shape is referral: the licensed platform holds the license and the loan book, سجّل supplies data and distribution, and earns a commission. That is where both Indian comparables ended up, Khatabook by strategy and OkCredit after regulation closed its own P2P product (Entrackr). Lending on our own book is off the table; the BNPL rules alone (below) say why. The own-book variant is worked out separately in [business_model_loan.md](business_model_loan.md), and stays off the table here.
 
 Two caveats. Micro-grocery tickets may sit below those platforms' current minimums, so the segment fit is unproven. And SIMAH, the national credit bureau, could one day make tab repayment count toward a customer's credit file, but access terms for a company like سجّل are not public.
 
