@@ -4,6 +4,8 @@
 
 This is a plan by a pre-revenue project with zero users. Every fee and every tier below is a proposal to test, not a decision. External facts carry named sources, listed at the end; several were reachable only through search summaries, so every figure needs confirming on the live page before it goes into a projection.
 
+An Arabic version is kept in [business_model_ar.md](business_model_ar.md). This English file is the source of truth: any change here must be carried into the Arabic file in the same commit.
+
 ## Who pays
 
 The merchant pays. The عميل pays nothing, ever, to settle a debt.
