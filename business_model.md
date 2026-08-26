@@ -1,6 +1,8 @@
 # Business model
 
-سجّل lends no money. The تاجر extends the tab; the app records it, guards the limit, and makes it easy to settle. Everything falls due on the 27th ([UC-19](POC.md)), and payment lands whenever the customer pays. That framing decides most of what follows: the merchant is the customer of the business, and the app's legal position depends on staying a ledger and a settlement rail, not becoming a lender.
+سجّل lends no money. The تاجر extends the tab; the app records it, guards the limit, and makes it easy to settle. Everything falls due weekly, on Tuesday, and payment lands whenever the customer pays. That framing decides most of what follows: the merchant is the customer of the business, and the app's legal position depends on staying a ledger and a settlement rail, not becoming a lender.
+
+The prototype's one monthly pay-day, the 27th ([UC-19](POC.md)), is superseded here. Merchants said a month is too long to wait for their money, so the cycle is a week and the day is Tuesday. The product side of that decision, and of the others this review settled, is in [MVP.md](MVP.md).
 
 This is a plan by a pre-revenue project with zero users. Every fee and every tier below is a proposal to test, not a decision. External facts carry named sources, listed at the end; several were reachable only through search summaries, so every figure needs confirming on the live page before it goes into a projection.
 
@@ -12,9 +14,27 @@ The merchant pays. The عميل pays nothing, ever, to settle a debt.
 
 A fee on repayment would punish the one behavior the app exists to produce. The customer did not pick سجّل; the merchant did. A surcharge on the WhatsApp link (UC-17) would send the customer back to cash at the counter, and the payments line would die with it. So the rule is absolute: settling a debt through سجّل costs the payer zero, and any gateway cost on settlement is the merchant's cost or ours.
 
+The fee is more than the payments margin. Transfer fees, payment fees, an administrative fee on the operation, and the gateway's own commission all sit on the merchant's side of that line. The customer sees one number, which is what they owe.
+
+## Who it is for
+
+The merchant side is retail that already runs a tab: groceries, laundries, cafeterias, small shops in general. The customer side is whoever walks in, and in that segment the counter is not monolingual. Arabic, English, Urdu, Hindi and Bengali are all counter languages, and the MVP ships all five ([MVP.md](MVP.md)). That is the team's read of the segment rather than a surveyed number, and it is worth checking in the pilot, because five languages is real translation cost carried before the first riyal.
+
+## A record, not credit
+
+سجّل underwrites nobody. The merchant decides who gets a tab and how large it is, and what they decide on is a rating and a commitment record the app keeps: how this customer has paid before. That is the guarantee on offer, and it is the whole of it.
+
+Three things make the record worth trusting. The invoice, because recording an operation requires one and there is no bare amount typed into a field ([tasks/009](tasks/009-invoice-attachment.md), pulled into the MVP by [MVP.md](MVP.md)). The acknowledgment, because the customer accepts the terms once and then approves each operation, and that approval is what secures the merchant's claim if the debt is ever argued. And the formal ledger: a grocery's paper دفتر is a private note, while the same tab in سجّل is dated, invoiced and acknowledged. Turning shop ledgers into records that hold up is the product, stated plainly.
+
+Whether an in-app approval carries the weight of an إقرار before a Saudi court is a question for counsel. The design assumes it does, and the assumption is load-bearing.
+
+Behind the record sits the engine the MVP has to build: the scoring algorithm, duplicate and fraud detection on operations, and a path for a customer who has fallen far behind to schedule what they owe, with their operations stopped until the schedule is honored ([MVP.md](MVP.md)). None of the lines below work if the score is not worth reading.
+
+For the customer the pitch is the mirror of it: settlement made easy, and a record that follows them. Not credit, and nothing سجّل lends.
+
 ## The wedge: a free ledger
 
-The core stays free: recording purchases (UC-04), the limit block (UC-05), limits and overrides (UC-13), the QR handshake (UC-07, UC-08), settlement in the app (UC-10), the payment link shared from the merchant's own WhatsApp (UC-17), the 27th everywhere (UC-19).
+The core stays free: recording purchases (UC-04), the limit block (UC-05), limits and overrides (UC-13), the QR handshake (UC-07, UC-08), settlement in the app (UC-10), the payment link shared from the merchant's own WhatsApp (UC-17), the weekly Tuesday everywhere (UC-19).
 
 The comparables are blunt about what a free ledger earns on its own. Khatabook and OkCredit built the free-khata category in India; OkCredit's lifetime numbers are roughly Rs 9 crore of revenue against Rs 428 crore of losses (Entrackr, Dec 2023; a crore is ten million), and The Ken's post-mortem of the category concludes that kirana-type merchants would not pay for bookkeeping software and that the monetization which survived was credit intermediation. By late 2023 Khatabook itself was framed around a loan-book target (Entrackr, Sept 2023).
 
@@ -42,12 +62,14 @@ What it needs from regulation: staying out of the money flow. SAMA's payment ser
 
 Second because it needs merchants willing to pay, and the comparables warn it stays small: both Khatabook and OkCredit sell premium tiers, and The Ken's verdict on the category credits lending, not subscriptions, with whatever worked. Treat this line as a complement to line 1, not the plan.
 
-Free forever: everything in the wedge, one merchant, unlimited customers, unlimited entries, links shared from the merchant's own WhatsApp. Moving any of it behind a paywall later would burn the trust the funnel runs on.
+Free forever: everything in the wedge, one merchant, unlimited customers, unlimited entries, links shared from the merchant's own WhatsApp. Alerts inside the app and by email, the customer's limit and its management, the due-date mode, a summary of the customer's commitment record, and one payout transfer a month. Moving any of it behind a paywall later would burn the trust the funnel runs on.
 
 Behind the paywall, as proposals to test:
 
-- Automated reminders leading up to the 27th, sent by سجّل through the WhatsApp Business API. These are new (the prototype's link goes out from the merchant's own phone) and each message costs real money on Meta's side (verify current WhatsApp Business pricing; it changed in 2025). A free monthly allowance with paid bundles above it is metering a new cost, not a paywall on an old feature.
-- Staff accounts, reports, exports: all outside the POC's scope today, all natural paid additions.
+- Customer behavior analysis, a merchant dashboard, and reports. This is the tier's real argument: the merchant carries the credit risk, so the merchant is the one who wants to know who repays.
+- Alerts over WhatsApp and SMS. In the app and by email they stay free. WhatsApp and SMS cost money per message on Meta's and the operator's side (verify current WhatsApp Business pricing; it changed in 2025), so a free allowance with paid bundles above it meters a new cost rather than paywalling an old feature.
+- Automated reminders ahead of Tuesday, sent by سجّل rather than from the merchant's own phone.
+- Staff accounts, exports, and more frequent payout transfers than the free monthly one: all outside the POC's scope today, all natural paid additions.
 
 No price points yet; the first numbers come out of pilot conversations with real merchants, framed as starting proposals.
 
@@ -55,7 +77,7 @@ No price points yet; the first numbers come out of pilot conversations with real
 
 ### Receivables financing, by referral
 
-The ledger produces underwriting data nobody has for a micro-merchant: receivables aging, repayment behavior against the 27th, customer concentration. SAMA-licensed platforms already lend to Saudi SMEs on adjacent data: Lendo (invoice financing), Forus (financing sized on POS transaction volume, the closest analogue to lending against a tab ledger), Tameed, Manafa (IBS Intelligence's overview). The SME Bank has allocated SAR 240M through Manafa, Lendo and Tameed for tickets of SAR 50,000 to 1M (Arab News).
+The ledger produces underwriting data nobody has for a micro-merchant: receivables aging, repayment behavior against the weekly Tuesday, customer concentration. SAMA-licensed platforms already lend to Saudi SMEs on adjacent data: Lendo (invoice financing), Forus (financing sized on POS transaction volume, the closest analogue to lending against a tab ledger), Tameed, Manafa (IBS Intelligence's overview). The SME Bank has allocated SAR 240M through Manafa, Lendo and Tameed for tickets of SAR 50,000 to 1M (Arab News).
 
 The workable shape is referral: the licensed platform holds the license and the loan book, سجّل supplies data and distribution, and earns a commission. That is where both Indian comparables ended up, Khatabook by strategy and OkCredit after regulation closed its own P2P product (Entrackr). Lending on our own book is off the table; the BNPL rules alone (below) say why. The own-book variant is worked out separately in [business_model_loan.md](business_model_loan.md), and stays off the table here.
 
@@ -64,6 +86,10 @@ Two caveats. Micro-grocery tickets may sit below those platforms' current minimu
 ### ZATCA e-invoicing
 
 Fatoora Phase 2 keeps widening: Wave 24 pulls in VAT-registered businesses above SAR 375,000 turnover with a 30 June 2026 deadline, and Wave 25 halves the threshold to SAR 187,500 with a 1 Feb 2027 deadline (VATupdate). That is deadline-driven pain for part of exactly our merchant segment, so a compliant simplified invoice per entry is a plausible paid hook. It needs certified Fatoora integration, which is real compliance engineering in a field already full of ZATCA vendors: [full release](FULL_RELEASE.md) at the earliest, and that document is still a stub.
+
+### POS integration
+
+The record's weak point is that a person types it. Reading operations from the shop's own point of sale removes the typing and brings the invoice with it, down to the line items, so the customer sees the goods behind the amount. It is also the natural distribution deal, since the POS vendor already has the merchants. Nothing here before the [full release](FULL_RELEASE.md), and the integration is only worth building if it carries the invoice and its categories; an amount without them is what the manual flow already gives.
 
 ### Not building
 
@@ -82,14 +108,14 @@ Fatoora Phase 2 keeps widening: Wave 24 pulls in VAT-registered businesses above
 The prototype already carries loops that spread the ledger to customers:
 
 - The WhatsApp payment link (UC-17) reaches a customer who has installed nothing. In the prototype it goes from the merchant's own WhatsApp, which costs nobody anything.
-- Connecting a new customer is the same in-person QR handshake that approves a purchase (UC-08), so the counter itself onboards customers. The merchant's home-screen QR (UC-16) is display-only today and deferred ([MVP.md](MVP.md)).
-- One pay-day (UC-19) gives the app a reason to be opened on a known day each month.
+- Connecting a new customer is the same in-person QR handshake that approves a purchase (UC-08), so the counter itself onboards customers. There is no separate "add customer" step in the MVP: the merchant's home screen is the QR code (UC-16, back in scope), and a customer who is not connected yet is connected by the same scan that starts an operation.
+- One pay-day (UC-19) gives the app a reason to be opened on a known day, and weekly gives it four times the reasons that monthly did.
 
 These loops acquire customers of a merchant already on سجّل. Nothing here acquires merchants, and the merchant is the one who pays. At this stage merchant acquisition is direct work: walking into shops, running pilots, asking for introductions. Merchants may refer each other once the thing is useful; we'll see. This document does not pretend a channel exists before the pilot finds one.
 
 ## What it costs before it earns
 
-Until line 1 clears zero, the model runs on cost with no revenue against it: hosting and the gateway integration, Meta's fees on templated reminders, SMS OTP delivery, support, and the KSA counsel opinion this document requires before the first riyal of revenue. No numbers here; they belong in a budget once the stack and gateway are chosen ([TECH_STACK.md](TECH_STACK.md)). What funds the gap is the owners' question.
+Until line 1 clears zero, the model runs on cost with no revenue against it: hosting and the gateway integration, Meta's fees on templated reminders, SMS OTP delivery, support, translation and upkeep of five languages, a written user guide, hand-approval of every store that applies, and the KSA counsel opinion this document requires before the first riyal of revenue. No numbers here; they belong in a budget once the stack and gateway are chosen ([TECH_STACK.md](TECH_STACK.md)). What funds the gap is the owners' question.
 
 ## Risks that could kill the model
 
@@ -97,6 +123,9 @@ Until line 1 clears zero, the model runs on cost with no revenue against it: hos
 - Gateway minimum economics. If micro-merchants cannot clear gateway onboarding, or fixed per-transaction fees eat the margin on small settlements, line 1 never clears zero. Watch: effective fee minus gateway cost per rail, from the first live month.
 - Merchants stay on paper. The paper دفتر is free, offline, and has worked for generations. Watch: pilot merchants still recording after a month, and the share of their tabs that goes through سجّل rather than beside it.
 - WhatsApp alone is good enough. A merchant can text "عليك 800" without us. The ledger, the limit, and pay-inside-the-link have to beat that text. Watch: whether customers pay through the link or keep handing over cash.
+- Holding money. Three decisions from the MVP review put funds inside سجّل instead of passing them through: a customer balance the customer can top up, gift cards, and a payout transfer the free tier rates at once a month. Stored value and scheduled payouts are exactly the PI/EMI questions gateway-direct settlement was chosen to avoid. Whether they ship at all, or ship with the licensed gateway holding the balance, is a counsel question before it is a build question.
+- The record leaving the shop that wrote it. A commitment record only its own merchant can see is one thing; a score readable by a merchant who has never served that customer is credit information about a named person, and the PDPL and the Saudi credit-information regime both bear on it. Watch: what the scoring engine exposes, and to whom.
+- Weekly settlement multiplies transactions. A month's tab settled once carries one gateway fee; the same tab settled every Tuesday carries four, and the fixed riyal per transaction is charged four times. On small tabs that can invert the margin. Watch: effective margin per settlement in the first live month, at the weekly cadence.
 - Collection conduct. SAMA's Debt Collection Regulations and Procedures for Individual Customers (2018) bind banks and finance companies: call caps, working hours, documented communication. On their face they do not bind a merchant chasing his own tab, but they define the norms SAMA expects, and automated reminders should be designed inside them from the MVP, because if سجّل is ever deemed a regulated collector they bind directly.
 
 ## Validate before any contract
@@ -105,6 +134,9 @@ Until line 1 clears zero, the model runs on cost with no revenue against it: hos
 - Settlement share through the app. If pilots record debts in سجّل but collect in cash, line 1 is zero at any price.
 - مدى share of link payments, since the margin thesis leans on it.
 - Gateway prices, confirmed on Moyasar's and Tap's live pages.
+- Weekly Tuesday, from both sides. The month was wrong for merchants; a week is a proposal, and the customer paid monthly is the one it may not fit.
+- The mandatory invoice. It is the record's spine and also the slowest step at the counter. If merchants skip it, they are skipping the product.
+- Whether analysis and reports are what a grocery pays for, or whether the paid tier is really just the WhatsApp alerts.
 - The empty field. The research surfaced no Saudi or GCC incumbent doing merchant-tab ledgers, but an Arabic app-store sweep was not done. Treat "no local competitor" as provisional until someone does the sweep.
 
 ## Sources

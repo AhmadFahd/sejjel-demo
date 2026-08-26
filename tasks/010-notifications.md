@@ -16,3 +16,7 @@ Use case: UC-12. Status: done in prototype, in-app only.
 ## Open for MVP
 
 Push notifications outside the app, SMS fallback for payment reminders, and a due-date reminder schedule.
+
+## Decided since
+
+Channels are tiered by package rather than by feature ([MVP.md](../MVP.md)): in the app and by email on the free package, WhatsApp and SMS on the paid one. The reminder schedule follows the weekly Tuesday.

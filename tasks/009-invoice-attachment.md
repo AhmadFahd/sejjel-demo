@@ -24,3 +24,7 @@ Use case: UC-11. Status: done in prototype.
 ## Open for MVP
 
 Storage and retention, more than one file per purchase, camera capture, PDF preview, and who is allowed to delete an attached invoice.
+
+## Decided since
+
+The invoice is required, not optional, and the use case is in the MVP ([MVP.md](../MVP.md)). An operation cannot be recorded without one, so the storage subsystem above is MVP work rather than a reason to defer.

@@ -16,3 +16,7 @@ Use case: UC-08. Status: done in prototype.
 ## Open for MVP
 
 What happens when the number belongs to someone who has never used the app, invitation by SMS, and whether a customer can refuse a connection.
+
+## Decided since
+
+The connection happens inside عملية جديدة; the MVP has no add-customer entry point ([MVP.md](../MVP.md)).
