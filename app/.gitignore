@@ -13,3 +13,5 @@ __unconfig*
 todos.json
 test-results
 playwright-report
+*.db
+*.db-journal
