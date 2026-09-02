@@ -29,7 +29,8 @@ export default defineConfig({
   webServer: {
     command: 'npm run build && npm start',
     url: baseURL,
-    env: { PORT: String(port), NODE_ENV: 'production' },
+    // A production build, but not a production deployment: the fakes stay.
+    env: { PORT: String(port), NODE_ENV: 'production', APP_ENV: 'test' },
     reuseExistingServer: !process.env.CI,
     timeout: 180_000,
   },
