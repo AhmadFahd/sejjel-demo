@@ -1,15 +1,70 @@
 @import 'tailwindcss';
 
+/**
+ * The prototype's palette and shapes, as tokens. Values come from the
+ * stylesheet in index.html and the brand files; the names are what the
+ * components ask for.
+ */
+@theme {
+  --color-mist: #ede9e6;
+  --color-ink: #5c766d;
+  --color-steel: #5c766d;
+  --color-gold: #c9996b;
+  --color-gold-light: #e0be96;
+  --color-gold-dark: #a87a50;
+  --color-card: #ffffff;
+  --color-line: rgba(58, 72, 66, 0.08);
+  --color-muted: #6f615b;
+  --color-faint: #a2938c;
+
+  --color-good: #4e8062;
+  --color-good-bg: #e7efe9;
+  --color-good-text: #3c6249;
+
+  --color-warn: #c08a3c;
+  --color-warn-bg: #f6ede0;
+  --color-warn-text: #8a6229;
+
+  --color-bad: #b4564c;
+  --color-bad-bg: #f4e5e1;
+  --color-bad-text: #93433a;
+
+  --color-info-bg: #e4edf5;
+  --color-info-text: #31607e;
+
+  --color-neutral-bg: #e5e0dc;
+
+  --radius-card: 18px;
+  --radius-hero: 20px;
+  --radius-tile: 15px;
+  --radius-control: 14px;
+
+  --shadow-card:
+    0 1px 2px rgba(58, 72, 66, 0.05), 0 10px 26px rgba(58, 72, 66, 0.07);
+  --shadow-tile: 0 1px 2px rgba(58, 72, 66, 0.05);
+  --shadow-toast: 0 14px 34px rgba(0, 0, 0, 0.3);
+
+  --font-sans: 'Cairo', 'Segoe UI', Tahoma, Arial, sans-serif;
+}
+
 * {
   box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
 }
 
 html,
-body,
-#app {
+body {
+  margin: 0;
   min-height: 100%;
 }
 
 body {
-  margin: 0;
+  font-family: var(--font-sans);
+  background: var(--color-mist);
+  color: var(--color-ink);
+}
+
+/** Amounts line up in a column, in either direction. */
+.tabular {
+  font-variant-numeric: tabular-nums;
 }

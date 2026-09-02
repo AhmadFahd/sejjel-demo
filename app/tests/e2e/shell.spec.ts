@@ -27,3 +27,33 @@ test('switching language turns the document around, and it stays turned', async 
   await expect(page.locator('html')).toHaveAttribute('lang', 'en')
   await expect(page).toHaveTitle('Sejjel')
 })
+
+test('the gallery shows every component in both directions', async ({
+  page,
+}) => {
+  await page.goto('/design')
+
+  const arabic = page.getByTestId('gallery-ar')
+  const english = page.getByTestId('gallery-en')
+
+  await expect(arabic).toHaveAttribute('data-dir', 'rtl')
+  await expect(english).toHaveAttribute('data-dir', 'ltr')
+
+  // The same amount, written the way each language writes it.
+  await expect(arabic).toContainText('800 ر.س')
+  await expect(english).toContainText('SAR 800')
+
+  // The status pills, from real ledger states rather than hard-coded strings.
+  await expect(arabic.locator('[data-status="overdue"]').first()).toHaveText(
+    /تجاوز الموعد/,
+  )
+  await expect(english.locator('[data-status="settled"]').first()).toHaveText(
+    /Settled/,
+  )
+
+  // The limit bar colours up with what is used: 800 of 1,000 is 80%.
+  await expect(arabic.getByTestId('limit-bar').first()).toHaveAttribute(
+    'data-percent',
+    '80',
+  )
+})

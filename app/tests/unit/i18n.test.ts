@@ -89,6 +89,10 @@ describe('no untranslated copy', () => {
     return files
   }
 
+  /** Comments may quote the prototype's wording; rendered copy may not. */
+  const withoutComments = (source: string) =>
+    source.replace(/\/\*[\s\S]*?\*\//g, '').replace(/\/\/.*$/gm, '')
+
   it('keeps Arabic out of the components', () => {
     const offenders = uiDirectories
       .filter((dir) => {
@@ -99,7 +103,9 @@ describe('no untranslated copy', () => {
         }
       })
       .flatMap(walk)
-      .filter((file) => arabic.test(readFileSync(file, 'utf8')))
+      .filter((file) =>
+        arabic.test(withoutComments(readFileSync(file, 'utf8'))),
+      )
 
     expect(offenders).toEqual([])
   })
