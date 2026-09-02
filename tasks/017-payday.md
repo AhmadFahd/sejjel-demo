@@ -22,3 +22,9 @@ Seed dues moved onto the day: أحمد 27 أغسطس, سالم 27 يوليو (22
 ## Open for MVP
 
 Whether the day is set per merchant or per customer, what a purchase made on the 26th does, and the reminders that lead up to the date.
+
+## Decided since
+
+The pay-day is weekly, on Tuesday, not monthly on the 27th ([MVP.md](../MVP.md)). Merchants said a month is too long to wait for money they had already fronted. Everything in this file moves with it: `PAYDAY` becomes a weekday rather than a day of the month, `dueFromDays()` rolls forward to the first Tuesday on or after the term, the gold strip's wording changes, and the seeded dues move. The question of what an operation recorded on Monday evening does gets sharper with a week to play with instead of a month.
+
+The prototype still shows the 27th everywhere. It stays the UX reference for everything except the date.
