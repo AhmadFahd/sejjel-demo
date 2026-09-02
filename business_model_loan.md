@@ -72,6 +72,25 @@ Under BNPL: the merchant discount, and that is the financing revenue in full, si
 
 Under microfinance: term cost and a capped fee, both paid by the customer. Stated plainly: this route's revenue exists only because the customer pays, and it is small on this asset. It is listed for completeness only.
 
+## Seed-stage parameters
+
+The owners have fixed the pilot's commercial parameters through the seed stage. They are recorded here as decisions the rest of this document is held against, not as analysis, and none of them overrides the license-first rule in Sequencing:
+
+- Working capital: SAR 100,000 of own money, until a seed round.
+- Per-customer cap: SAR 1,000 total outstanding, across all merchants and all transactions.
+- Credit cutoff: financing stops 30 days after the customer's last payment, even if the cap has not been reached.
+- Merchant discount fee: 6 percent.
+- Merchant settlement: the merchant is paid on the 27th of the month, whether or not the customer has paid.
+
+What those figures do to the model, arithmetic only:
+
+- Paying merchants 94 halalas per riyal of financed tab, SAR 100,000 funds about 106 customers drawn to the full cap; more in practice, since real tabs run below it.
+- If the whole capital turns over once a month, gross revenue tops out near SAR 6,000 a month, before credit losses and before any operating cost.
+- A customer who defaults at the cap costs SAR 940 net, the fees of about 16 fully drawn customers who pay. Break-even before costs sits near a 6.4 percent default rate on financed volume; the 30-day cutoff is the control that keeps a silent customer from riding exposure to the cap.
+- Six percent sits at the top of the analyst-estimated Tabby range (3 to 7 percent), in the one segment, grocery, those same estimates say negotiates the bottom of it. Gate 3 exists to test this number against real merchants.
+- Settling merchants on the 27th regardless of customer payment moves the 27th from the customer's due date to the merchant's payout date and leaves the funding cycle open at the far end: capital is committed from payout until the customer actually settles, so effective capacity sits below the 106 figure.
+- SAR 100,000 is 2 percent of the SAR 5M licensing minimum (BNPL Rules, Art. 5). Until that gap closes, these parameters can operate only through the licensed-partner shape in Sequencing, or stay on paper; there is no licensable own-book configuration at this capital level.
+
 ## What this model adds that the ledger model does not have
 
 Every item here is absent from [business_model.md](business_model.md) because that model never touches the money:
