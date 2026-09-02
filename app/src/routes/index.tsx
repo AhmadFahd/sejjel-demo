@@ -1,6 +1,7 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { createServerFn } from '@tanstack/react-start'
 import { describeEnvironment } from '#/lib/environment'
+import { useI18n } from '#/i18n/context'
 
 /**
  * Placeholder until the ledger exists. It reports what the server thinks it is,
@@ -22,26 +23,30 @@ export const Route = createFileRoute('/')({
 
 function Home() {
   const env = Route.useLoaderData()
+  const { t } = useI18n()
+
+  const rows = [
+    [t('shell.mode'), env.mode],
+    [t('shell.nodeEnv'), env.nodeEnv],
+    [t('shell.node'), env.node],
+    [t('shell.startedAt'), env.startedAt],
+  ] as const
 
   return (
-    <main className="mx-auto max-w-xl p-8">
-      <h1 className="text-3xl font-bold">سجّل</h1>
-      <p className="mt-2 text-slate-600">
-        The app shell. Nothing of the ledger is built yet.
-      </p>
+    <main className="mx-auto max-w-xl px-8 pb-8">
+      <h1 className="text-3xl font-bold">{t('appName')}</h1>
+      <p className="mt-2 text-slate-600">{t('shell.nothingYet')}</p>
 
       <dl
         className="mt-8 grid grid-cols-[auto_1fr] gap-x-6 gap-y-2 text-sm"
         data-testid="environment"
       >
-        <dt className="text-slate-500">Mode</dt>
-        <dd className="font-medium">{env.mode}</dd>
-        <dt className="text-slate-500">NODE_ENV</dt>
-        <dd className="font-medium">{env.nodeEnv}</dd>
-        <dt className="text-slate-500">Node</dt>
-        <dd className="font-medium">{env.node}</dd>
-        <dt className="text-slate-500">Server started</dt>
-        <dd className="font-medium">{env.startedAt}</dd>
+        {rows.map(([label, value]) => (
+          <div key={label} className="contents">
+            <dt className="text-slate-500">{label}</dt>
+            <dd className="font-medium">{value}</dd>
+          </div>
+        ))}
       </dl>
     </main>
   )
