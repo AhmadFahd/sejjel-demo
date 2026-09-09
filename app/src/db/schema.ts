@@ -1,0 +1,302 @@
+import { randomUUID } from 'node:crypto'
+import { relations, sql } from 'drizzle-orm'
+import {
+  index,
+  integer,
+  sqliteTable,
+  text,
+  uniqueIndex,
+} from 'drizzle-orm/sqlite-core'
+
+/**
+ * Money is halalas, always. A riyal amount never reaches the database, and no
+ * column holds a float: 12.30 ر.س is 1230 here.
+ *
+ * Time is a Unix timestamp in UTC. The prototype's clock is frozen at
+ * 18 August 2026; nothing here has an equivalent.
+ */
+const id = () =>
+  text('id')
+    .primaryKey()
+    .$defaultFn(() => randomUUID())
+
+const createdAt = () =>
+  integer('created_at', { mode: 'timestamp' })
+    .notNull()
+    .default(sql`(unixepoch())`)
+
+export const users = sqliteTable(
+  'users',
+  {
+    id: id(),
+    /** E.164, so one number is one row however it was typed. */
+    mobile: text('mobile').notNull(),
+    name: text('name').notNull(),
+    nationalId: text('national_id'),
+    locale: text('locale', { enum: ['ar', 'en'] })
+      .notNull()
+      .default('ar'),
+    /** UC-14: hide the amounts. Per person, not per device. */
+    hideAmounts: integer('hide_amounts', { mode: 'boolean' })
+      .notNull()
+      .default(false),
+    createdAt: createdAt(),
+  },
+  (table) => [uniqueIndex('users_mobile_idx').on(table.mobile)],
+)
+
+export const merchants = sqliteTable(
+  'merchants',
+  {
+    id: id(),
+    ownerUserId: text('owner_user_id')
+      .notNull()
+      .references(() => users.id),
+    name: text('name').notNull(),
+    defaultLimitHalalas: integer('default_limit_halalas').notNull(),
+    defaultTermDays: integer('default_term_days').notNull(),
+    createdAt: createdAt(),
+  },
+  (table) => [index('merchants_owner_idx').on(table.ownerUserId)],
+)
+
+/**
+ * The pair, not the customer, is what carries a balance: one person owes
+ * several shops different amounts (UC-09). A null override means the shop's
+ * default applies, and follows it when the shop changes it (UC-13).
+ */
+export const connections = sqliteTable(
+  'connections',
+  {
+    id: id(),
+    merchantId: text('merchant_id')
+      .notNull()
+      .references(() => merchants.id),
+    customerUserId: text('customer_user_id')
+      .notNull()
+      .references(() => users.id),
+    limitOverrideHalalas: integer('limit_override_halalas'),
+    termOverrideDays: integer('term_override_days'),
+    /** A connection exists only after the customer agrees (UC-08). */
+    status: text('status', { enum: ['pending', 'active', 'revoked'] })
+      .notNull()
+      .default('pending'),
+    termsAcceptedAt: integer('terms_accepted_at', { mode: 'timestamp' }),
+    createdAt: createdAt(),
+  },
+  (table) => [
+    uniqueIndex('connections_pair_idx').on(
+      table.merchantId,
+      table.customerUserId,
+    ),
+    index('connections_customer_idx').on(table.customerUserId),
+  ],
+)
+
+export const invoices = sqliteTable('invoices', {
+  id: id(),
+  /** Opaque to the app: the storage provider knows what it means. */
+  storageKey: text('storage_key').notNull(),
+  contentType: text('content_type').notNull(),
+  byteSize: integer('byte_size').notNull(),
+  uploadedByUserId: text('uploaded_by_user_id')
+    .notNull()
+    .references(() => users.id),
+  createdAt: createdAt(),
+})
+
+/**
+ * The ledger. A balance is the sum of applied rows and is never stored, so it
+ * cannot drift from its own history.
+ *
+ * `amountHalalas` is always positive; `kind` says which way it moves.
+ */
+export const transactions = sqliteTable(
+  'transactions',
+  {
+    id: id(),
+    connectionId: text('connection_id')
+      .notNull()
+      .references(() => connections.id),
+    kind: text('kind', { enum: ['purchase', 'payment'] }).notNull(),
+    amountHalalas: integer('amount_halalas').notNull(),
+    status: text('status', {
+      enum: ['pending', 'applied', 'cancelled', 'failed'],
+    })
+      .notNull()
+      .default('pending'),
+    description: text('description'),
+    invoiceId: text('invoice_id').references(() => invoices.id),
+    /**
+     * Copied from the connection when the operation is recorded, so a later
+     * change to the shop's term does not move a due date already given.
+     */
+    termDaysSnapshot: integer('term_days_snapshot'),
+    dueAt: integer('due_at', { mode: 'timestamp' }),
+    /**
+     * UC-07: the customer's approval is the intent, the merchant's scan is the
+     * apply, and the token is what makes applying twice impossible.
+     */
+    approvalToken: text('approval_token'),
+    approvalExpiresAt: integer('approval_expires_at', { mode: 'timestamp' }),
+    /** UC-06: the merchant was warned about an overdue customer and went on. */
+    overdueAcknowledged: integer('overdue_acknowledged', { mode: 'boolean' })
+      .notNull()
+      .default(false),
+    appliedAt: integer('applied_at', { mode: 'timestamp' }),
+    createdAt: createdAt(),
+  },
+  (table) => [
+    uniqueIndex('transactions_approval_token_idx').on(table.approvalToken),
+    index('transactions_connection_idx').on(
+      table.connectionId,
+      table.createdAt,
+    ),
+    index('transactions_status_idx').on(table.status),
+  ],
+)
+
+export const notifications = sqliteTable(
+  'notifications',
+  {
+    id: id(),
+    userId: text('user_id')
+      .notNull()
+      .references(() => users.id),
+    kind: text('kind', {
+      enum: [
+        'purchase_awaiting_approval',
+        'purchase_applied',
+        'payment_received',
+        'connection_requested',
+        'limit_changed',
+        'due_soon',
+        'overdue',
+      ],
+    }).notNull(),
+    connectionId: text('connection_id').references(() => connections.id),
+    transactionId: text('transaction_id').references(() => transactions.id),
+    readAt: integer('read_at', { mode: 'timestamp' }),
+    /** An actionable notification can be acted on once (UC-12). */
+    actedAt: integer('acted_at', { mode: 'timestamp' }),
+    createdAt: createdAt(),
+  },
+  (table) => [
+    index('notifications_user_idx').on(table.userId, table.createdAt),
+  ],
+)
+
+export const sessions = sqliteTable(
+  'sessions',
+  {
+    id: id(),
+    userId: text('user_id')
+      .notNull()
+      .references(() => users.id),
+    expiresAt: integer('expires_at', { mode: 'timestamp' }).notNull(),
+    createdAt: createdAt(),
+  },
+  (table) => [index('sessions_user_idx').on(table.userId)],
+)
+
+export const otpCodes = sqliteTable(
+  'otp_codes',
+  {
+    id: id(),
+    mobile: text('mobile').notNull(),
+    /** Hashed: a leaked table should not be a way in. */
+    codeHash: text('code_hash').notNull(),
+    expiresAt: integer('expires_at', { mode: 'timestamp' }).notNull(),
+    attempts: integer('attempts').notNull().default(0),
+    consumedAt: integer('consumed_at', { mode: 'timestamp' }),
+    createdAt: createdAt(),
+  },
+  (table) => [index('otp_codes_mobile_idx').on(table.mobile, table.createdAt)],
+)
+
+/** UC-17: single-use, and expiring, so a shared link cannot be paid twice. */
+export const paymentLinks = sqliteTable(
+  'payment_links',
+  {
+    id: id(),
+    connectionId: text('connection_id')
+      .notNull()
+      .references(() => connections.id),
+    token: text('token').notNull(),
+    amountHalalas: integer('amount_halalas').notNull(),
+    expiresAt: integer('expires_at', { mode: 'timestamp' }).notNull(),
+    consumedAt: integer('consumed_at', { mode: 'timestamp' }),
+    transactionId: text('transaction_id').references(() => transactions.id),
+    createdAt: createdAt(),
+  },
+  (table) => [uniqueIndex('payment_links_token_idx').on(table.token)],
+)
+
+/**
+ * What the SSE stream replays. The id is a monotonic integer because that is
+ * what a reconnecting client sends back as Last-Event-ID.
+ */
+export const events = sqliteTable(
+  'events',
+  {
+    id: integer('id').primaryKey({ autoIncrement: true }),
+    userId: text('user_id')
+      .notNull()
+      .references(() => users.id),
+    kind: text('kind').notNull(),
+    /** What changed. The client re-fetches; the event carries no state. */
+    subjectId: text('subject_id'),
+    createdAt: createdAt(),
+  },
+  (table) => [index('events_user_idx').on(table.userId, table.id)],
+)
+
+export const usersRelations = relations(users, ({ many }) => ({
+  merchants: many(merchants),
+  connections: many(connections),
+  notifications: many(notifications),
+}))
+
+export const merchantsRelations = relations(merchants, ({ one, many }) => ({
+  owner: one(users, {
+    fields: [merchants.ownerUserId],
+    references: [users.id],
+  }),
+  connections: many(connections),
+}))
+
+export const connectionsRelations = relations(connections, ({ one, many }) => ({
+  merchant: one(merchants, {
+    fields: [connections.merchantId],
+    references: [merchants.id],
+  }),
+  customer: one(users, {
+    fields: [connections.customerUserId],
+    references: [users.id],
+  }),
+  transactions: many(transactions),
+}))
+
+export const transactionsRelations = relations(transactions, ({ one }) => ({
+  connection: one(connections, {
+    fields: [transactions.connectionId],
+    references: [connections.id],
+  }),
+  invoice: one(invoices, {
+    fields: [transactions.invoiceId],
+    references: [invoices.id],
+  }),
+}))
+
+export const schema = {
+  users,
+  merchants,
+  connections,
+  invoices,
+  transactions,
+  notifications,
+  sessions,
+  otpCodes,
+  paymentLinks,
+  events,
+}
