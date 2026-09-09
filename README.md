@@ -38,11 +38,8 @@ npm run format
 
 ## Continuous integration
 
-`docs/ci-workflow.yml` is the GitHub Actions run for this repo: lint, types,
-formatting, unit tests and the browser suite on every pull request. It has to be
-moved to `.github/workflows/ci.yml` by someone whose GitHub token carries the
-`workflow` scope; the automation that wrote it does not have that scope, and
-GitHub refuses the push.
+`.github/workflows/ci.yml` runs lint, types, formatting, the unit suite and the
+browser suite on every pull request.
 
 ## Running the prototype
 
