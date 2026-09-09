@@ -1,0 +1,28 @@
+# Railway service configuration. The service's root directory must be set to
+# `app` in the dashboard; this file is read from there.
+#
+# Two things Railway cannot take from a file, and that the app needs:
+#   - a volume, mounted where STORAGE_ROOT points, for the invoice files
+#   - the variables in .env.example, above all DATABASE_URL, DATABASE_AUTH_TOKEN
+#     and APP_ENV
+#
+# APP_ENV=production makes the app refuse to start on a fake OTP sender,
+# gateway or push sender. Until those exist, deploy with APP_ENV=staging.
+
+[build]
+builder = "NIXPACKS"
+buildCommand = "npm run build"
+
+[deploy]
+# Migrations run before the new version takes traffic, and a failure here
+# stops the deploy rather than leaving a half-migrated database serving.
+preDeployCommand = "npm run db:migrate"
+startCommand = "npm start"
+healthcheckPath = "/"
+healthcheckTimeout = 300
+restartPolicyType = "ON_FAILURE"
+restartPolicyMaxRetries = 3
+# One instance, and no more: the invoice volume attaches to a single instance
+# and the SSE fan-out assumes a single process. Scaling out needs object
+# storage and a shared bus first.
+numReplicas = 1
