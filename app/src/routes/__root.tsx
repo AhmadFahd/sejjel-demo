@@ -11,6 +11,7 @@ import { changeLocale, loadLocale } from '#/i18n/server'
 import { DEFAULT_LOCALE, directionOf } from '#/i18n/locales'
 import { createTranslate } from '#/i18n/translate'
 import type { ReactNode } from 'react'
+import type { Locale } from '#/i18n/locales'
 import appCss from '../styles.css?url'
 
 export const Route = createRootRoute({
@@ -39,15 +40,18 @@ export const Route = createRootRoute({
 })
 
 function RootDocument({ children }: { children: ReactNode }) {
-  const locale = Route.useLoaderData()
+  // A loader that failed leaves this undefined, whatever the type says, and a
+  // document has to render in some language even then.
+  const locale: Locale | undefined = Route.useLoaderData()
+  const dir = directionOf(locale ?? DEFAULT_LOCALE)
 
   return (
-    <html lang={locale} dir={directionOf(locale)}>
+    <html lang={locale ?? DEFAULT_LOCALE} dir={dir}>
       <head>
         <HeadContent />
       </head>
       <body>
-        <I18nProvider locale={locale}>
+        <I18nProvider locale={locale ?? DEFAULT_LOCALE}>
           <LocaleSwitch />
           {children}
         </I18nProvider>

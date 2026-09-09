@@ -15,9 +15,18 @@ const ONE_YEAR_SECONDS = 60 * 60 * 24 * 365
  */
 export const loadLocale = createServerFn({ method: 'GET' }).handler(
   async (): Promise<Locale> => {
-    const { readSignedInUser } = await import('#/auth/session.server')
-    const user = await readSignedInUser()
-    return user ? user.locale : resolveLocale(getCookie(LOCALE_COOKIE))
+    const fromCookie = resolveLocale(getCookie(LOCALE_COOKIE))
+
+    try {
+      const { readSignedInUser } = await import('#/auth/session.server')
+      const user = await readSignedInUser()
+      return user ? user.locale : fromCookie
+    } catch (error) {
+      // Which language to render in is not worth a blank page. Say so loudly
+      // and carry on with what the cookie knows.
+      console.error('Could not read the session while choosing a locale', error)
+      return fromCookie
+    }
   },
 )
 
