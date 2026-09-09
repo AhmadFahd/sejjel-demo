@@ -4,6 +4,7 @@ import { phoneNumber } from 'better-auth/plugins'
 import { getDatabase } from '#/db/client'
 import { accounts, sessions, users, verifications } from '#/db/schema'
 import { getProviders, providerConfigFromEnv } from '#/providers/registry'
+import { log } from '#/lib/log'
 import { SAUDI_MOBILE } from './phone'
 
 /** Five minutes is long enough to read an SMS and short enough to be worth stealing. */
@@ -14,12 +15,24 @@ const ALLOWED_ATTEMPTS = 5
 
 const SESSION_TTL_SECONDS = 60 * 60 * 24 * 30
 
+/**
+ * Better Auth builds absolute links from this. Railway names the public
+ * hostname for us, so an unset APP_URL does not have to mean a warning on
+ * every request.
+ */
+function baseUrlFromEnv() {
+  if (process.env.APP_URL) return process.env.APP_URL
+
+  const railway = process.env.RAILWAY_PUBLIC_DOMAIN
+  return railway ? `https://${railway}` : undefined
+}
+
 let cached: ReturnType<typeof createAuth> | undefined
 
 function createAuth() {
   return betterAuth({
     appName: 'sejjel',
-    baseURL: process.env.APP_URL,
+    baseURL: baseUrlFromEnv(),
     secret: process.env.AUTH_SECRET,
     database: drizzleAdapter(getDatabase(), {
       provider: 'sqlite',
@@ -32,11 +45,34 @@ function createAuth() {
     }),
     session: { expiresIn: SESSION_TTL_SECONDS },
     /**
-     * Railway terminates TLS and sets x-forwarded-for, so the last hop is the
-     * one to believe. Without this every caller shares one rate-limit bucket,
-     * which turns a limit meant for one number into a limit on everybody.
+     * Better Auth's own logger writes multi-line objects, which a log pipeline
+     * reads as one entry per line. Send it through ours instead.
      */
-    advanced: { ipAddress: { ipAddressHeaders: ['x-forwarded-for'] } },
+    logger: {
+      level: 'warn',
+      log: (level, message, ...args) => {
+        const fields = args.length > 0 ? { details: args } : undefined
+        if (level === 'error') log.error(message, fields)
+        else if (level === 'warn') log.warn(message, fields)
+        else log.info(message, fields)
+      },
+    },
+    /**
+     * A proxy sets one of these; which one depends on the host. Without a
+     * client address every caller shares one rate-limit bucket, which turns a
+     * limit meant for one number into a limit on everybody.
+     */
+    advanced: {
+      ipAddress: {
+        ipAddressHeaders: [
+          'x-forwarded-for',
+          'x-real-ip',
+          'x-client-ip',
+          'cf-connecting-ip',
+          'x-envoy-external-address',
+        ],
+      },
+    },
     rateLimit: {
       /**
        * Off in the browser tests, which come from one address and would spend

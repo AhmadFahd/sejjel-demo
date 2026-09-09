@@ -11,7 +11,7 @@
   "scripts": {
     "dev": "vite dev --port 3000",
     "build": "vite build",
-    "start": "npm run preflight && node .output/server/index.mjs",
+    "start": "npm run boot && node .output/server/index.mjs",
     "preview": "vite preview",
     "lint": "eslint",
     "format": "prettier --write . && eslint --fix",
@@ -25,9 +25,9 @@
     "db:migrate": "tsx src/db/migrate-cli.ts",
     "db:seed": "tsx src/db/seed.ts",
     "db:studio": "drizzle-kit studio",
-    "preflight": "tsx src/preflight.ts",
     "db:reset": "tsx src/db/seed.ts --reset-only",
-    "db:deploy": "tsx src/db/deploy-cli.ts"
+    "db:deploy": "tsx src/db/deploy-cli.ts",
+    "boot": "tsx src/boot.ts"
   },
   "dependencies": {
     "@libsql/client": "^0.18.0",

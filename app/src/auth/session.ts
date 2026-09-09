@@ -21,7 +21,8 @@ export const loadSignedInUser = createServerFn({ method: 'GET' }).handler(
     } catch (error) {
       // Nobody, as far as this page is concerned. A broken session store is a
       // signed-out visitor, not a five hundred.
-      console.error('Could not read the session', error)
+      const { log, describeError } = await import('#/lib/log')
+      log.error('Could not read the session', { error: describeError(error) })
       return null
     }
   },
