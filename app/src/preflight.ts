@@ -18,6 +18,10 @@ if (providers.isProduction && !database.url.startsWith('libsql://')) {
   )
 }
 
+if (providers.isProduction && !process.env.AUTH_SECRET) {
+  throw new Error('Refusing to start in production without AUTH_SECRET')
+}
+
 console.log(
   `Preflight passed: db=${database.url.split(':')[0]} otp=${providers.otp} ` +
     `payments=${providers.payments} storage=${providers.storage} push=${providers.push}`,

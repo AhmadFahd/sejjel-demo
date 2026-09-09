@@ -13,7 +13,8 @@ export async function makeUser(
   const [row] = await db
     .insert(users)
     .values({
-      mobile: `+9665${String(n).padStart(8, '0')}`,
+      phoneNumber: `+9665${String(n).padStart(8, '0')}`,
+      email: `user-${n}@phone.sejjel.local`,
       name: `عميل ${n}`,
       ...overrides,
     })

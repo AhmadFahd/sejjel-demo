@@ -61,7 +61,10 @@ describe('the logging OTP sender', () => {
     const lines: Array<string> = []
     const sender = createLoggingOtpSender((line) => lines.push(line))
 
-    const result = await sender.send({ mobile: '+966550123456', code: '4821' })
+    const result = await sender.send({
+      phoneNumber: '+966550123456',
+      code: '4821',
+    })
 
     expect(result).toBeUndefined()
     expect(lines).toEqual(['[otp] +966550123456 → 4821'])

@@ -1,6 +1,8 @@
-import { createFileRoute } from '@tanstack/react-router'
+import { createFileRoute, Link, useRouter } from '@tanstack/react-router'
 import { createServerFn } from '@tanstack/react-start'
 import { describeEnvironment } from '#/lib/environment'
+import { loadSignedInUser, signOut } from '#/auth/session'
+import { Button } from '#/components/chrome'
 import { useI18n } from '#/i18n/context'
 
 /**
@@ -18,12 +20,16 @@ const getEnvironment = createServerFn({ method: 'GET' }).handler(() =>
 
 export const Route = createFileRoute('/')({
   component: Home,
-  loader: () => getEnvironment(),
+  loader: async () => ({
+    environment: await getEnvironment(),
+    user: await loadSignedInUser(),
+  }),
 })
 
 function Home() {
-  const env = Route.useLoaderData()
+  const { environment: env, user } = Route.useLoaderData()
   const { t } = useI18n()
+  const router = useRouter()
 
   const rows = [
     [t('shell.mode'), env.mode],
@@ -35,7 +41,34 @@ function Home() {
   return (
     <main className="mx-auto max-w-xl px-8 pb-8">
       <h1 className="text-3xl font-bold">{t('appName')}</h1>
-      <p className="mt-2 text-slate-600">{t('shell.nothingYet')}</p>
+      <p className="mt-2 text-muted">{t('shell.nothingYet')}</p>
+
+      <div className="mt-6" data-testid="session">
+        {user ? (
+          <div className="flex items-center gap-3">
+            <span className="text-sm font-extrabold text-ink">
+              {t('auth.signedInAs', { name: user.name })}
+            </span>
+            <Button
+              tone="soft"
+              className="w-auto px-4 py-2 text-[13px]"
+              onClick={async () => {
+                await signOut()
+                await router.invalidate()
+              }}
+            >
+              {t('auth.signOut')}
+            </Button>
+          </div>
+        ) : (
+          <Link
+            to="/sign-in"
+            className="inline-block rounded-(--radius-control) bg-steel px-4 py-2 text-[13px] font-black text-white"
+          >
+            {t('auth.title')}
+          </Link>
+        )}
+      </div>
 
       <dl
         className="mt-8 grid grid-cols-[auto_1fr] gap-x-6 gap-y-2 text-sm"

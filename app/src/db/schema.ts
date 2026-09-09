@@ -25,12 +25,31 @@ const createdAt = () =>
     .notNull()
     .default(sql`(unixepoch())`)
 
+const updatedAt = () =>
+  integer('updated_at', { mode: 'timestamp' })
+    .notNull()
+    .default(sql`(unixepoch())`)
+
+/**
+ * Better Auth owns the identity columns on this table: `email`,
+ * `emailVerified`, `image`, `updatedAt`, `phoneNumber` and
+ * `phoneNumberVerified`. Nobody signs in by email; the address is a
+ * placeholder because Better Auth's core model requires one.
+ */
 export const users = sqliteTable(
   'users',
   {
     id: id(),
     /** E.164, so one number is one row however it was typed. */
-    mobile: text('mobile').notNull(),
+    phoneNumber: text('phone_number').notNull(),
+    phoneNumberVerified: integer('phone_number_verified', { mode: 'boolean' })
+      .notNull()
+      .default(false),
+    email: text('email').notNull(),
+    emailVerified: integer('email_verified', { mode: 'boolean' })
+      .notNull()
+      .default(false),
+    image: text('image'),
     name: text('name').notNull(),
     nationalId: text('national_id'),
     locale: text('locale', { enum: ['ar', 'en'] })
@@ -41,8 +60,12 @@ export const users = sqliteTable(
       .notNull()
       .default(false),
     createdAt: createdAt(),
+    updatedAt: updatedAt(),
   },
-  (table) => [uniqueIndex('users_mobile_idx').on(table.mobile)],
+  (table) => [
+    uniqueIndex('users_phone_number_idx').on(table.phoneNumber),
+    uniqueIndex('users_email_idx').on(table.email),
+  ],
 )
 
 export const merchants = sqliteTable(
@@ -186,32 +209,72 @@ export const notifications = sqliteTable(
   ],
 )
 
+/** Better Auth's session model. A session is a row, so it survives a restart. */
 export const sessions = sqliteTable(
   'sessions',
   {
     id: id(),
     userId: text('user_id')
       .notNull()
-      .references(() => users.id),
+      .references(() => users.id, { onDelete: 'cascade' }),
+    token: text('token').notNull(),
     expiresAt: integer('expires_at', { mode: 'timestamp' }).notNull(),
+    ipAddress: text('ip_address'),
+    userAgent: text('user_agent'),
     createdAt: createdAt(),
+    updatedAt: updatedAt(),
   },
-  (table) => [index('sessions_user_idx').on(table.userId)],
+  (table) => [
+    uniqueIndex('sessions_token_idx').on(table.token),
+    index('sessions_user_idx').on(table.userId),
+  ],
 )
 
-export const otpCodes = sqliteTable(
-  'otp_codes',
+/**
+ * Better Auth's account model. Nothing here has a password or an OAuth
+ * provider yet; the table exists because the core expects it.
+ */
+export const accounts = sqliteTable(
+  'accounts',
   {
     id: id(),
-    mobile: text('mobile').notNull(),
-    /** Hashed: a leaked table should not be a way in. */
-    codeHash: text('code_hash').notNull(),
-    expiresAt: integer('expires_at', { mode: 'timestamp' }).notNull(),
-    attempts: integer('attempts').notNull().default(0),
-    consumedAt: integer('consumed_at', { mode: 'timestamp' }),
+    userId: text('user_id')
+      .notNull()
+      .references(() => users.id, { onDelete: 'cascade' }),
+    accountId: text('account_id').notNull(),
+    providerId: text('provider_id').notNull(),
+    accessToken: text('access_token'),
+    refreshToken: text('refresh_token'),
+    idToken: text('id_token'),
+    accessTokenExpiresAt: integer('access_token_expires_at', {
+      mode: 'timestamp',
+    }),
+    refreshTokenExpiresAt: integer('refresh_token_expires_at', {
+      mode: 'timestamp',
+    }),
+    scope: text('scope'),
+    password: text('password'),
     createdAt: createdAt(),
+    updatedAt: updatedAt(),
   },
-  (table) => [index('otp_codes_mobile_idx').on(table.mobile, table.createdAt)],
+  (table) => [index('accounts_user_idx').on(table.userId)],
+)
+
+/**
+ * Where the OTP codes live, hashed by Better Auth. This replaces the
+ * hand-rolled `otp_codes` table the schema started with.
+ */
+export const verifications = sqliteTable(
+  'verifications',
+  {
+    id: id(),
+    identifier: text('identifier').notNull(),
+    value: text('value').notNull(),
+    expiresAt: integer('expires_at', { mode: 'timestamp' }).notNull(),
+    createdAt: createdAt(),
+    updatedAt: updatedAt(),
+  },
+  (table) => [index('verifications_identifier_idx').on(table.identifier)],
 )
 
 /** UC-17: single-use, and expiring, so a shared link cannot be paid twice. */
@@ -296,7 +359,8 @@ export const schema = {
   transactions,
   notifications,
   sessions,
-  otpCodes,
+  accounts,
+  verifications,
   paymentLinks,
   events,
 }
