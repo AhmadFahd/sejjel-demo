@@ -15,6 +15,25 @@ export const ar = {
   'shell.node': 'Node',
   'shell.startedAt': 'بدأ الخادم',
 
+  'auth.title': 'تسجيل الدخول',
+  'auth.phoneLabel': 'رقم الجوال',
+  'auth.phonePlaceholder': '05X XXX XXXX',
+  'auth.phoneHint': 'الرقم المسجّل به متجرك أو دفترك',
+  'auth.sendCode': 'أرسل الرمز',
+  'auth.codeLabel': 'رمز التحقق',
+  'auth.codeSentTo': 'أدخل الرمز المُرسل إلى {phoneNumber}',
+  'auth.verify': 'دخول',
+  'auth.resend': 'إرسال رمز جديد',
+  'auth.changeNumber': 'استخدام رقم آخر',
+  'auth.signOut': 'تسجيل الخروج',
+  'auth.signedInAs': 'مسجّل الدخول: {name}',
+  'auth.error.phoneInvalid': 'هذا ليس رقم جوال سعودي',
+  'auth.error.codeWrong': 'الرمز غير صحيح',
+  'auth.error.unknownNumber':
+    'لا يوجد حساب لهذا الرقم. يلزم أن يربطك متجر أولاً.',
+  'auth.error.tooMany': 'محاولات كثيرة. اطلب رمزًا جديدًا.',
+  'auth.error.generic': 'حدث خطأ. حاول مرة أخرى.',
+
   'money.currency': 'ر.س',
   'money.hidden': '••••',
 

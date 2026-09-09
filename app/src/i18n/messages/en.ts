@@ -16,6 +16,25 @@ export const en = {
   'shell.node': 'Node',
   'shell.startedAt': 'Server started',
 
+  'auth.title': 'Sign in',
+  'auth.phoneLabel': 'Mobile number',
+  'auth.phonePlaceholder': '05X XXX XXXX',
+  'auth.phoneHint': 'The number your shop or your ledger is registered to',
+  'auth.sendCode': 'Send the code',
+  'auth.codeLabel': 'Verification code',
+  'auth.codeSentTo': 'Enter the code sent to {phoneNumber}',
+  'auth.verify': 'Sign in',
+  'auth.resend': 'Send another code',
+  'auth.changeNumber': 'Use a different number',
+  'auth.signOut': 'Sign out',
+  'auth.signedInAs': 'Signed in as {name}',
+  'auth.error.phoneInvalid': 'That is not a Saudi mobile number',
+  'auth.error.codeWrong': 'That code is not right',
+  'auth.error.unknownNumber':
+    'No account for that number. A shop has to connect you first.',
+  'auth.error.tooMany': 'Too many tries. Ask for a new code.',
+  'auth.error.generic': 'Something went wrong. Try again.',
+
   'money.currency': 'SAR',
   'money.hidden': '••••',
 

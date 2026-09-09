@@ -34,6 +34,19 @@ npm start          # serve that build
 npm run typecheck
 npm run lint
 npm run format
+npm test           # unit tests
+npm run test:e2e   # browser tests, against a production build
+```
+
+Working with the database:
+
+```bash
+npm run db:seed              # the prototype's fixture from POC.md
+npm run db:seed -- --list    # what else there is to choose from
+npm run db:seed -- --reset   # replace whatever is there
+npm run db:reset             # empty every table
+npm run db:migrate           # migrations only
+npm run db:deploy            # what runs before a deploy: migrate, repair, seed if empty
 ```
 
 ## Continuous integration

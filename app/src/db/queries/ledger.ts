@@ -68,7 +68,7 @@ function toSummary(row: {
     merchantName: row.merchant.name,
     customerUserId: row.customer.id,
     customerName: row.customer.name,
-    customerMobile: row.customer.mobile,
+    customerMobile: row.customer.phoneNumber,
     balanceHalalas,
     limitHalalas,
     availableHalalas: availableOf(balanceHalalas, limitHalalas),

@@ -16,3 +16,4 @@ playwright-report
 *.db
 *.db-journal
 storage/
+.e2e

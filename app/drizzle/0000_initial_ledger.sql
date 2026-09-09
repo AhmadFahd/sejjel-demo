@@ -1,3 +1,21 @@
+CREATE TABLE `accounts` (
+	`id` text PRIMARY KEY NOT NULL,
+	`user_id` text NOT NULL,
+	`account_id` text NOT NULL,
+	`provider_id` text NOT NULL,
+	`access_token` text,
+	`refresh_token` text,
+	`id_token` text,
+	`access_token_expires_at` integer,
+	`refresh_token_expires_at` integer,
+	`scope` text,
+	`password` text,
+	`created_at` integer DEFAULT (unixepoch()) NOT NULL,
+	`updated_at` integer DEFAULT (unixepoch()) NOT NULL,
+	FOREIGN KEY (`user_id`) REFERENCES `users`(`id`) ON UPDATE no action ON DELETE cascade
+);
+--> statement-breakpoint
+CREATE INDEX `accounts_user_idx` ON `accounts` (`user_id`);--> statement-breakpoint
 CREATE TABLE `connections` (
 	`id` text PRIMARY KEY NOT NULL,
 	`merchant_id` text NOT NULL,
@@ -59,17 +77,6 @@ CREATE TABLE `notifications` (
 );
 --> statement-breakpoint
 CREATE INDEX `notifications_user_idx` ON `notifications` (`user_id`,`created_at`);--> statement-breakpoint
-CREATE TABLE `otp_codes` (
-	`id` text PRIMARY KEY NOT NULL,
-	`mobile` text NOT NULL,
-	`code_hash` text NOT NULL,
-	`expires_at` integer NOT NULL,
-	`attempts` integer DEFAULT 0 NOT NULL,
-	`consumed_at` integer,
-	`created_at` integer DEFAULT (unixepoch()) NOT NULL
-);
---> statement-breakpoint
-CREATE INDEX `otp_codes_mobile_idx` ON `otp_codes` (`mobile`,`created_at`);--> statement-breakpoint
 CREATE TABLE `payment_links` (
 	`id` text PRIMARY KEY NOT NULL,
 	`connection_id` text NOT NULL,
@@ -87,11 +94,16 @@ CREATE UNIQUE INDEX `payment_links_token_idx` ON `payment_links` (`token`);--> s
 CREATE TABLE `sessions` (
 	`id` text PRIMARY KEY NOT NULL,
 	`user_id` text NOT NULL,
+	`token` text NOT NULL,
 	`expires_at` integer NOT NULL,
+	`ip_address` text,
+	`user_agent` text,
 	`created_at` integer DEFAULT (unixepoch()) NOT NULL,
-	FOREIGN KEY (`user_id`) REFERENCES `users`(`id`) ON UPDATE no action ON DELETE no action
+	`updated_at` integer DEFAULT (unixepoch()) NOT NULL,
+	FOREIGN KEY (`user_id`) REFERENCES `users`(`id`) ON UPDATE no action ON DELETE cascade
 );
 --> statement-breakpoint
+CREATE UNIQUE INDEX `sessions_token_idx` ON `sessions` (`token`);--> statement-breakpoint
 CREATE INDEX `sessions_user_idx` ON `sessions` (`user_id`);--> statement-breakpoint
 CREATE TABLE `transactions` (
 	`id` text PRIMARY KEY NOT NULL,
@@ -117,12 +129,28 @@ CREATE INDEX `transactions_connection_idx` ON `transactions` (`connection_id`,`c
 CREATE INDEX `transactions_status_idx` ON `transactions` (`status`);--> statement-breakpoint
 CREATE TABLE `users` (
 	`id` text PRIMARY KEY NOT NULL,
-	`mobile` text NOT NULL,
+	`phone_number` text NOT NULL,
+	`phone_number_verified` integer DEFAULT false NOT NULL,
+	`email` text NOT NULL,
+	`email_verified` integer DEFAULT false NOT NULL,
+	`image` text,
 	`name` text NOT NULL,
 	`national_id` text,
 	`locale` text DEFAULT 'ar' NOT NULL,
 	`hide_amounts` integer DEFAULT false NOT NULL,
-	`created_at` integer DEFAULT (unixepoch()) NOT NULL
+	`created_at` integer DEFAULT (unixepoch()) NOT NULL,
+	`updated_at` integer DEFAULT (unixepoch()) NOT NULL
 );
 --> statement-breakpoint
-CREATE UNIQUE INDEX `users_mobile_idx` ON `users` (`mobile`);
+CREATE UNIQUE INDEX `users_phone_number_idx` ON `users` (`phone_number`);--> statement-breakpoint
+CREATE UNIQUE INDEX `users_email_idx` ON `users` (`email`);--> statement-breakpoint
+CREATE TABLE `verifications` (
+	`id` text PRIMARY KEY NOT NULL,
+	`identifier` text NOT NULL,
+	`value` text NOT NULL,
+	`expires_at` integer NOT NULL,
+	`created_at` integer DEFAULT (unixepoch()) NOT NULL,
+	`updated_at` integer DEFAULT (unixepoch()) NOT NULL
+);
+--> statement-breakpoint
+CREATE INDEX `verifications_identifier_idx` ON `verifications` (`identifier`);

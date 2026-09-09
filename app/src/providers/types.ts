@@ -20,7 +20,7 @@ export type Payment = {
 
 export interface OtpSender {
   readonly name: string
-  send: (input: { mobile: string; code: string }) => Promise<void>
+  send: (input: { phoneNumber: string; code: string }) => Promise<void>
 }
 
 export interface PaymentGateway {

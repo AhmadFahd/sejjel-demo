@@ -1,3 +1,4 @@
+import { appendFileSync } from 'node:fs'
 import type { OtpSender } from './types'
 
 /**
@@ -6,11 +7,17 @@ import type { OtpSender } from './types'
  */
 export function createLoggingOtpSender(
   log: (message: string) => void = console.info,
+  /**
+   * Where the browser tests read the code from. A file, not an endpoint: an
+   * endpoint that hands out codes is a way in, however well guarded.
+   */
+  sink: string | undefined = process.env.OTP_LOG_FILE,
 ): OtpSender {
   return {
     name: 'log',
-    async send({ mobile, code }) {
-      log(`[otp] ${mobile} → ${code}`)
+    async send({ phoneNumber, code }) {
+      log(`[otp] ${phoneNumber} → ${code}`)
+      if (sink) appendFileSync(sink, `${phoneNumber} ${code}\n`)
     },
   }
 }

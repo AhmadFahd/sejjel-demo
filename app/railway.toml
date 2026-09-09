@@ -14,9 +14,11 @@ builder = "NIXPACKS"
 buildCommand = "npm run build"
 
 [deploy]
-# Migrations run before the new version takes traffic, and a failure here
-# stops the deploy rather than leaving a half-migrated database serving.
-preDeployCommand = "npm run db:migrate"
+# Runs before the new version takes traffic: migrate, repair a schema that
+# cannot be migrated (never in production), and seed an empty database. A
+# failure here stops the deploy rather than leaving a half-migrated database
+# serving. SEED_SCENARIO picks what an empty environment gets.
+preDeployCommand = "npm run db:deploy"
 startCommand = "npm start"
 healthcheckPath = "/"
 healthcheckTimeout = 300
