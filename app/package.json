@@ -26,7 +26,8 @@
     "db:seed": "tsx src/db/seed.ts",
     "db:studio": "drizzle-kit studio",
     "preflight": "tsx src/preflight.ts",
-    "db:reset": "tsx src/db/seed.ts --reset-only"
+    "db:reset": "tsx src/db/seed.ts --reset-only",
+    "db:deploy": "tsx src/db/deploy-cli.ts"
   },
   "dependencies": {
     "@libsql/client": "^0.18.0",

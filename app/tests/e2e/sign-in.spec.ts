@@ -32,10 +32,12 @@ test('a seeded customer signs in with a code, and stays signed in', async ({
   await expect(page.getByTestId('session')).toContainText('أحمد محمد')
 })
 
+// Each test signs in as a different seeded person: a new code replaces the
+// last one for that number, so two tests sharing a number race each other.
 test('a wrong code is refused', async ({ page }) => {
   await page.goto('/sign-in')
 
-  await page.getByLabel('رقم الجوال').fill('0550123456')
+  await page.getByLabel('رقم الجوال').fill('0533456789')
   await page.getByRole('button', { name: 'أرسل الرمز' }).click()
   await page.getByLabel('رمز التحقق').fill('000000')
   await page.getByRole('button', { name: 'دخول' }).click()
