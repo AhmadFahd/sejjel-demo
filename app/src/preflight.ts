@@ -1,28 +1,35 @@
 import { databaseConfigFromEnv } from './db/client'
-import {
-  providerConfigFromEnv,
-  assertProductionSafe,
-} from './providers/registry'
+import { describeStartupProblems } from './lib/startup'
+import { providerConfigFromEnv } from './providers/registry'
 
 /**
- * Runs before the server does, as part of `npm start`. Production with a fake
- * OTP sender or gateway is worse than production that will not start.
+ * Runs before the server does, as part of `npm start`. Anything wrong here is
+ * wrong for every request, so it is better said once at boot than five hundred
+ * times a minute afterwards.
  */
 const providers = providerConfigFromEnv()
-assertProductionSafe(providers)
-
 const database = databaseConfigFromEnv()
-if (providers.isProduction && !database.url.startsWith('libsql://')) {
+
+const FAKES = new Set(['log', 'fake'])
+const fakeProviders = (['otp', 'payments', 'push'] as const).filter((key) =>
+  FAKES.has(providers[key]),
+)
+
+const problems = describeStartupProblems({
+  appEnv: providers.appEnv,
+  databaseUrl: database.url,
+  authSecret: process.env.AUTH_SECRET,
+  fakeProviders,
+})
+
+if (problems.length > 0) {
   throw new Error(
-    `Refusing to start in production against ${database.url}: production is Turso`,
+    `Refusing to start in ${providers.appEnv}:\n  - ${problems.join('\n  - ')}`,
   )
 }
 
-if (providers.isProduction && !process.env.AUTH_SECRET) {
-  throw new Error('Refusing to start in production without AUTH_SECRET')
-}
-
 console.log(
-  `Preflight passed: db=${database.url.split(':')[0]} otp=${providers.otp} ` +
-    `payments=${providers.payments} storage=${providers.storage} push=${providers.push}`,
+  `Preflight passed: env=${providers.appEnv} db=${database.url.split(':')[0]} ` +
+    `otp=${providers.otp} payments=${providers.payments} ` +
+    `storage=${providers.storage} push=${providers.push}`,
 )

@@ -15,8 +15,15 @@ export type SignedInUser = {
  */
 export const loadSignedInUser = createServerFn({ method: 'GET' }).handler(
   async (): Promise<SignedInUser | null> => {
-    const { readSignedInUser } = await import('./session.server')
-    return readSignedInUser()
+    try {
+      const { readSignedInUser } = await import('./session.server')
+      return await readSignedInUser()
+    } catch (error) {
+      // Nobody, as far as this page is concerned. A broken session store is a
+      // signed-out visitor, not a five hundred.
+      console.error('Could not read the session', error)
+      return null
+    }
   },
 )
 

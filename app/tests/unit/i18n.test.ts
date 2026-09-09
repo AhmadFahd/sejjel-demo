@@ -41,6 +41,15 @@ describe('catalogues', () => {
     }
   })
 
+  /**
+   * The shell renders through this. A locale it does not have must not be an
+   * exception, or a failed loader turns into a blank page.
+   */
+  it('falls back rather than throwing on a locale it does not have', () => {
+    const t = createTranslate(undefined)
+    expect(t('appName')).toBe('سجّل')
+  })
+
   it('fills placeholders, and leaves an unknown one alone', () => {
     const t = createTranslate('en')
     expect(t('limit.used', { percent: 60 })).toBe('60% of the limit used')
