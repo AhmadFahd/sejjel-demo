@@ -85,6 +85,47 @@ test('a customer is sent back from the shop side', async ({ page }) => {
   await expect(page).toHaveURL(/\/customer$/)
 })
 
+/**
+ * UC-09: أحمد owes three shops in the fixture, one of them settled. The total
+ * is the sum of the two he still owes, so it is a check that the customer's
+ * figures come from the same derivation the merchant's do.
+ */
+test('a customer sees every shop they owe, and can open one', async ({
+  page,
+}) => {
+  await signIn(page, '0550123456', '+966550123456')
+  await expect(page).toHaveURL(/\/customer$/)
+
+  await expect(page.getByTestId('connection-row')).toHaveCount(3)
+  await expect(page.locator('main')).toContainText('1,220')
+
+  await page
+    .getByTestId('connection-row')
+    .filter({ hasText: 'بقالة الريان' })
+    .click()
+
+  await expect(page.getByText('بقالة الريان')).toBeVisible()
+  // His history at that shop: a purchase of 1,000 and a payment of 200.
+  const history = page.getByTestId('transactions')
+  await expect(history).toContainText('1,000')
+  await expect(history).toContainText('200')
+  await expect(page.getByTestId('pager')).toHaveCount(0)
+})
+
+test('a customer cannot open another customer’s account', async ({ page }) => {
+  await signIn(page, '0533456789', '+966533456789')
+  await expect(page).toHaveURL(/\/customer$/)
+
+  const mine = page.getByTestId('connection-row').first()
+  const href = await mine.getAttribute('href')
+  const stranger = `${href?.replace(/[^/]+$/, '')}not-my-connection`
+
+  await page.goto(stranger)
+
+  await expect(page.getByTestId('transactions')).toHaveCount(0)
+  await expect(page.getByRole('heading', { level: 1 })).toHaveText('غير موجود')
+})
+
 test('signing out ends the session and the ledger is closed again', async ({
   page,
 }) => {

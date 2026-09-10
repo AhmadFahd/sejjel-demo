@@ -3,6 +3,7 @@ import type { Database } from '#/db/client'
 import { balanceOf } from '#/db/derive'
 import {
   getConnectionSummary,
+  getCustomerTotals,
   getMerchantTotals,
   listCustomerConnections,
   listMerchantConnections,
@@ -282,7 +283,7 @@ describe('getMerchantTotals', () => {
 
     const totals = await getMerchantTotals(db, merchant.id)
 
-    expect(totals.customers).toBe(2)
+    expect(totals.connections).toBe(2)
     expect(totals.outstandingHalalas).toBe(riyalsToHalalas(800))
     expect(totals.overdueHalalas).toBe(0)
     expect(totals.purchases).toBe(2)
@@ -331,7 +332,7 @@ describe('getMerchantTotals', () => {
     const merchant = await makeMerchant(db)
 
     expect(await getMerchantTotals(db, merchant.id)).toEqual({
-      customers: 0,
+      connections: 0,
       outstandingHalalas: 0,
       overdueHalalas: 0,
       purchases: 0,
@@ -350,8 +351,49 @@ describe('getMerchantTotals', () => {
 
     const totals = await getMerchantTotals(db, mine.id)
 
-    expect(totals.customers).toBe(0)
+    expect(totals.connections).toBe(0)
     expect(totals.outstandingHalalas).toBe(0)
+  })
+})
+
+describe('getCustomerTotals', () => {
+  it('adds up what one person owes across shops, and nobody else’s debt', async () => {
+    const customer = await makeUser(db)
+    const stranger = await makeUser(db)
+    const noor = await makeMerchant(db, { name: 'سوق النور' })
+    const duha = await makeMerchant(db, { name: 'مخبز الضحى' })
+
+    const atNoor = await makeConnection(db, {
+      merchantId: noor.id,
+      customerUserId: customer.id,
+    })
+    const atDuha = await makeConnection(db, {
+      merchantId: duha.id,
+      customerUserId: customer.id,
+    })
+    const theirs = await makeConnection(db, {
+      merchantId: noor.id,
+      customerUserId: stranger.id,
+    })
+
+    await makeTransaction(db, {
+      connectionId: atNoor.id,
+      amountHalalas: riyalsToHalalas(350),
+    })
+    await makeTransaction(db, {
+      connectionId: atDuha.id,
+      amountHalalas: riyalsToHalalas(420),
+    })
+    await makeTransaction(db, {
+      connectionId: theirs.id,
+      amountHalalas: riyalsToHalalas(900),
+    })
+
+    const totals = await getCustomerTotals(db, customer.id)
+
+    expect(totals.connections).toBe(2)
+    expect(totals.outstandingHalalas).toBe(riyalsToHalalas(770))
+    expect(totals.purchases).toBe(2)
   })
 })
 
