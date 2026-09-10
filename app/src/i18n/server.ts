@@ -24,7 +24,10 @@ export const loadLocale = createServerFn({ method: 'GET' }).handler(
     } catch (error) {
       // Which language to render in is not worth a blank page. Say so loudly
       // and carry on with what the cookie knows.
-      console.error('Could not read the session while choosing a locale', error)
+      const { log, describeError } = await import('#/lib/log')
+      log.error('Could not read the session while choosing a locale', {
+        error: describeError(error),
+      })
       return fromCookie
     }
   },

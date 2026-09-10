@@ -1,6 +1,7 @@
 import { createDatabase, databaseConfigFromEnv } from './client'
 import { prepareForDeploy } from './deploy'
 import { providerConfigFromEnv } from '#/providers/registry'
+import { log } from '#/lib/log'
 
 /**
  * The pre-deploy step. Migrates, repairs a schema that cannot be migrated
@@ -15,14 +16,12 @@ const { isProduction, appEnv } = providerConfigFromEnv()
 const report = await prepareForDeploy(createDatabase(config), {
   isProduction,
   scenario: process.env.SEED_SCENARIO,
+  log: (message) => log.warn(message),
 })
 
-console.log(
-  [
-    `Database ready for ${appEnv}:`,
-    report.rebuilt ? 'schema rebuilt,' : 'migrated,',
-    report.seeded
-      ? `seeded "${report.seeded}"`
-      : `not seeded (${report.reason})`,
-  ].join(' '),
-)
+log.info('Database ready', {
+  env: appEnv,
+  rebuilt: report.rebuilt,
+  seeded: report.seeded,
+  reason: report.reason,
+})

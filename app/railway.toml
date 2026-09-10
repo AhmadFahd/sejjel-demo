@@ -14,10 +14,11 @@ builder = "NIXPACKS"
 buildCommand = "npm run build"
 
 [deploy]
-# Runs before the new version takes traffic: migrate, repair a schema that
-# cannot be migrated (never in production), and seed an empty database. A
-# failure here stops the deploy rather than leaving a half-migrated database
-# serving. SEED_SCENARIO picks what an empty environment gets.
+# Migrate, repair and seed before the new version takes traffic, so a bad
+# migration stops the deploy. `npm start` does the same work again on boot and
+# it is safe to repeat: this hook is a setting on a dashboard, and an app that
+# only works when somebody remembered to configure it is an app that will come
+# up one day against a database nothing has migrated.
 preDeployCommand = "npm run db:deploy"
 startCommand = "npm start"
 healthcheckPath = "/"
