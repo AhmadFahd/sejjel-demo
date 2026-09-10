@@ -58,8 +58,10 @@ describe('provider configuration', () => {
 
 describe('the logging OTP sender', () => {
   it('writes the code to the log and returns nothing a caller could leak', async () => {
-    const lines: Array<string> = []
-    const sender = createLoggingOtpSender((line) => lines.push(line))
+    const written: Array<[string, string]> = []
+    const sender = createLoggingOtpSender((phoneNumber, code) =>
+      written.push([phoneNumber, code]),
+    )
 
     const result = await sender.send({
       phoneNumber: '+966550123456',
@@ -67,7 +69,7 @@ describe('the logging OTP sender', () => {
     })
 
     expect(result).toBeUndefined()
-    expect(lines).toEqual(['[otp] +966550123456 → 4821'])
+    expect(written).toEqual([['+966550123456', '4821']])
   })
 })
 

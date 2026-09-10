@@ -3,6 +3,8 @@ export type StartupEnvironment = {
   databaseUrl: string
   authSecret: string | undefined
   fakeProviders: Array<string>
+  /** A code that signs anyone in, if one is configured. */
+  fixedOtpCode?: string | undefined
 }
 
 /**
@@ -15,6 +17,9 @@ export function isDeployed(appEnv: string) {
 }
 
 const MINIMUM_SECRET_LENGTH = 32
+
+/** Kept here rather than imported, so this module stays free of the auth stack. */
+const FIXED_OTP_SHAPE = /^\d{4,8}$/
 
 /**
  * Everything that would otherwise be found out by a request failing. Returned
@@ -35,6 +40,16 @@ export function describeStartupProblems(
 
   if (production && !env.databaseUrl.startsWith('libsql://')) {
     problems.push(`production is Turso, not ${env.databaseUrl}`)
+  }
+
+  if (env.fixedOtpCode !== undefined) {
+    if (production) {
+      problems.push(
+        'OTP_FIXED_CODE is set. A code that always works is a key to every account, and production is not the place for one',
+      )
+    } else if (!FIXED_OTP_SHAPE.test(env.fixedOtpCode)) {
+      problems.push('OTP_FIXED_CODE has to be four to eight digits')
+    }
   }
 
   if (isDeployed(env.appEnv)) {

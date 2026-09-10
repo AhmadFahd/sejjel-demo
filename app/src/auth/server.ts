@@ -5,7 +5,7 @@ import { getDatabase } from '#/db/client'
 import { accounts, sessions, users, verifications } from '#/db/schema'
 import { getProviders, providerConfigFromEnv } from '#/providers/registry'
 import { log } from '#/lib/log'
-import { SAUDI_MOBILE } from './phone'
+import { SAUDI_MOBILE, fixedOtpFromEnv } from './phone'
 
 /** Five minutes is long enough to read an SMS and short enough to be worth stealing. */
 const OTP_TTL_SECONDS = 300
@@ -30,6 +30,14 @@ function baseUrlFromEnv() {
 let cached: ReturnType<typeof createAuth> | undefined
 
 function createAuth() {
+  const fixedCode = fixedOtpFromEnv()
+
+  if (fixedCode) {
+    log.warn('Every sign-in on this deployment accepts one fixed code', {
+      reason: 'OTP_FIXED_CODE is set',
+    })
+  }
+
   return betterAuth({
     appName: 'sejjel',
     baseURL: baseUrlFromEnv(),
@@ -97,8 +105,21 @@ function createAuth() {
         allowedAttempts: ALLOWED_ATTEMPTS,
         phoneNumberValidator: (value) => SAUDI_MOBILE.test(value),
         sendOTP: async ({ phoneNumber: to, code }) => {
-          await getProviders().otp.send({ phoneNumber: to, code })
+          // With a fixed code configured, send that one: a log that disagrees
+          // with what the screen accepts is worse than no log at all.
+          await getProviders().otp.send({
+            phoneNumber: to,
+            code: fixedCode ?? code,
+          })
         },
+        /**
+         * Replaces the generated code entirely, rather than sitting beside it,
+         * so there is one answer to what will be accepted. Refused in
+         * production by the startup check.
+         */
+        ...(fixedCode
+          ? { verifyOTP: ({ code }: { code: string }) => code === fixedCode }
+          : {}),
         /**
          * No `signUpOnVerification`: a number nobody has connected to a shop
          * gets no account. Accounts are created by the handshake (#38), not by

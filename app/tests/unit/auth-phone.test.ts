@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { normaliseSaudiMobile } from '#/auth/phone'
+import { fixedOtpFromEnv, normaliseSaudiMobile } from '#/auth/phone'
 
 describe('normaliseSaudiMobile', () => {
   it.each([
@@ -20,5 +20,19 @@ describe('normaliseSaudiMobile', () => {
     ['+447700900000', 'not Saudi'],
   ])('refuses %s (%s)', (typed) => {
     expect(normaliseSaudiMobile(typed)).toBeNull()
+  })
+})
+
+describe('fixedOtpFromEnv', () => {
+  it('is nothing when the variable is not set', () => {
+    expect(fixedOtpFromEnv({})).toBeUndefined()
+  })
+
+  it('is nothing when the variable is set to nothing', () => {
+    expect(fixedOtpFromEnv({ OTP_FIXED_CODE: '  ' })).toBeUndefined()
+  })
+
+  it('reads the code, without the spaces around it', () => {
+    expect(fixedOtpFromEnv({ OTP_FIXED_CODE: ' 123456 ' })).toBe('123456')
   })
 })
