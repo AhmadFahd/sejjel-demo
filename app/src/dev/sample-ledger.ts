@@ -5,6 +5,9 @@
  */
 import { riyalsToHalalas } from '#/lib/money'
 
+/** A Tuesday, so the gallery shows what a real pay-day looks like. */
+export const SAMPLE_NEXT_PAYDAY = new Date('2026-09-15T00:00:00Z')
+
 export const SAMPLE_CUSTOMERS = [
   {
     name: 'أحمد محمد',
@@ -29,6 +32,14 @@ export const SAMPLE_CUSTOMERS = [
     balanceHalalas: riyalsToHalalas(1250),
     limitHalalas: riyalsToHalalas(1500),
     dueAt: new Date('2026-07-27T00:00:00Z'),
+  },
+  {
+    name: 'نورة الحربي',
+    mobile: '0500 000 001',
+    status: 'due_soon' as const,
+    balanceHalalas: riyalsToHalalas(180),
+    limitHalalas: riyalsToHalalas(1000),
+    dueAt: SAMPLE_NEXT_PAYDAY,
   },
 ]
 

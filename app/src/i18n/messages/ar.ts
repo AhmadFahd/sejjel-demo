@@ -81,10 +81,12 @@ export const ar = {
   'status.settled': 'مسدد',
   'status.overdue': 'تجاوز الموعد',
   'status.at_limit': 'بلغ الحد',
+  'status.due_soon': 'يستحق قريبًا',
   'status.open': 'حساب قائم',
 
   'payday.title': 'تاريخ الاستحقاق الموحد: كل ثلاثاء',
   'payday.note': 'يوم السداد الموحد — تجميع مرن لكل حساباتك لسهولة الدفع',
+  'payday.next': 'يوم السداد القادم: {date}',
 
   'limit.used': 'المستهلك {percent}% من الحد',
   'limit.nearlyFull': 'اقتربت من استهلاك الحد ({percent}%) — يُنصح بالسداد',

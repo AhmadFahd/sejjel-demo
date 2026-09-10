@@ -31,6 +31,15 @@ test('a shopkeeper lands on their shop', async ({ page }) => {
   )
   // The shop's three customers, from the fixture.
   await expect(page.getByText('سالم العتيبي')).toBeVisible()
+
+  // UC-19: the strip names the coming Tuesday, and the states below it are
+  // worked out from today rather than stored, so سالم reads as past due.
+  const strip = page.getByTestId('payday-strip')
+  await expect(strip).toContainText('كل ثلاثاء')
+  await expect(strip).toContainText('يوم السداد القادم')
+  await expect(
+    page.getByTestId('connection-row').filter({ hasText: 'سالم العتيبي' }),
+  ).toContainText('تجاوز الموعد')
 })
 
 test('a shopkeeper is sent back from the customer side, which is not theirs', async ({

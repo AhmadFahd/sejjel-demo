@@ -13,6 +13,7 @@ import {
 } from '#/db/queries/ledger'
 import { merchants, users } from '#/db/schema'
 import { riyalsToHalalas } from '#/lib/money'
+import { PAYDAY_WEEKDAY, riyadhWeekday } from '#/lib/payday'
 import { eq } from 'drizzle-orm'
 import { createTestDatabase } from '../support/database'
 
@@ -43,6 +44,28 @@ describe('scenarios', () => {
 
     const salem = rows.find((row) => row.customerName === 'سالم العتيبي')
     expect(salem?.limitHalalas).toBe(riyalsToHalalas(1500))
+  })
+
+  it('dates the fixture from the seed, so its states hold as time passes', async () => {
+    await applyScenario(db, 'poc')
+
+    const [riyan] = await db
+      .select()
+      .from(merchants)
+      .where(eq(merchants.name, 'بقالة الريان'))
+    const rows = await listMerchantConnections(db, riyan.id)
+    const byName = Object.fromEntries(
+      rows.map((row) => [row.customerName, row]),
+    )
+
+    // Every due date the rule produced is a Tuesday, whenever the seed ran.
+    for (const row of rows) {
+      if (row.dueAt) expect(riyadhWeekday(row.dueAt)).toBe(PAYDAY_WEEKDAY)
+    }
+
+    expect(byName['أحمد محمد'].status).toBe('open')
+    expect(byName['خالد علي'].status).toBe('settled')
+    expect(byName['سالم العتيبي'].status).toBe('overdue')
   })
 
   it('gives أحمد the two other shops he owes', async () => {

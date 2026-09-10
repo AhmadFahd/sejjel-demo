@@ -1,3 +1,4 @@
+import { dueDateFor } from '#/lib/payday'
 import { riyalsToHalalas } from '#/lib/money'
 import { connections, merchants, transactions, users } from '../schema'
 import type { Database } from '../client'
@@ -85,6 +86,21 @@ export async function connect(
   return row
 }
 
+/**
+ * UC-19: a purchase falls due on the first pay-day after the shop's term, and
+ * a scenario says so by naming the term rather than by working out a Tuesday.
+ * An explicit date is still honoured, for a fixture that needs one.
+ */
+function dueAtFor(purchase: {
+  at: Date
+  dueAt?: Date
+  termDays?: number
+}): Date | null {
+  if (purchase.dueAt) return purchase.dueAt
+  if (purchase.termDays === undefined) return null
+  return dueDateFor(purchase.at, purchase.termDays)
+}
+
 export async function recordPurchase(
   db: Database,
   purchase: {
@@ -106,7 +122,7 @@ export async function recordPurchase(
       amountHalalas: riyalsToHalalas(purchase.riyals),
       description: purchase.description,
       termDaysSnapshot: purchase.termDays ?? null,
-      dueAt: purchase.dueAt ?? null,
+      dueAt: dueAtFor(purchase),
       appliedAt: purchase.status === 'pending' ? null : purchase.at,
       createdAt: purchase.at,
     })

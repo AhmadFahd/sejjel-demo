@@ -83,10 +83,12 @@ export const en = {
   'status.settled': 'Settled',
   'status.overdue': 'Past due',
   'status.at_limit': 'At the limit',
+  'status.due_soon': 'Due soon',
   'status.open': 'Open account',
 
   'payday.title': 'One due day: every Tuesday',
   'payday.note': 'Everything you owe falls due together, to make paying simple',
+  'payday.next': 'Next pay-day: {date}',
 
   'limit.used': '{percent}% of the limit used',
   'limit.nearlyFull': 'Close to the limit ({percent}%). Settling is advised',

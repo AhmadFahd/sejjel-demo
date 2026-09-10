@@ -1,7 +1,10 @@
 import { and, desc, eq, sql } from 'drizzle-orm'
 import type { Database } from '../client'
 import { connections, merchants, transactions, users } from '../schema'
-import { availableOf, limitOf, termOf } from '../derive'
+import { availableOf, limitOf, statusOf, termOf } from '../derive'
+import { daysOverdue, dueStateOf } from '#/lib/payday'
+import type { DueState } from '#/lib/payday'
+import type { LedgerStatus } from '../derive'
 
 /**
  * Balances are derived in SQL from applied rows, the same rule `balanceOf`
@@ -40,19 +43,25 @@ export type ConnectionSummary = {
   availableHalalas: number
   termDays: number
   dueAt: Date | null
+  dueState: DueState
+  daysOverdue: number
+  status: LedgerStatus
   purchases: number
   payments: number
 }
 
-function toSummary(row: {
-  connection: typeof connections.$inferSelect
-  merchant: typeof merchants.$inferSelect
-  customer: typeof users.$inferSelect
-  balance: number
-  purchases: number
-  payments: number
-  dueAt: number | null
-}): ConnectionSummary {
+function toSummary(
+  now: Date,
+  row: {
+    connection: typeof connections.$inferSelect
+    merchant: typeof merchants.$inferSelect
+    customer: typeof users.$inferSelect
+    balance: number
+    purchases: number
+    payments: number
+    dueAt: number | null
+  },
+): ConnectionSummary {
   const source = {
     defaultLimitHalalas: row.merchant.defaultLimitHalalas,
     defaultTermDays: row.merchant.defaultTermDays,
@@ -61,6 +70,7 @@ function toSummary(row: {
   }
   const limitHalalas = limitOf(source)
   const balanceHalalas = Number(row.balance)
+  const dueAt = row.dueAt === null ? null : new Date(Number(row.dueAt) * 1000)
 
   return {
     connectionId: row.connection.id,
@@ -73,7 +83,10 @@ function toSummary(row: {
     limitHalalas,
     availableHalalas: availableOf(balanceHalalas, limitHalalas),
     termDays: termOf(source),
-    dueAt: row.dueAt === null ? null : new Date(Number(row.dueAt) * 1000),
+    dueAt,
+    dueState: dueStateOf(dueAt, now),
+    daysOverdue: dueAt ? daysOverdue(dueAt, now) : 0,
+    status: statusOf({ balanceHalalas, limitHalalas, dueAt, now }),
     purchases: Number(row.purchases),
     payments: Number(row.payments),
   }
@@ -103,6 +116,7 @@ function summaryQuery(db: Database) {
 export async function listMerchantConnections(
   db: Database,
   merchantId: string,
+  now: Date = new Date(),
 ) {
   const rows = await summaryQuery(db)
     .where(
@@ -112,11 +126,15 @@ export async function listMerchantConnections(
       ),
     )
     .orderBy(users.name)
-  return rows.map(toSummary)
+  return rows.map((row) => toSummary(now, row))
 }
 
 /** UC-09: every shop one customer owes. */
-export async function listCustomerConnections(db: Database, userId: string) {
+export async function listCustomerConnections(
+  db: Database,
+  userId: string,
+  now: Date = new Date(),
+) {
   const rows = await summaryQuery(db)
     .where(
       and(
@@ -125,13 +143,17 @@ export async function listCustomerConnections(db: Database, userId: string) {
       ),
     )
     .orderBy(merchants.name)
-  return rows.map(toSummary)
+  return rows.map((row) => toSummary(now, row))
 }
 
-export async function getConnectionSummary(db: Database, connectionId: string) {
+export async function getConnectionSummary(
+  db: Database,
+  connectionId: string,
+  now: Date = new Date(),
+) {
   const rows = await summaryQuery(db).where(eq(connections.id, connectionId))
   const row = rows.at(0)
-  return row ? toSummary(row) : null
+  return row ? toSummary(now, row) : null
 }
 
 /** UC-03: the transaction list, newest first, a page at a time. */
