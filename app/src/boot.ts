@@ -1,5 +1,6 @@
 import { createDatabase, databaseConfigFromEnv } from './db/client'
 import { prepareForDeploy } from './db/deploy'
+import { fixedOtpFromEnv } from './auth/phone'
 import { describeStartupProblems } from './lib/startup'
 import { describeError, log } from './lib/log'
 import { providerConfigFromEnv } from './providers/registry'
@@ -26,6 +27,7 @@ const problems = describeStartupProblems({
   databaseUrl: database.url,
   authSecret: process.env.AUTH_SECRET,
   fakeProviders,
+  fixedOtpCode: fixedOtpFromEnv(),
 })
 
 if (problems.length > 0) {
