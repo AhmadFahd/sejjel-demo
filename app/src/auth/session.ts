@@ -1,4 +1,5 @@
 import { createServerFn } from '@tanstack/react-start'
+import type { Roles } from './roles'
 import type { Locale } from '#/i18n/locales'
 
 export type SignedInUser = {
@@ -7,6 +8,7 @@ export type SignedInUser = {
   phoneNumber: string
   locale: Locale
   hideAmounts: boolean
+  roles: Roles
 }
 
 /**

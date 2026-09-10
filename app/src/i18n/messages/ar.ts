@@ -34,6 +34,34 @@ export const ar = {
   'auth.error.tooMany': 'محاولات كثيرة. اطلب رمزًا جديدًا.',
   'auth.error.generic': 'حدث خطأ. حاول مرة أخرى.',
 
+  'role.merchant': 'متجري',
+  'role.customer': 'ما عليّ',
+  'role.switchToMerchant': 'الانتقال إلى متجري',
+  'role.switchToCustomer': 'الانتقال إلى ما عليّ',
+
+  'welcome.title': 'لا شيء هنا بعد',
+  'welcome.body':
+    'لم يربطك أي متجر، ولا تدير متجرًا. يربطك المتجر أول مرة يسجّل لك فيها عملية بالآجل.',
+  'welcome.openShop': 'لديّ متجر',
+
+  'shop.newTitle': 'افتح متجرك',
+  'shop.name': 'اسم المتجر',
+  'shop.defaultLimit': 'حد الائتمان الافتراضي',
+  'shop.defaultTerm': 'مدة السداد الافتراضية بالأيام',
+  'shop.defaultsNote':
+    'ما يبدأ به العميل الجديد. يمكن تغيير أيٍّ منهما لعميل بعينه لاحقًا.',
+  'shop.open': 'افتح المتجر',
+  'shop.error.name': 'المتجر يحتاج اسمًا',
+  'shop.error.limit': 'حد بين 1 و100,000 ر.س',
+  'shop.error.term': 'مدة بين يوم واحد و90 يومًا',
+  'shop.error.already': 'لديك متجر بالفعل',
+
+  'merchant.noCustomers': 'لا عملاء بعد',
+  'merchant.noCustomersBody': 'ينضم العميل أول مرة تسجّل له فيها عملية بالآجل.',
+  'customer.noMerchants': 'لا متاجر بعد',
+  'customer.noMerchantsBody':
+    'يظهر المتجر هنا أول مرة يسجّل لك فيها عملية بالآجل.',
+
   'money.currency': 'ر.س',
   'money.hidden': '••••',
 

@@ -4,6 +4,7 @@ import { getAuth } from './server'
 import { getDatabase } from '#/db/client'
 import { users } from '#/db/schema'
 import { DEFAULT_LOCALE, isLocale } from '#/i18n/locales'
+import { resolveRoles } from './roles.server'
 import type { SignedInUser } from './session'
 
 /**
@@ -36,6 +37,7 @@ export async function readSignedInUser(): Promise<SignedInUser | null> {
     phoneNumber: row.phoneNumber,
     locale: isLocale(row.locale) ? row.locale : DEFAULT_LOCALE,
     hideAmounts: row.hideAmounts,
+    roles: await resolveRoles(row.id),
   }
 }
 

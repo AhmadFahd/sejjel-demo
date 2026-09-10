@@ -61,6 +61,18 @@ describe('scenarios', () => {
     ])
   })
 
+  it('includes a person on neither side of the ledger', async () => {
+    await applyScenario(db, 'poc')
+
+    const [noura] = await db
+      .select()
+      .from(users)
+      .where(eq(users.phoneNumber, '+966500000001'))
+
+    expect(noura).toBeDefined()
+    expect(await listCustomerConnections(db, noura.id)).toEqual([])
+  })
+
   it('verifies every seeded number, so a seeded person can sign in', async () => {
     await applyScenario(db, 'poc')
 

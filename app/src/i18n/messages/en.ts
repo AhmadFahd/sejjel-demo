@@ -35,6 +35,35 @@ export const en = {
   'auth.error.tooMany': 'Too many tries. Ask for a new code.',
   'auth.error.generic': 'Something went wrong. Try again.',
 
+  'role.merchant': 'My shop',
+  'role.customer': 'What I owe',
+  'role.switchToMerchant': 'Go to my shop',
+  'role.switchToCustomer': 'Go to what I owe',
+
+  'welcome.title': 'Nothing here yet',
+  'welcome.body':
+    'No shop has connected you, and you do not keep a shop. A shop connects you the first time it records something on credit.',
+  'welcome.openShop': 'I keep a shop',
+
+  'shop.newTitle': 'Open your shop',
+  'shop.name': 'Shop name',
+  'shop.defaultLimit': 'Default credit limit',
+  'shop.defaultTerm': 'Default term, in days',
+  'shop.defaultsNote':
+    'What a new customer starts with. Either can be changed for one customer later.',
+  'shop.open': 'Open the shop',
+  'shop.error.name': 'A shop needs a name',
+  'shop.error.limit': 'A limit between 1 and 100,000 ر.س',
+  'shop.error.term': 'A term between 1 and 90 days',
+  'shop.error.already': 'You already keep a shop',
+
+  'merchant.noCustomers': 'No customers yet',
+  'merchant.noCustomersBody':
+    'A customer joins the first time you record something on credit for them.',
+  'customer.noMerchants': 'No shops yet',
+  'customer.noMerchantsBody':
+    'A shop appears here the first time it records something on credit for you.',
+
   'money.currency': 'SAR',
   'money.hidden': '••••',
 
