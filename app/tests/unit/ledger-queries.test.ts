@@ -3,6 +3,7 @@ import type { Database } from '#/db/client'
 import { balanceOf } from '#/db/derive'
 import {
   getConnectionSummary,
+  getMerchantTotals,
   listCustomerConnections,
   listMerchantConnections,
   listTransactions,
@@ -255,5 +256,129 @@ describe('due state against the clock', () => {
     expect(summary.connectionId).toBe(connection.id)
     expect(summary.dueState).toBe('none')
     expect(summary.status).toBe('settled')
+  })
+})
+
+describe('getMerchantTotals', () => {
+  it('sums the shop position in SQL, over every customer and not a page', async () => {
+    const merchant = await makeMerchant(db, {
+      defaultLimitHalalas: riyalsToHalalas(1000),
+    })
+    const owing = await makeConnection(db, { merchantId: merchant.id })
+    const settled = await makeConnection(db, { merchantId: merchant.id })
+    await makeTransaction(db, {
+      connectionId: owing.id,
+      amountHalalas: riyalsToHalalas(800),
+    })
+    await makeTransaction(db, {
+      connectionId: settled.id,
+      amountHalalas: riyalsToHalalas(350),
+    })
+    await makeTransaction(db, {
+      connectionId: settled.id,
+      kind: 'payment',
+      amountHalalas: riyalsToHalalas(350),
+    })
+
+    const totals = await getMerchantTotals(db, merchant.id)
+
+    expect(totals.customers).toBe(2)
+    expect(totals.outstandingHalalas).toBe(riyalsToHalalas(800))
+    expect(totals.overdueHalalas).toBe(0)
+    expect(totals.purchases).toBe(2)
+    expect(totals.payments).toBe(1)
+  })
+
+  it('counts as overdue only what is owed past a due day that has gone', async () => {
+    const merchant = await makeMerchant(db)
+    const late = await makeConnection(db, { merchantId: merchant.id })
+    const soon = await makeConnection(db, { merchantId: merchant.id })
+    const paidLate = await makeConnection(db, { merchantId: merchant.id })
+
+    await makeTransaction(db, {
+      connectionId: late.id,
+      amountHalalas: riyalsToHalalas(500),
+      dueAt: new Date('2026-09-08T00:00:00+03:00'),
+    })
+    await makeTransaction(db, {
+      connectionId: soon.id,
+      amountHalalas: riyalsToHalalas(300),
+      dueAt: new Date('2026-09-22T00:00:00+03:00'),
+    })
+    // Owes nothing, so its gone-by date adds nothing to the overdue figure.
+    await makeTransaction(db, {
+      connectionId: paidLate.id,
+      amountHalalas: riyalsToHalalas(200),
+      dueAt: new Date('2026-09-01T00:00:00+03:00'),
+    })
+    await makeTransaction(db, {
+      connectionId: paidLate.id,
+      kind: 'payment',
+      amountHalalas: riyalsToHalalas(200),
+    })
+
+    const totals = await getMerchantTotals(
+      db,
+      merchant.id,
+      new Date('2026-09-15T02:00:00+03:00'),
+    )
+
+    expect(totals.outstandingHalalas).toBe(riyalsToHalalas(800))
+    expect(totals.overdueHalalas).toBe(riyalsToHalalas(500))
+  })
+
+  it('reads a shop with no customers as zero rather than nothing', async () => {
+    const merchant = await makeMerchant(db)
+
+    expect(await getMerchantTotals(db, merchant.id)).toEqual({
+      customers: 0,
+      outstandingHalalas: 0,
+      overdueHalalas: 0,
+      purchases: 0,
+      payments: 0,
+    })
+  })
+
+  it('leaves out another shop’s customers', async () => {
+    const mine = await makeMerchant(db)
+    const theirs = await makeMerchant(db)
+    const theirCustomer = await makeConnection(db, { merchantId: theirs.id })
+    await makeTransaction(db, {
+      connectionId: theirCustomer.id,
+      amountHalalas: riyalsToHalalas(900),
+    })
+
+    const totals = await getMerchantTotals(db, mine.id)
+
+    expect(totals.customers).toBe(0)
+    expect(totals.outstandingHalalas).toBe(0)
+  })
+})
+
+describe('paging the customer list', () => {
+  it('keeps a name shared by two customers on one page each', async () => {
+    const merchant = await makeMerchant(db)
+    for (const name of ['أحمد محمد', 'أحمد محمد', 'خالد علي']) {
+      const customer = await makeUser(db, { name })
+      await makeConnection(db, {
+        merchantId: merchant.id,
+        customerUserId: customer.id,
+      })
+    }
+
+    const first = await listMerchantConnections(db, merchant.id, new Date(), {
+      limit: 2,
+    })
+    const second = await listMerchantConnections(db, merchant.id, new Date(), {
+      limit: 2,
+      offset: 2,
+    })
+
+    expect(first).toHaveLength(2)
+    expect(second).toHaveLength(1)
+    expect(
+      new Set([...first, ...second].map((row) => row.connectionId)).size,
+    ).toBe(3)
+    expect(second[0].customerName).toBe('خالد علي')
   })
 })

@@ -20,6 +20,17 @@ export function normaliseSaudiMobile(input: string): string | null {
 }
 
 /**
+ * How a Saudi number is read aloud and written down: `0550 123 456`, not the
+ * E.164 the database keeps. A number that is not one of ours is handed back
+ * untouched rather than cut into groups that mean nothing.
+ */
+export function localSaudiMobile(e164: string): string {
+  if (!SAUDI_MOBILE.test(e164)) return e164
+  const digits = `0${e164.slice(4)}`
+  return `${digits.slice(0, 4)} ${digits.slice(4, 7)} ${digits.slice(7)}`
+}
+
+/**
  * A code that always works, for a deployment nobody can receive an SMS on.
  * When it is set, that is the code: the one written to the log is the same, so
  * the log never disagrees with what the screen accepts.
