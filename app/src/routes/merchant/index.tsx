@@ -1,42 +1,85 @@
-import { createFileRoute } from '@tanstack/react-router'
-import { requireSide } from '#/auth/guard'
-import { listMerchantConnections } from '#/db/queries/ledger'
-import { paydayOnOrAfter } from '#/lib/payday'
+import { Link, createFileRoute } from '@tanstack/react-router'
 import { createServerFn } from '@tanstack/react-start'
+import { requireSide } from '#/auth/guard'
+import { localSaudiMobile } from '#/auth/phone'
+import { getMerchantTotals, listMerchantConnections } from '#/db/queries/ledger'
+import { paydayOnOrAfter } from '#/lib/payday'
 import { AppBar } from '#/components/chrome'
-import { Card, KeyValueRow, StatusPill } from '#/components/primitives'
-import { PaydayStrip } from '#/components/ledger'
+import {
+  Avatar,
+  Card,
+  KeyValueRow,
+  MobileNumber,
+  StatTile,
+  StatusPill,
+  cx,
+} from '#/components/primitives'
+import { OperationsCounter, PaydayStrip } from '#/components/ledger'
 import { SideSwitch } from '#/components/side-switch'
 import { SignOutButton } from '#/components/sign-out'
 import { useI18n } from '#/i18n/context'
 
-const loadShop = createServerFn({ method: 'GET' }).handler(async () => {
-  const { requireSignedInUser } = await import('#/auth/session.server')
-  const { getDatabase } = await import('#/db/client')
-  const user = await requireSignedInUser()
-  const shop = user.roles.merchant
-  if (!shop) return null
+/** How many customers one screen of the list holds. */
+const PAGE_SIZE = 25
 
-  const now = new Date()
-  return {
-    shop,
-    customers: await listMerchantConnections(getDatabase(), shop.id, now),
-    nextPaydayAt: paydayOnOrAfter(now),
-    roles: user.roles,
-  }
-})
+const loadShop = createServerFn({ method: 'GET' })
+  .validator((input: unknown): { page: number } => {
+    const raw = input as { page?: unknown }
+    const page = Math.trunc(Number(raw.page))
+    return { page: Number.isFinite(page) && page > 1 ? page : 1 }
+  })
+  .handler(async ({ data }) => {
+    const { requireSignedInUser } = await import('#/auth/session.server')
+    const { getDatabase } = await import('#/db/client')
+    const user = await requireSignedInUser()
+    const shop = user.roles.merchant
+    if (!shop) return null
 
-/** A placeholder until UC-02 builds the real thing. */
+    const db = getDatabase()
+    const now = new Date()
+    const offset = (data.page - 1) * PAGE_SIZE
+
+    // Both queries read the same moment, so the figures and the pills below
+    // them cannot describe two different days.
+    const [totals, customers] = await Promise.all([
+      getMerchantTotals(db, shop.id, now),
+      listMerchantConnections(db, shop.id, now, {
+        limit: PAGE_SIZE,
+        offset,
+      }),
+    ])
+
+    return {
+      shop,
+      totals,
+      customers,
+      page: data.page,
+      pages: Math.max(1, Math.ceil(totals.customers / PAGE_SIZE)),
+      nextPaydayAt: paydayOnOrAfter(now),
+      roles: user.roles,
+    }
+  })
+
+/** UC-02: the shop's position, and every customer in it. */
 export const Route = createFileRoute('/merchant/')({
   beforeLoad: () => requireSide('merchant'),
-  loader: () => loadShop(),
+  // Page one carries no search parameter, so every other link to the shop —
+  // a guard sending someone back, the side switch — stays a bare `/merchant`.
+  validateSearch: (search: Record<string, unknown>): { page?: number } => {
+    const page = Math.trunc(Number(search.page))
+    return Number.isFinite(page) && page > 1 ? { page } : {}
+  },
+  loaderDeps: ({ search }) => ({ page: search.page ?? 1 }),
+  loader: ({ deps }) => loadShop({ data: { page: deps.page } }),
   component: MerchantHome,
 })
 
 function MerchantHome() {
   const data = Route.useLoaderData()
-  const { t, money, date } = useI18n()
+  const { t, money, number, date } = useI18n()
   if (!data) return null
+
+  const { totals } = data
 
   return (
     <>
@@ -51,9 +94,32 @@ function MerchantHome() {
       <main className="p-3.5">
         <h1 className="mb-3 text-xl font-black text-ink">{data.shop.name}</h1>
 
+        <div className="mb-3 grid grid-cols-3 gap-2">
+          <StatTile
+            label={t('ledger.customers')}
+            value={number(totals.customers)}
+          />
+          <StatTile
+            label={t('ledger.outstanding')}
+            value={money(totals.outstandingHalalas)}
+            tone="gold"
+          />
+          <StatTile
+            label={t('ledger.overdueTotal')}
+            value={money(totals.overdueHalalas)}
+            tone={totals.overdueHalalas > 0 ? 'bad' : 'plain'}
+            marked={totals.overdueHalalas > 0}
+          />
+        </div>
+
         <Card className="p-4">
           <PaydayStrip nextPaydayAt={data.nextPaydayAt} />
         </Card>
+
+        <OperationsCounter
+          purchases={totals.purchases}
+          payments={totals.payments}
+        />
 
         {data.customers.length === 0 ? (
           <Card>
@@ -65,15 +131,25 @@ function MerchantHome() {
             </p>
           </Card>
         ) : (
-          data.customers.map((row) => (
+          data.customers.map((row, index) => (
             <Card key={row.connectionId} data-testid="connection-row">
-              <div className="mb-2 flex items-center justify-between gap-2">
-                <span className="text-[15px] font-black text-ink">
-                  {row.customerName}
-                </span>
+              <div className="mb-3 flex items-center gap-2.5">
+                <Avatar name={row.customerName} index={index} />
+                <div className="flex-1">
+                  <div className="text-[15px] font-black text-ink">
+                    {row.customerName}
+                  </div>
+                  <MobileNumber>
+                    {localSaudiMobile(row.customerMobile)}
+                  </MobileNumber>
+                </div>
                 <StatusPill status={row.status} />
               </div>
-              <KeyValueRow label={t('ledger.balance')} emphasis>
+              <KeyValueRow
+                label={t('ledger.balance')}
+                emphasis
+                tone={row.status === 'overdue' ? 'bad' : 'plain'}
+              >
                 {money(row.balanceHalalas)}
               </KeyValueRow>
               <KeyValueRow label={t('ledger.dueDate')}>
@@ -82,7 +158,68 @@ function MerchantHome() {
             </Card>
           ))
         )}
+
+        <Pager page={data.page} pages={data.pages} />
       </main>
     </>
+  )
+}
+
+/**
+ * The list is paged rather than loaded whole, so a shop with a few hundred
+ * customers costs the same to open as a shop with three.
+ */
+function Pager({ page, pages }: { page: number; pages: number }) {
+  const { t, number } = useI18n()
+  if (pages < 2) return null
+
+  return (
+    <nav
+      className="flex items-center justify-between gap-2 py-2"
+      data-testid="pager"
+    >
+      <PagerLink to={page - 1} disabled={page <= 1}>
+        {t('page.previous')}
+      </PagerLink>
+      <span className="text-[12px] font-extrabold text-muted">
+        {t('page.position', { page: number(page), pages: number(pages) })}
+      </span>
+      <PagerLink to={page + 1} disabled={page >= pages}>
+        {t('page.next')}
+      </PagerLink>
+    </nav>
+  )
+}
+
+function PagerLink({
+  to,
+  disabled,
+  children,
+}: {
+  to: number
+  disabled: boolean
+  children: React.ReactNode
+}) {
+  const className = cx(
+    'rounded-(--radius-control) px-3 py-2 text-[13px] font-black',
+    disabled ? 'text-muted opacity-50' : 'bg-neutral-bg text-ink',
+  )
+
+  if (disabled) {
+    return (
+      <span className={className} aria-disabled>
+        {children}
+      </span>
+    )
+  }
+
+  return (
+    <Link
+      to="/merchant"
+      search={to > 1 ? { page: to } : {}}
+      className={className}
+    >
+      {children}
+    </Link>
   )
 }

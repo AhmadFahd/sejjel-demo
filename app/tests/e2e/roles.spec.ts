@@ -42,6 +42,29 @@ test('a shopkeeper lands on their shop', async ({ page }) => {
   ).toContainText('تجاوز الموعد')
 })
 
+/**
+ * UC-02: the figures come from the fixture's three customers — 800 owed, one
+ * settled, 1,250 past due — so they are a check that the shop's position is
+ * summed in the database rather than added up on the screen.
+ */
+test('the shop position is on the dashboard', async ({ page }) => {
+  await signIn(page, '0550111222', '+966550111222')
+
+  const main = page.locator('main')
+  await expect(main).toContainText('2,050')
+  await expect(main).toContainText('1,250')
+  await expect(page.getByTestId('connection-row')).toHaveCount(3)
+
+  // The operations counter: three purchases and two payments at this shop.
+  const counter = page.getByTestId('operations-counter')
+  await expect(counter).toContainText('العمليات')
+  await expect(counter).toContainText('شراء')
+  await expect(counter).toContainText('سداد')
+
+  // Three customers fit on one page, so there is nothing to page through.
+  await expect(page.getByTestId('pager')).toHaveCount(0)
+})
+
 test('a shopkeeper is sent back from the customer side, which is not theirs', async ({
   page,
 }) => {

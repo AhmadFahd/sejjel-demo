@@ -80,6 +80,10 @@ export const en = {
   'ledger.payments': 'Payments',
   'ledger.noDueDate': '—',
 
+  'page.previous': 'Previous',
+  'page.next': 'Next',
+  'page.position': 'Page {page} of {pages}',
+
   'status.settled': 'Settled',
   'status.overdue': 'Past due',
   'status.at_limit': 'At the limit',

@@ -1,5 +1,9 @@
 import { describe, expect, it } from 'vitest'
-import { fixedOtpFromEnv, normaliseSaudiMobile } from '#/auth/phone'
+import {
+  fixedOtpFromEnv,
+  localSaudiMobile,
+  normaliseSaudiMobile,
+} from '#/auth/phone'
 
 describe('normaliseSaudiMobile', () => {
   it.each([
@@ -34,5 +38,15 @@ describe('fixedOtpFromEnv', () => {
 
   it('reads the code, without the spaces around it', () => {
     expect(fixedOtpFromEnv({ OTP_FIXED_CODE: ' 123456 ' })).toBe('123456')
+  })
+})
+
+describe('localSaudiMobile', () => {
+  it('writes a number the way it is said', () => {
+    expect(localSaudiMobile('+966550123456')).toBe('0550 123 456')
+  })
+
+  it('leaves a number that is not one of ours alone', () => {
+    expect(localSaudiMobile('+13115552368')).toBe('+13115552368')
   })
 })

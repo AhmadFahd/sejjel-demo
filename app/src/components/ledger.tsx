@@ -152,7 +152,10 @@ export function OperationsCounter({
   const { t, number } = useI18n()
 
   return (
-    <Card className="flex items-center gap-3 px-3.5 py-3">
+    <Card
+      className="flex items-center gap-3 px-3.5 py-3"
+      data-testid="operations-counter"
+    >
       <span
         className="grid size-10 flex-none place-items-center rounded-xl bg-warn-bg text-warn-text"
         aria-hidden

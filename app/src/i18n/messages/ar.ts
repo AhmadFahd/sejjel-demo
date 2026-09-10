@@ -78,6 +78,10 @@ export const ar = {
   'ledger.payments': 'سداد',
   'ledger.noDueDate': '—',
 
+  'page.previous': 'السابق',
+  'page.next': 'التالي',
+  'page.position': 'صفحة {page} من {pages}',
+
   'status.settled': 'مسدد',
   'status.overdue': 'تجاوز الموعد',
   'status.at_limit': 'بلغ الحد',
