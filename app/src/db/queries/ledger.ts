@@ -1,4 +1,5 @@
 import { and, desc, eq, sql } from 'drizzle-orm'
+import type { SQL } from 'drizzle-orm'
 import type { Database } from '../client'
 import { connections, merchants, transactions, users } from '../schema'
 import { availableOf, limitOf, statusOf, termOf } from '../derive'
@@ -141,23 +142,23 @@ export async function listMerchantConnections(
 }
 
 /**
- * The figures at the top of the dashboard. They are summed in SQL over every
- * customer of the shop, not over the page the screen happens to be showing,
- * so the shop's position is the shop's position however the list is paged.
+ * The figures at the top of a dashboard, summed in SQL over every connection
+ * on that side of the ledger — not over the page the screen happens to be
+ * showing, so paging cannot change what is owed.
  */
-export type MerchantTotals = {
-  customers: number
+export type LedgerTotals = {
+  connections: number
   outstandingHalalas: number
   overdueHalalas: number
   purchases: number
   payments: number
 }
 
-export async function getMerchantTotals(
+async function totalsOver(
   db: Database,
-  merchantId: string,
-  now: Date = new Date(),
-): Promise<MerchantTotals> {
+  where: SQL | undefined,
+  now: Date,
+): Promise<LedgerTotals> {
   const perConnection = db
     .select({
       balance: balanceExpression.as('balance'),
@@ -167,16 +168,11 @@ export async function getMerchantTotals(
     })
     .from(connections)
     .leftJoin(transactions, eq(transactions.connectionId, connections.id))
-    .where(
-      and(
-        eq(connections.merchantId, merchantId),
-        eq(connections.status, 'active'),
-      ),
-    )
+    .where(where)
     .groupBy(connections.id)
     .as('per_connection')
 
-  // Overdue is the same line the pill uses: a due day earlier than today's,
+  // Overdue draws the same line the pill does: a due day earlier than today's,
   // with the day boundary Riyadh's rather than the server's.
   const today = Math.floor(startOfRiyadhDay(now).getTime() / 1000)
   const owed = sql`case when ${perConnection.balance} > 0
@@ -184,7 +180,7 @@ export async function getMerchantTotals(
 
   const rows = await db
     .select({
-      customers: sql<number>`count(*)`,
+      connections: sql<number>`count(*)`,
       outstanding: sql<number>`coalesce(sum(${owed}), 0)`,
       overdue: sql<number>`coalesce(sum(case
         when ${perConnection.dueAt} is not null and ${perConnection.dueAt} < ${today}
@@ -196,12 +192,44 @@ export async function getMerchantTotals(
 
   const row = rows.at(0)
   return {
-    customers: Number(row?.customers ?? 0),
+    connections: Number(row?.connections ?? 0),
     outstandingHalalas: Number(row?.outstanding ?? 0),
     overdueHalalas: Number(row?.overdue ?? 0),
     purchases: Number(row?.purchases ?? 0),
     payments: Number(row?.payments ?? 0),
   }
+}
+
+/** UC-02: what the shop is owed, across every customer of it. */
+export function getMerchantTotals(
+  db: Database,
+  merchantId: string,
+  now: Date = new Date(),
+) {
+  return totalsOver(
+    db,
+    and(
+      eq(connections.merchantId, merchantId),
+      eq(connections.status, 'active'),
+    ),
+    now,
+  )
+}
+
+/** UC-09: what one customer owes, across every shop they owe it to. */
+export function getCustomerTotals(
+  db: Database,
+  userId: string,
+  now: Date = new Date(),
+) {
+  return totalsOver(
+    db,
+    and(
+      eq(connections.customerUserId, userId),
+      eq(connections.status, 'active'),
+    ),
+    now,
+  )
 }
 
 /** UC-09: every shop one customer owes. */

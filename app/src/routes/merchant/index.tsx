@@ -54,7 +54,7 @@ const loadShop = createServerFn({ method: 'GET' })
       totals,
       customers,
       page: data.page,
-      pages: Math.max(1, Math.ceil(totals.customers / PAGE_SIZE)),
+      pages: Math.max(1, Math.ceil(totals.connections / PAGE_SIZE)),
       nextPaydayAt: paydayOnOrAfter(now),
       roles: user.roles,
     }
@@ -97,7 +97,7 @@ function MerchantHome() {
         <div className="mb-3 grid grid-cols-3 gap-2">
           <StatTile
             label={t('ledger.customers')}
-            value={number(totals.customers)}
+            value={number(totals.connections)}
           />
           <StatTile
             label={t('ledger.outstanding')}

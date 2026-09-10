@@ -1,11 +1,13 @@
 import {
   HeadContent,
+  Link,
   Scripts,
   createRootRoute,
   useRouter,
 } from '@tanstack/react-router'
 import { TanStackRouterDevtoolsPanel } from '@tanstack/react-router-devtools'
 import { TanStackDevtools } from '@tanstack/react-devtools'
+import { Card } from '#/components/primitives'
 import { I18nProvider, useI18n } from '#/i18n/context'
 import { changeLocale, loadLocale } from '#/i18n/server'
 import { DEFAULT_LOCALE, directionOf } from '#/i18n/locales'
@@ -37,7 +39,33 @@ export const Route = createRootRoute({
     ],
   }),
   shellComponent: RootDocument,
+  notFoundComponent: NotFound,
 })
+
+/**
+ * A page that is not there, said in the reader's language and inside the
+ * app's own layout. An account belonging to someone else arrives here too:
+ * it is not there for them, which is the whole answer they get.
+ */
+function NotFound() {
+  const { t } = useI18n()
+
+  return (
+    <main className="p-3.5">
+      <Card>
+        <h1 className="mb-1 text-base font-black text-ink">
+          {t('notFound.title')}
+        </h1>
+        <p className="mb-3 text-[13px] font-bold text-muted">
+          {t('notFound.body')}
+        </p>
+        <Link to="/" className="text-[13px] font-black text-steel">
+          {t('notFound.home')}
+        </Link>
+      </Card>
+    </main>
+  )
+}
 
 function RootDocument({ children }: { children: ReactNode }) {
   // A loader that failed leaves this undefined, whatever the type says, and a
