@@ -1,4 +1,5 @@
-import type { PushSender } from './types'
+import { log } from '#/lib/log'
+import type { PushMessage, PushSender } from './types'
 
 /**
  * Out-of-app push is what a real provider would add. The in-app bell does not
@@ -6,12 +7,16 @@ import type { PushSender } from './types'
  * caller before this is reached, so nothing is lost by logging and moving on.
  */
 export function createLoggingPushSender(
-  log: (message: string) => void = console.info,
+  write: (message: PushMessage) => void = (message) =>
+    log.info('A push that would have gone to a device', {
+      userId: message.userId,
+      title: message.title,
+    }),
 ): PushSender {
   return {
     name: 'log',
     async send(message) {
-      log(`[push] ${message.userId}: ${message.title}`)
+      write(message)
     },
   }
 }
