@@ -3,12 +3,23 @@ import { useI18n } from '#/i18n/context'
 import type { ReactNode } from 'react'
 import type { LedgerStatus } from '#/db/derive'
 
-/** UC-19: the gold strip that says when everything falls due. */
-export function PaydayStrip({ onDark = false }: { onDark?: boolean }) {
-  const { t } = useI18n()
+/**
+ * UC-19: the gold strip that says when everything falls due. The date is worked
+ * out on the server and handed down, so the strip cannot disagree with the due
+ * dates below it, and so a device set to another timezone reads the same day.
+ */
+export function PaydayStrip({
+  nextPaydayAt,
+  onDark = false,
+}: {
+  nextPaydayAt?: Date
+  onDark?: boolean
+}) {
+  const { t, date } = useI18n()
 
   return (
     <div
+      data-testid="payday-strip"
       className={cx(
         'flex items-center gap-2.5 rounded-(--radius-control) p-3',
         onDark
@@ -40,7 +51,9 @@ export function PaydayStrip({ onDark = false }: { onDark?: boolean }) {
             onDark ? 'text-gold-light' : 'text-warn-text',
           )}
         >
-          {t('payday.note')}
+          {nextPaydayAt
+            ? t('payday.next', { date: date(nextPaydayAt) })
+            : t('payday.note')}
         </span>
       </div>
     </div>

@@ -25,6 +25,7 @@ const STATUS_STYLE: Record<LedgerStatus, string> = {
   settled: 'bg-good-bg text-good-text',
   overdue: 'bg-bad-bg text-bad-text',
   at_limit: 'bg-neutral-bg text-ink',
+  due_soon: 'bg-warn-bg text-warn-text',
   open: 'bg-info-bg text-info-text',
 }
 

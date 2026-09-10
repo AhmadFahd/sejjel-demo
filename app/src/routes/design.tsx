@@ -25,7 +25,11 @@ import {
 } from '#/components/chrome'
 import { I18nProvider, useI18n } from '#/i18n/context'
 import { LOCALES, directionOf } from '#/i18n/locales'
-import { SAMPLE_CUSTOMERS, SAMPLE_TRANSACTIONS } from '#/dev/sample-ledger'
+import {
+  SAMPLE_CUSTOMERS,
+  SAMPLE_NEXT_PAYDAY,
+  SAMPLE_TRANSACTIONS,
+} from '#/dev/sample-ledger'
 import type { Locale } from '#/i18n/locales'
 
 /**
@@ -80,7 +84,7 @@ function Panel({ locale }: { locale: Locale }) {
 
         <Card className="p-0">
           <div className="p-4">
-            <PaydayStrip />
+            <PaydayStrip nextPaydayAt={SAMPLE_NEXT_PAYDAY} />
           </div>
         </Card>
 
@@ -142,7 +146,7 @@ function Panel({ locale }: { locale: Locale }) {
           ]}
         >
           <div className="relative z-1 mt-3">
-            <PaydayStrip onDark />
+            <PaydayStrip nextPaydayAt={SAMPLE_NEXT_PAYDAY} onDark />
             <LimitBar
               usedHalalas={customer.balanceHalalas}
               limitHalalas={customer.limitHalalas}

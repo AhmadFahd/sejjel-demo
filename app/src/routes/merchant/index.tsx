@@ -1,9 +1,11 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { requireSide } from '#/auth/guard'
 import { listMerchantConnections } from '#/db/queries/ledger'
+import { paydayOnOrAfter } from '#/lib/payday'
 import { createServerFn } from '@tanstack/react-start'
 import { AppBar } from '#/components/chrome'
-import { Card } from '#/components/primitives'
+import { Card, KeyValueRow, StatusPill } from '#/components/primitives'
+import { PaydayStrip } from '#/components/ledger'
 import { SideSwitch } from '#/components/side-switch'
 import { SignOutButton } from '#/components/sign-out'
 import { useI18n } from '#/i18n/context'
@@ -15,9 +17,11 @@ const loadShop = createServerFn({ method: 'GET' }).handler(async () => {
   const shop = user.roles.merchant
   if (!shop) return null
 
+  const now = new Date()
   return {
     shop,
-    customers: await listMerchantConnections(getDatabase(), shop.id),
+    customers: await listMerchantConnections(getDatabase(), shop.id, now),
+    nextPaydayAt: paydayOnOrAfter(now),
     roles: user.roles,
   }
 })
@@ -31,7 +35,7 @@ export const Route = createFileRoute('/merchant/')({
 
 function MerchantHome() {
   const data = Route.useLoaderData()
-  const { t, money } = useI18n()
+  const { t, money, date } = useI18n()
   if (!data) return null
 
   return (
@@ -47,6 +51,10 @@ function MerchantHome() {
       <main className="p-3.5">
         <h1 className="mb-3 text-xl font-black text-ink">{data.shop.name}</h1>
 
+        <Card className="p-4">
+          <PaydayStrip nextPaydayAt={data.nextPaydayAt} />
+        </Card>
+
         {data.customers.length === 0 ? (
           <Card>
             <h2 className="mb-1 text-base font-black text-ink">
@@ -58,15 +66,19 @@ function MerchantHome() {
           </Card>
         ) : (
           data.customers.map((row) => (
-            <Card key={row.connectionId}>
-              <div className="flex items-center justify-between">
+            <Card key={row.connectionId} data-testid="connection-row">
+              <div className="mb-2 flex items-center justify-between gap-2">
                 <span className="text-[15px] font-black text-ink">
                   {row.customerName}
                 </span>
-                <b className="tabular text-[15px] font-black text-ink">
-                  {money(row.balanceHalalas)}
-                </b>
+                <StatusPill status={row.status} />
               </div>
+              <KeyValueRow label={t('ledger.balance')} emphasis>
+                {money(row.balanceHalalas)}
+              </KeyValueRow>
+              <KeyValueRow label={t('ledger.dueDate')}>
+                {row.dueAt ? date(row.dueAt) : t('ledger.noDueDate')}
+              </KeyValueRow>
             </Card>
           ))
         )}

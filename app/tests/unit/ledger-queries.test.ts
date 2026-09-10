@@ -184,3 +184,76 @@ describe('listTransactions', () => {
     ])
   })
 })
+
+/**
+ * UC-19: the state a screen shows is worked out against the clock it is given,
+ * so the same rows read differently on a different day with nothing rewritten.
+ */
+describe('due state against the clock', () => {
+  const tuesday = new Date('2026-09-15T00:00:00+03:00')
+
+  async function summaryOn(now: Date, dueAt: Date) {
+    const merchant = await makeMerchant(db, {
+      defaultLimitHalalas: riyalsToHalalas(1000),
+    })
+    const connection = await makeConnection(db, { merchantId: merchant.id })
+    await makeTransaction(db, {
+      connectionId: connection.id,
+      amountHalalas: riyalsToHalalas(400),
+      dueAt,
+    })
+
+    const summary = await getConnectionSummary(db, connection.id, now)
+    if (!summary) throw new Error('the connection went missing')
+    return summary
+  }
+
+  it('is open while the date is still a week off', async () => {
+    const summary = await summaryOn(
+      new Date('2026-09-08T20:00:00+03:00'),
+      tuesday,
+    )
+
+    expect(summary.dueState).toBe('open')
+    expect(summary.status).toBe('open')
+    expect(summary.daysOverdue).toBe(0)
+  })
+
+  it('warns two days out, and the day itself still counts as time left', async () => {
+    const sunday = await summaryOn(
+      new Date('2026-09-13T06:00:00+03:00'),
+      tuesday,
+    )
+    const theDay = await summaryOn(
+      new Date('2026-09-15T23:00:00+03:00'),
+      tuesday,
+    )
+
+    expect(sunday.dueState).toBe('due_soon')
+    expect(sunday.status).toBe('due_soon')
+    expect(theDay.dueState).toBe('due_soon')
+    expect(theDay.daysOverdue).toBe(0)
+  })
+
+  it('turns overdue on its own once the day is past', async () => {
+    const summary = await summaryOn(
+      new Date('2026-09-18T00:30:00+03:00'),
+      tuesday,
+    )
+
+    expect(summary.dueState).toBe('overdue')
+    expect(summary.status).toBe('overdue')
+    expect(summary.daysOverdue).toBe(3)
+  })
+
+  it('says nothing is due when nothing has a date', async () => {
+    const merchant = await makeMerchant(db)
+    const connection = await makeConnection(db, { merchantId: merchant.id })
+
+    const [summary] = await listMerchantConnections(db, merchant.id)
+
+    expect(summary.connectionId).toBe(connection.id)
+    expect(summary.dueState).toBe('none')
+    expect(summary.status).toBe('settled')
+  })
+})
