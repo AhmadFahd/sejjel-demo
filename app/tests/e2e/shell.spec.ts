@@ -3,7 +3,7 @@ import { expect, test } from '@playwright/test'
 test('the shell renders right to left and reports its environment', async ({
   page,
 }) => {
-  await page.goto('/')
+  await page.goto('/status')
 
   await expect(page.locator('html')).toHaveAttribute('dir', 'rtl')
   await expect(page.locator('html')).toHaveAttribute('lang', 'ar')
@@ -15,7 +15,7 @@ test('the shell renders right to left and reports its environment', async ({
 test('switching language turns the document around, and it stays turned', async ({
   page,
 }) => {
-  await page.goto('/')
+  await page.goto('/status')
   await page.getByTestId('locale-switch').click()
 
   await expect(page.locator('html')).toHaveAttribute('dir', 'ltr')

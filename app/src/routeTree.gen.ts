@@ -12,6 +12,11 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as DesignRouteImport } from './routes/design'
 import { Route as SignInRouteImport } from './routes/sign-in'
+import { Route as StatusRouteImport } from './routes/status'
+import { Route as WelcomeRouteImport } from './routes/welcome'
+import { Route as CustomerIndexRouteImport } from './routes/customer/index'
+import { Route as MerchantIndexRouteImport } from './routes/merchant/index'
+import { Route as MerchantNewRouteImport } from './routes/merchant/new'
 import { Route as ApiAuthSplatRouteImport } from './routes/api/auth/$'
 
 const IndexRoute = IndexRouteImport.update({
@@ -29,6 +34,31 @@ const SignInRoute = SignInRouteImport.update({
   path: '/sign-in',
   getParentRoute: () => rootRouteImport,
 } as any)
+const StatusRoute = StatusRouteImport.update({
+  id: '/status',
+  path: '/status',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const WelcomeRoute = WelcomeRouteImport.update({
+  id: '/welcome',
+  path: '/welcome',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CustomerIndexRoute = CustomerIndexRouteImport.update({
+  id: '/customer/',
+  path: '/customer/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MerchantIndexRoute = MerchantIndexRouteImport.update({
+  id: '/merchant/',
+  path: '/merchant/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MerchantNewRoute = MerchantNewRouteImport.update({
+  id: '/merchant/new',
+  path: '/merchant/new',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiAuthSplatRoute = ApiAuthSplatRouteImport.update({
   id: '/api/auth/$',
   path: '/api/auth/$',
@@ -39,12 +69,22 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/design': typeof DesignRoute
   '/sign-in': typeof SignInRoute
+  '/status': typeof StatusRoute
+  '/welcome': typeof WelcomeRoute
+  '/merchant/new': typeof MerchantNewRoute
+  '/customer/': typeof CustomerIndexRoute
+  '/merchant/': typeof MerchantIndexRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/design': typeof DesignRoute
   '/sign-in': typeof SignInRoute
+  '/status': typeof StatusRoute
+  '/welcome': typeof WelcomeRoute
+  '/merchant/new': typeof MerchantNewRoute
+  '/customer': typeof CustomerIndexRoute
+  '/merchant': typeof MerchantIndexRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
 }
 export interface FileRoutesById {
@@ -52,20 +92,58 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/design': typeof DesignRoute
   '/sign-in': typeof SignInRoute
+  '/status': typeof StatusRoute
+  '/welcome': typeof WelcomeRoute
+  '/merchant/new': typeof MerchantNewRoute
+  '/customer/': typeof CustomerIndexRoute
+  '/merchant/': typeof MerchantIndexRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/design' | '/sign-in' | '/api/auth/$'
+  fullPaths:
+    | '/'
+    | '/design'
+    | '/sign-in'
+    | '/status'
+    | '/welcome'
+    | '/merchant/new'
+    | '/customer/'
+    | '/merchant/'
+    | '/api/auth/$'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/design' | '/sign-in' | '/api/auth/$'
-  id: '__root__' | '/' | '/design' | '/sign-in' | '/api/auth/$'
+  to:
+    | '/'
+    | '/design'
+    | '/sign-in'
+    | '/status'
+    | '/welcome'
+    | '/merchant/new'
+    | '/customer'
+    | '/merchant'
+    | '/api/auth/$'
+  id:
+    | '__root__'
+    | '/'
+    | '/design'
+    | '/sign-in'
+    | '/status'
+    | '/welcome'
+    | '/merchant/new'
+    | '/customer/'
+    | '/merchant/'
+    | '/api/auth/$'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   DesignRoute: typeof DesignRoute
   SignInRoute: typeof SignInRoute
+  StatusRoute: typeof StatusRoute
+  WelcomeRoute: typeof WelcomeRoute
+  MerchantNewRoute: typeof MerchantNewRoute
+  CustomerIndexRoute: typeof CustomerIndexRoute
+  MerchantIndexRoute: typeof MerchantIndexRoute
   ApiAuthSplatRoute: typeof ApiAuthSplatRoute
 }
 
@@ -92,6 +170,41 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SignInRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/status': {
+      id: '/status'
+      path: '/status'
+      fullPath: '/status'
+      preLoaderRoute: typeof StatusRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/welcome': {
+      id: '/welcome'
+      path: '/welcome'
+      fullPath: '/welcome'
+      preLoaderRoute: typeof WelcomeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/customer/': {
+      id: '/customer/'
+      path: '/customer'
+      fullPath: '/customer/'
+      preLoaderRoute: typeof CustomerIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/merchant/': {
+      id: '/merchant/'
+      path: '/merchant'
+      fullPath: '/merchant/'
+      preLoaderRoute: typeof MerchantIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/merchant/new': {
+      id: '/merchant/new'
+      path: '/merchant/new'
+      fullPath: '/merchant/new'
+      preLoaderRoute: typeof MerchantNewRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/auth/$': {
       id: '/api/auth/$'
       path: '/api/auth/$'
@@ -106,6 +219,11 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   DesignRoute: DesignRoute,
   SignInRoute: SignInRoute,
+  StatusRoute: StatusRoute,
+  WelcomeRoute: WelcomeRoute,
+  MerchantNewRoute: MerchantNewRoute,
+  CustomerIndexRoute: CustomerIndexRoute,
+  MerchantIndexRoute: MerchantIndexRoute,
   ApiAuthSplatRoute: ApiAuthSplatRoute,
 }
 export const routeTree = rootRouteImport

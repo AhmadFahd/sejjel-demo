@@ -25,11 +25,13 @@ test('a seeded customer signs in with a code, and stays signed in', async ({
   await page.getByLabel('رمز التحقق').fill(codeSentTo('+966550123456'))
   await page.getByRole('button', { name: 'دخول' }).click()
 
-  await expect(page.getByTestId('session')).toContainText('أحمد محمد')
+  // أحمد owes three shops and keeps none, so he lands on the customer side.
+  await expect(page).toHaveURL(/\/customer$/)
+  await expect(page.getByText('بقالة الريان')).toBeVisible()
 
   // A session is a row, not a page's memory.
   await page.reload()
-  await expect(page.getByTestId('session')).toContainText('أحمد محمد')
+  await expect(page.getByText('بقالة الريان')).toBeVisible()
 })
 
 // Each test signs in as a different seeded person: a new code replaces the
@@ -43,7 +45,7 @@ test('a wrong code is refused', async ({ page }) => {
   await page.getByRole('button', { name: 'دخول' }).click()
 
   await expect(page.getByRole('alert')).toBeVisible()
-  await expect(page.getByTestId('session')).toHaveCount(0)
+  await expect(page).toHaveURL(/\/sign-in$/)
 })
 
 test('a number nobody has connected gets no account', async ({ page }) => {
@@ -70,7 +72,7 @@ test('the language a signed-in person picks follows their account', async ({
   await expect(page.getByLabel('رمز التحقق')).toBeVisible()
   await page.getByLabel('رمز التحقق').fill(codeSentTo('+966555987210'))
   await page.getByRole('button', { name: 'دخول' }).click()
-  await expect(page.getByTestId('session')).toContainText('خالد علي')
+  await expect(page).toHaveURL(/\/customer$/)
 
   await page.getByTestId('locale-switch').click()
   await expect(page.locator('html')).toHaveAttribute('lang', 'en')

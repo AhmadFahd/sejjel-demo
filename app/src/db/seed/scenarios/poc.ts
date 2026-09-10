@@ -43,6 +43,13 @@ export const poc: Scenario = {
       name: 'سالم العتيبي',
       nationalId: '1029536471',
     })
+    // Nobody has connected her and she keeps no shop: the state a person is in
+    // before either side of the ledger exists for them.
+    await addPerson(db, {
+      phoneNumber: '+966500000001',
+      name: 'نورة الحربي',
+    })
+
     const noorOwner = await addPerson(db, {
       phoneNumber: '+966551000001',
       name: 'صاحب سوق النور',
