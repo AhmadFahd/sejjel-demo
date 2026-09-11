@@ -84,6 +84,9 @@ export const en = {
   'ledger.noOperations': 'Nothing has been recorded on this account yet.',
   'tx.purchase': 'Purchase',
   'tx.payment': 'Payment',
+  'tx.pending': 'Awaiting approval',
+  'tx.cancelled': 'Cancelled',
+  'tx.failed': 'Failed',
 
   'notFound.title': 'Not here',
   'notFound.body': 'This page does not exist, or it is not yours to open.',

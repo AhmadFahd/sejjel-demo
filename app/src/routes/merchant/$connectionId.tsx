@@ -1,14 +1,11 @@
 import { Link, createFileRoute, notFound } from '@tanstack/react-router'
 import { createServerFn } from '@tanstack/react-start'
 import { requireSide } from '#/auth/guard'
+import { localSaudiMobile } from '#/auth/phone'
 import { AppBar } from '#/components/chrome'
+import { MobileNumber } from '#/components/primitives'
 import { Pager, TransactionHistory, pagerLinkClass } from '#/components/account'
-import {
-  BalanceHero,
-  OperationsCounter,
-  PaydayStrip,
-} from '#/components/ledger'
-import { paydayOnOrAfter } from '#/lib/payday'
+import { BalanceHero, LimitBar, OperationsCounter } from '#/components/ledger'
 import { useI18n } from '#/i18n/context'
 
 const loadAccount = createServerFn({ method: 'GET' })
@@ -25,24 +22,24 @@ const loadAccount = createServerFn({ method: 'GET' })
     const { getDatabase } = await import('#/db/client')
     const { readAccountPage } = await import('#/db/queries/account')
     const user = await requireSignedInUser()
+    const shop = user.roles.merchant
+    if (!shop) return null
 
-    const now = new Date()
     const account = await readAccountPage(
       getDatabase(),
       data.connectionId,
       data.page,
-      now,
     )
 
-    // Someone else's account is not there, rather than there and refused.
-    if (!account || account.summary.customerUserId !== user.id) return null
+    // Another shop's customer is not there, rather than there and refused.
+    if (!account || account.summary.merchantId !== shop.id) return null
 
-    return { ...account, page: data.page, nextPaydayAt: paydayOnOrAfter(now) }
+    return { ...account, page: data.page }
   })
 
-/** UC-09: one shop's history, as the customer who owes it sees it. */
-export const Route = createFileRoute('/customer/$connectionId')({
-  beforeLoad: () => requireSide('customer'),
+/** UC-03: one customer's whole account, as the shop sees it. */
+export const Route = createFileRoute('/merchant/$connectionId')({
+  beforeLoad: () => requireSide('merchant'),
   validateSearch: (search: Record<string, unknown>): { page?: number } => {
     const page = Math.trunc(Number(search.page))
     return Number.isFinite(page) && page > 1 ? { page } : {}
@@ -55,12 +52,11 @@ export const Route = createFileRoute('/customer/$connectionId')({
     if (!account) throw notFound()
     return account
   },
-  component: CustomerAccount,
+  component: MerchantAccount,
 })
 
-function CustomerAccount() {
-  const { summary, transactions, page, hasMore, nextPaydayAt } =
-    Route.useLoaderData()
+function MerchantAccount() {
+  const { summary, transactions, page, hasMore } = Route.useLoaderData()
   const { t, money, date } = useI18n()
 
   return (
@@ -68,14 +64,19 @@ function CustomerAccount() {
       <AppBar />
       <main className="p-3.5">
         <Link
-          to="/customer"
+          to="/merchant"
           className="mb-3 inline-block text-[13px] font-black text-steel"
         >
           {t('nav.back')}
         </Link>
 
         <BalanceHero
-          title={summary.merchantName}
+          title={summary.customerName}
+          subtitle={
+            <MobileNumber onDark>
+              {localSaudiMobile(summary.customerMobile)}
+            </MobileNumber>
+          }
           status={summary.status}
           balanceHalalas={summary.balanceHalalas}
           facts={[
@@ -95,9 +96,11 @@ function CustomerAccount() {
             },
           ]}
         >
-          <div className="relative z-1 mt-3">
-            <PaydayStrip nextPaydayAt={nextPaydayAt} onDark />
-          </div>
+          <LimitBar
+            usedHalalas={summary.balanceHalalas}
+            limitHalalas={summary.limitHalalas}
+            onDark
+          />
         </BalanceHero>
 
         <OperationsCounter
@@ -155,7 +158,7 @@ function PagerLink({
 
   return (
     <Link
-      to="/customer/$connectionId"
+      to="/merchant/$connectionId"
       params={{ connectionId }}
       search={to > 1 ? { page: to } : {}}
       className={pagerLinkClass(false)}

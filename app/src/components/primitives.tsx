@@ -123,9 +123,21 @@ export function Avatar({ name, index = 0 }: { name: string; index?: number }) {
 }
 
 /** A mobile number reads left to right in either direction. */
-export function MobileNumber({ children }: { children: ReactNode }) {
+export function MobileNumber({
+  children,
+  onDark = false,
+}: {
+  children: ReactNode
+  onDark?: boolean
+}) {
   return (
-    <span dir="ltr" className="text-xs font-bold text-muted">
+    <span
+      dir="ltr"
+      className={cx(
+        'text-xs font-bold',
+        onDark ? 'text-white/70' : 'text-muted',
+      )}
+    >
       {children}
     </span>
   )

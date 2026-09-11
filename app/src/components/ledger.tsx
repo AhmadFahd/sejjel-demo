@@ -254,11 +254,14 @@ export function TransactionRow({
   when,
   amountHalalas,
   kind,
+  note,
 }: {
   title: string
   when: string
   amountHalalas: number
   kind: 'purchase' | 'payment'
+  /** What is not ordinary about this row: pending, cancelled, failed. */
+  note?: string
 }) {
   const { money } = useI18n()
 
@@ -267,6 +270,11 @@ export function TransactionRow({
       <div>
         <div className="text-[13.5px] font-extrabold text-ink">{title}</div>
         <div className="text-[11px] font-bold text-muted">{when}</div>
+        {note ? (
+          <div className="mt-0.5 text-[11px] font-black text-warn-text">
+            {note}
+          </div>
+        ) : null}
       </div>
       <b
         className={cx(
