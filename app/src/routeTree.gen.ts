@@ -19,6 +19,7 @@ import { Route as CustomerConnectionIdRouteImport } from './routes/customer/$con
 import { Route as MerchantIndexRouteImport } from './routes/merchant/index'
 import { Route as MerchantConnectionIdRouteImport } from './routes/merchant/$connectionId'
 import { Route as MerchantNewRouteImport } from './routes/merchant/new'
+import { Route as MerchantRecordRouteImport } from './routes/merchant/record'
 import { Route as ApiAuthSplatRouteImport } from './routes/api/auth/$'
 
 const IndexRoute = IndexRouteImport.update({
@@ -71,6 +72,11 @@ const MerchantNewRoute = MerchantNewRouteImport.update({
   path: '/merchant/new',
   getParentRoute: () => rootRouteImport,
 } as any)
+const MerchantRecordRoute = MerchantRecordRouteImport.update({
+  id: '/merchant/record',
+  path: '/merchant/record',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiAuthSplatRoute = ApiAuthSplatRouteImport.update({
   id: '/api/auth/$',
   path: '/api/auth/$',
@@ -86,6 +92,7 @@ export interface FileRoutesByFullPath {
   '/customer/$connectionId': typeof CustomerConnectionIdRoute
   '/merchant/$connectionId': typeof MerchantConnectionIdRoute
   '/merchant/new': typeof MerchantNewRoute
+  '/merchant/record': typeof MerchantRecordRoute
   '/customer/': typeof CustomerIndexRoute
   '/merchant/': typeof MerchantIndexRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
@@ -99,6 +106,7 @@ export interface FileRoutesByTo {
   '/customer/$connectionId': typeof CustomerConnectionIdRoute
   '/merchant/$connectionId': typeof MerchantConnectionIdRoute
   '/merchant/new': typeof MerchantNewRoute
+  '/merchant/record': typeof MerchantRecordRoute
   '/customer': typeof CustomerIndexRoute
   '/merchant': typeof MerchantIndexRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
@@ -113,6 +121,7 @@ export interface FileRoutesById {
   '/customer/$connectionId': typeof CustomerConnectionIdRoute
   '/merchant/$connectionId': typeof MerchantConnectionIdRoute
   '/merchant/new': typeof MerchantNewRoute
+  '/merchant/record': typeof MerchantRecordRoute
   '/customer/': typeof CustomerIndexRoute
   '/merchant/': typeof MerchantIndexRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
@@ -128,6 +137,7 @@ export interface FileRouteTypes {
     | '/customer/$connectionId'
     | '/merchant/$connectionId'
     | '/merchant/new'
+    | '/merchant/record'
     | '/customer/'
     | '/merchant/'
     | '/api/auth/$'
@@ -141,6 +151,7 @@ export interface FileRouteTypes {
     | '/customer/$connectionId'
     | '/merchant/$connectionId'
     | '/merchant/new'
+    | '/merchant/record'
     | '/customer'
     | '/merchant'
     | '/api/auth/$'
@@ -154,6 +165,7 @@ export interface FileRouteTypes {
     | '/customer/$connectionId'
     | '/merchant/$connectionId'
     | '/merchant/new'
+    | '/merchant/record'
     | '/customer/'
     | '/merchant/'
     | '/api/auth/$'
@@ -168,6 +180,7 @@ export interface RootRouteChildren {
   CustomerConnectionIdRoute: typeof CustomerConnectionIdRoute
   MerchantConnectionIdRoute: typeof MerchantConnectionIdRoute
   MerchantNewRoute: typeof MerchantNewRoute
+  MerchantRecordRoute: typeof MerchantRecordRoute
   CustomerIndexRoute: typeof CustomerIndexRoute
   MerchantIndexRoute: typeof MerchantIndexRoute
   ApiAuthSplatRoute: typeof ApiAuthSplatRoute
@@ -245,6 +258,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof MerchantNewRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/merchant/record': {
+      id: '/merchant/record'
+      path: '/merchant/record'
+      fullPath: '/merchant/record'
+      preLoaderRoute: typeof MerchantRecordRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/auth/$': {
       id: '/api/auth/$'
       path: '/api/auth/$'
@@ -264,6 +284,7 @@ const rootRouteChildren: RootRouteChildren = {
   CustomerConnectionIdRoute: CustomerConnectionIdRoute,
   MerchantConnectionIdRoute: MerchantConnectionIdRoute,
   MerchantNewRoute: MerchantNewRoute,
+  MerchantRecordRoute: MerchantRecordRoute,
   CustomerIndexRoute: CustomerIndexRoute,
   MerchantIndexRoute: MerchantIndexRoute,
   ApiAuthSplatRoute: ApiAuthSplatRoute,

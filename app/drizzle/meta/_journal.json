@@ -8,6 +8,13 @@
       "when": 1788986027352,
       "tag": "0000_initial_ledger",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "6",
+      "when": 1789127962124,
+      "tag": "0001_record_purchase",
+      "breakpoints": true
     }
   ]
 }

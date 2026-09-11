@@ -4,7 +4,7 @@ import { requireSide } from '#/auth/guard'
 import { localSaudiMobile } from '#/auth/phone'
 import { getMerchantTotals, listMerchantConnections } from '#/db/queries/ledger'
 import { paydayOnOrAfter } from '#/lib/payday'
-import { AppBar } from '#/components/chrome'
+import { AppBar, buttonClass } from '#/components/chrome'
 import {
   Avatar,
   Card,
@@ -115,6 +115,14 @@ function MerchantHome() {
         <Card className="p-4">
           <PaydayStrip nextPaydayAt={data.nextPaydayAt} />
         </Card>
+
+        <Link
+          to="/merchant/record"
+          className={buttonClass('primary', 'mb-3')}
+          data-testid="record"
+        >
+          {t('operation.new')}
+        </Link>
 
         <OperationsCounter
           purchases={totals.purchases}

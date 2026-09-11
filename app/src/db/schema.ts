@@ -157,6 +157,12 @@ export const transactions = sqliteTable(
     termDaysSnapshot: integer('term_days_snapshot'),
     dueAt: integer('due_at', { mode: 'timestamp' }),
     /**
+     * UC-04: the merchant's own id for the operation they are recording. A
+     * retried submit carries the same one, so the second attempt finds the
+     * first purchase instead of making another.
+     */
+    requestId: text('request_id'),
+    /**
      * UC-07: the customer's approval is the intent, the merchant's scan is the
      * apply, and the token is what makes applying twice impossible.
      */
@@ -171,6 +177,7 @@ export const transactions = sqliteTable(
   },
   (table) => [
     uniqueIndex('transactions_approval_token_idx').on(table.approvalToken),
+    uniqueIndex('transactions_request_id_idx').on(table.requestId),
     index('transactions_connection_idx').on(
       table.connectionId,
       table.createdAt,

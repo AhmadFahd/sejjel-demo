@@ -149,21 +149,24 @@ const BUTTON_TONES: Record<ButtonTone, string> = {
   danger: 'bg-bad text-white',
 }
 
+/**
+ * A button's look, for the places where the thing being pressed is a link:
+ * going somewhere is an anchor, not a button that navigates.
+ */
+export function buttonClass(tone: ButtonTone = 'primary', className?: string) {
+  return cx(
+    'flex w-full items-center justify-center gap-2 rounded-(--radius-control) p-3.5 text-[14.5px] font-black transition active:scale-[0.98]',
+    BUTTON_TONES[tone],
+    className,
+  )
+}
+
 export function Button({
   tone = 'primary',
   className,
   ...rest
 }: { tone?: ButtonTone } & React.ComponentProps<'button'>) {
-  return (
-    <button
-      className={cx(
-        'flex w-full items-center justify-center gap-2 rounded-(--radius-control) p-3.5 text-[14.5px] font-black transition active:scale-[0.98]',
-        BUTTON_TONES[tone],
-        className,
-      )}
-      {...rest}
-    />
-  )
+  return <button className={buttonClass(tone, className)} {...rest} />
 }
 
 /** Somewhere for the gallery and the screens to keep a toast's state. */

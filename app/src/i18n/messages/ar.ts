@@ -85,6 +85,7 @@ export const ar = {
   'tx.pending': 'بانتظار الموافقة',
   'tx.cancelled': 'ملغاة',
   'tx.failed': 'فشلت',
+  'tx.expired': 'انتهت المهلة',
 
   'notFound.title': 'غير موجود',
   'notFound.body': 'هذه الصفحة غير موجودة، أو ليست لك.',
@@ -99,6 +100,23 @@ export const ar = {
   'status.at_limit': 'بلغ الحد',
   'status.due_soon': 'يستحق قريبًا',
   'status.open': 'حساب قائم',
+
+  'operation.new': 'عملية جديدة',
+  'operation.customer': 'العميل',
+  'operation.pickCustomer': 'اختر العميل',
+  'operation.amount': 'المبلغ',
+  'operation.description': 'الوصف (اختياري)',
+  'operation.projected': 'الرصيد بعد العملية',
+  'operation.submit': 'أرسل للعميل',
+  'operation.waiting': 'بانتظار موافقة العميل',
+  'operation.waitingBody':
+    'العملية على شاشته للموافقة. لا شيء مستحق حتى يوافق، وتسقط بعد {minutes} دقيقة.',
+  'operation.cancel': 'إلغاء العملية',
+  'operation.record': 'تسجيل عملية',
+  'operation.error.amount': 'أدخل المبلغ بالريال.',
+  'operation.error.ceiling': 'المبلغ أكبر من حد العملية الواحدة.',
+  'operation.error.limit': 'هذه العملية تتجاوز حد العميل.',
+  'operation.error.connection': 'هذا العميل ليس من عملائك.',
 
   'payday.title': 'تاريخ الاستحقاق الموحد: كل ثلاثاء',
   'payday.note': 'يوم السداد الموحد — تجميع مرن لكل حساباتك لسهولة الدفع',

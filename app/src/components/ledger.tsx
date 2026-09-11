@@ -255,6 +255,7 @@ export function TransactionRow({
   amountHalalas,
   kind,
   note,
+  action,
 }: {
   title: string
   when: string
@@ -262,6 +263,8 @@ export function TransactionRow({
   kind: 'purchase' | 'payment'
   /** What is not ordinary about this row: pending, cancelled, failed. */
   note?: string
+  /** Something the reader can do about this row, where there is anything. */
+  action?: ReactNode
 }) {
   const { money } = useI18n()
 
@@ -271,8 +274,11 @@ export function TransactionRow({
         <div className="text-[13.5px] font-extrabold text-ink">{title}</div>
         <div className="text-[11px] font-bold text-muted">{when}</div>
         {note ? (
-          <div className="mt-0.5 text-[11px] font-black text-warn-text">
-            {note}
+          <div className="mt-0.5 flex items-center gap-2">
+            <span className="text-[11px] font-black text-warn-text">
+              {note}
+            </span>
+            {action}
           </div>
         ) : null}
       </div>
