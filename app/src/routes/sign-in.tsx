@@ -1,23 +1,53 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { createFileRoute, useRouter } from '@tanstack/react-router'
 import { authClient } from '#/auth/client'
 import { normaliseSaudiMobile } from '#/auth/phone'
-import { Button } from '#/components/chrome'
-import { Card } from '#/components/primitives'
+import { PrototypeSwitcher } from '#/components/prototype-switcher'
 import { useI18n } from '#/i18n/context'
+import { SIGN_IN_VARIANTS, resolveVariant } from '#/dev/sign-in-prototype'
+import { RESEND_SECONDS } from '#/dev/sign-in-prototype/shared'
+import type { SignInControls, SignInStep } from '#/dev/sign-in-prototype/shared'
 
-export const Route = createFileRoute('/sign-in')({ component: SignIn })
-
-type Step = { name: 'phone' } | { name: 'code'; phoneNumber: string }
+export const Route = createFileRoute('/sign-in')({
+  /**
+   * PROTOTYPE: `?variant=` picks one of the sign-in screens in
+   * `src/dev/sign-in-prototype`. Absent or unknown is today's screen, so the
+   * param only ever adds a prototype, never takes the real one away.
+   */
+  validateSearch: (search: Record<string, unknown>): { variant?: string } =>
+    typeof search.variant === 'string' ? { variant: search.variant } : {},
+  component: SignIn,
+})
 
 function SignIn() {
   const { t } = useI18n()
   const router = useRouter()
-  const [step, setStep] = useState<Step>({ name: 'phone' })
+  const { variant: variantKey } = Route.useSearch()
+  const navigate = Route.useNavigate()
+
+  const [step, setStep] = useState<SignInStep>({ name: 'phone' })
   const [typed, setTyped] = useState('')
   const [code, setCode] = useState('')
   const [error, setError] = useState<string | null>(null)
   const [busy, setBusy] = useState(false)
+
+  /**
+   * When the last code went out, so a screen can say how long it will be
+   * before another one is worth asking for. The server's own rate limit is
+   * what actually refuses; this only keeps somebody from hammering it.
+   */
+  const [sentAt, setSentAt] = useState<number | null>(null)
+  const [now, setNow] = useState(() => Date.now())
+  const secondsUntilResend =
+    sentAt === null
+      ? 0
+      : Math.max(0, RESEND_SECONDS - Math.floor((now - sentAt) / 1000))
+
+  useEffect(() => {
+    if (secondsUntilResend === 0) return
+    const timer = setInterval(() => setNow(Date.now()), 1000)
+    return () => clearInterval(timer)
+  }, [secondsUntilResend])
 
   const send = async (phoneNumber: string) => {
     setBusy(true)
@@ -30,6 +60,8 @@ function SignIn() {
       setError(t('auth.error.generic'))
       return false
     }
+    setSentAt(Date.now())
+    setNow(Date.now())
     return true
   }
 
@@ -43,7 +75,7 @@ function SignIn() {
   }
 
   const onVerify = async () => {
-    if (step.name !== 'code') return
+    if (step.name !== 'code' || busy) return
     setBusy(true)
     setError(null)
     const { error: failure } = await authClient.phoneNumber.verify({
@@ -67,97 +99,40 @@ function SignIn() {
     await router.navigate({ to: '/' })
   }
 
+  const controls: SignInControls = {
+    step,
+    typed,
+    onTyped: setTyped,
+    code,
+    onCode: setCode,
+    error,
+    busy,
+    secondsUntilResend,
+    onSendCode,
+    onVerify,
+    onResend: () => {
+      if (step.name === 'code') void send(step.phoneNumber)
+    },
+    onChangeNumber: () => {
+      setCode('')
+      setError(null)
+      setSentAt(null)
+      setStep({ name: 'phone' })
+    },
+  }
+
+  const variant = resolveVariant(variantKey)
+
   return (
-    <main className="mx-auto max-w-sm px-6 py-10">
-      <h1 className="mb-6 text-2xl font-black text-ink">{t('auth.title')}</h1>
-
-      <Card>
-        {step.name === 'phone' ? (
-          <>
-            <label
-              className="mb-1 block text-[12.5px] font-extrabold text-muted"
-              htmlFor="phone"
-            >
-              {t('auth.phoneLabel')}
-            </label>
-            <input
-              id="phone"
-              name="phone"
-              type="tel"
-              dir="ltr"
-              autoComplete="tel"
-              inputMode="tel"
-              placeholder={t('auth.phonePlaceholder')}
-              className="mb-2 w-full rounded-(--radius-control) border border-neutral-bg px-3 py-3 text-base"
-              value={typed}
-              onChange={(event) => setTyped(event.target.value)}
-            />
-            <p className="mb-4 text-[11px] font-bold text-muted">
-              {t('auth.phoneHint')}
-            </p>
-            <Button tone="primary" disabled={busy} onClick={onSendCode}>
-              {t('auth.sendCode')}
-            </Button>
-          </>
-        ) : (
-          <>
-            <label
-              className="mb-1 block text-[12.5px] font-extrabold text-muted"
-              htmlFor="code"
-            >
-              {t('auth.codeLabel')}
-            </label>
-            <p className="mb-2 text-[11px] font-bold text-muted">
-              {t('auth.codeSentTo', { phoneNumber: step.phoneNumber })}
-            </p>
-            <input
-              id="code"
-              name="code"
-              type="text"
-              dir="ltr"
-              autoComplete="one-time-code"
-              inputMode="numeric"
-              className="mb-4 w-full rounded-(--radius-control) border border-neutral-bg px-3 py-3 text-center text-2xl tracking-[0.4em]"
-              value={code}
-              onChange={(event) =>
-                setCode(event.target.value.replace(/\D/g, ''))
-              }
-            />
-            <Button tone="primary" disabled={busy} onClick={onVerify}>
-              {t('auth.verify')}
-            </Button>
-            <div className="mt-3 flex gap-2.5">
-              <Button
-                tone="ghost"
-                disabled={busy}
-                onClick={() => send(step.phoneNumber)}
-              >
-                {t('auth.resend')}
-              </Button>
-              <Button
-                tone="soft"
-                disabled={busy}
-                onClick={() => {
-                  setCode('')
-                  setError(null)
-                  setStep({ name: 'phone' })
-                }}
-              >
-                {t('auth.changeNumber')}
-              </Button>
-            </div>
-          </>
-        )}
-
-        {error ? (
-          <p
-            role="alert"
-            className="mt-4 text-[12.5px] font-extrabold text-bad-text"
-          >
-            {error}
-          </p>
-        ) : null}
-      </Card>
-    </main>
+    <>
+      <variant.Component controls={controls} />
+      <PrototypeSwitcher
+        variants={SIGN_IN_VARIANTS}
+        current={variant.key}
+        onSelect={(key) =>
+          void navigate({ search: { variant: key }, replace: true })
+        }
+      />
+    </>
   )
 }
