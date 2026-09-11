@@ -1,8 +1,14 @@
-import { Link, createFileRoute, notFound } from '@tanstack/react-router'
+import {
+  Link,
+  createFileRoute,
+  notFound,
+  useRouter,
+} from '@tanstack/react-router'
 import { createServerFn } from '@tanstack/react-start'
 import { requireSide } from '#/auth/guard'
 import { localSaudiMobile } from '#/auth/phone'
-import { AppBar } from '#/components/chrome'
+import { cancelOperation } from '#/auth/operation'
+import { AppBar, buttonClass } from '#/components/chrome'
 import { MobileNumber } from '#/components/primitives'
 import { Pager, TransactionHistory, pagerLinkClass } from '#/components/account'
 import { BalanceHero, LimitBar, OperationsCounter } from '#/components/ledger'
@@ -25,16 +31,18 @@ const loadAccount = createServerFn({ method: 'GET' })
     const shop = user.roles.merchant
     if (!shop) return null
 
+    const now = new Date()
     const account = await readAccountPage(
       getDatabase(),
       data.connectionId,
       data.page,
+      now,
     )
 
     // Another shop's customer is not there, rather than there and refused.
     if (!account || account.summary.merchantId !== shop.id) return null
 
-    return { ...account, page: data.page }
+    return { ...account, page: data.page, now }
   })
 
 /** UC-03: one customer's whole account, as the shop sees it. */
@@ -56,8 +64,9 @@ export const Route = createFileRoute('/merchant/$connectionId')({
 })
 
 function MerchantAccount() {
-  const { summary, transactions, page, hasMore } = Route.useLoaderData()
+  const { summary, transactions, page, hasMore, now } = Route.useLoaderData()
   const { t, money, date } = useI18n()
+  const router = useRouter()
 
   return (
     <>
@@ -108,7 +117,23 @@ function MerchantAccount() {
           payments={summary.payments}
         />
 
-        <TransactionHistory entries={transactions} />
+        <Link
+          to="/merchant/record"
+          search={{ customer: summary.connectionId }}
+          className={buttonClass('primary', 'mb-3')}
+          data-testid="record"
+        >
+          {t('operation.new')}
+        </Link>
+
+        <TransactionHistory
+          entries={transactions}
+          now={now}
+          onCancel={async (transactionId) => {
+            await cancelOperation({ data: { transactionId } })
+            await router.invalidate()
+          }}
+        />
 
         {page > 1 || hasMore ? (
           <Pager

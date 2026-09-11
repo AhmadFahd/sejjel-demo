@@ -131,6 +131,44 @@ test('a shopkeeper opens a customer account, and only their own', async ({
   await nextDoor.close()
 })
 
+/**
+ * UC-04: the shop records what خالد just bought. It waits for him rather than
+ * landing on the ledger, which is why his balance does not move.
+ */
+test('a shopkeeper records an operation, and can call it off', async ({
+  page,
+}) => {
+  await signIn(page, '0550111222', '+966550111222')
+
+  await page.getByTestId('record').click()
+  await page.getByLabel('العميل').selectOption({ label: 'خالد علي' })
+  await page.getByLabel('المبلغ').fill('250')
+  await page.getByLabel('الوصف (اختياري)').fill('مشتريات اليوم')
+
+  // The projection says what the account would read as, before committing.
+  await expect(page.getByTestId('projection')).toContainText('250')
+
+  await page.getByRole('button', { name: 'أرسل للعميل' }).click()
+  await expect(page.getByTestId('waiting')).toBeVisible()
+
+  // Nothing is owed until he agrees, so the shop's position is unchanged.
+  await page.goto('/merchant')
+  await expect(page.locator('main')).toContainText('2,050')
+
+  const khalid = page
+    .getByTestId('connection-row')
+    .filter({ hasText: 'خالد علي' })
+  await expect(khalid).toContainText('مسدد')
+  await khalid.click()
+
+  const history = page.getByTestId('transactions')
+  await expect(history).toContainText('مشتريات اليوم')
+  await expect(history).toContainText('بانتظار الموافقة')
+
+  await page.getByTestId('cancel-operation').click()
+  await expect(history).toContainText('ملغاة')
+})
+
 test('a customer sees every shop they owe, and can open one', async ({
   page,
 }) => {

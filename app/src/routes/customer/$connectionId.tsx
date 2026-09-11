@@ -37,7 +37,12 @@ const loadAccount = createServerFn({ method: 'GET' })
     // Someone else's account is not there, rather than there and refused.
     if (!account || account.summary.customerUserId !== user.id) return null
 
-    return { ...account, page: data.page, nextPaydayAt: paydayOnOrAfter(now) }
+    return {
+      ...account,
+      page: data.page,
+      now,
+      nextPaydayAt: paydayOnOrAfter(now),
+    }
   })
 
 /** UC-09: one shop's history, as the customer who owes it sees it. */
@@ -59,7 +64,7 @@ export const Route = createFileRoute('/customer/$connectionId')({
 })
 
 function CustomerAccount() {
-  const { summary, transactions, page, hasMore, nextPaydayAt } =
+  const { summary, transactions, page, hasMore, now, nextPaydayAt } =
     Route.useLoaderData()
   const { t, money, date } = useI18n()
 
@@ -105,7 +110,7 @@ function CustomerAccount() {
           payments={summary.payments}
         />
 
-        <TransactionHistory entries={transactions} />
+        <TransactionHistory entries={transactions} now={now} />
 
         {page > 1 || hasMore ? (
           <Pager

@@ -87,6 +87,7 @@ export const en = {
   'tx.pending': 'Awaiting approval',
   'tx.cancelled': 'Cancelled',
   'tx.failed': 'Failed',
+  'tx.expired': 'Lapsed',
 
   'notFound.title': 'Not here',
   'notFound.body': 'This page does not exist, or it is not yours to open.',
@@ -101,6 +102,23 @@ export const en = {
   'status.at_limit': 'At the limit',
   'status.due_soon': 'Due soon',
   'status.open': 'Open account',
+
+  'operation.new': 'New operation',
+  'operation.customer': 'Customer',
+  'operation.pickCustomer': 'Choose a customer',
+  'operation.amount': 'Amount',
+  'operation.description': 'Description (optional)',
+  'operation.projected': 'Balance after this',
+  'operation.submit': 'Send to the customer',
+  'operation.waiting': 'Waiting for the customer',
+  'operation.waitingBody':
+    'It is on their screen to approve. Nothing is owed until they do, and it lapses after {minutes} minutes.',
+  'operation.cancel': 'Call it off',
+  'operation.record': 'Record an operation',
+  'operation.error.amount': 'Enter an amount in riyals.',
+  'operation.error.ceiling': 'That is more than one operation can be.',
+  'operation.error.limit': 'This would take the balance past the limit.',
+  'operation.error.connection': 'This customer is not one of yours.',
 
   'payday.title': 'One due day: every Tuesday',
   'payday.note': 'Everything you owe falls due together, to make paying simple',

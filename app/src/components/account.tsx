@@ -1,5 +1,6 @@
 import { Card, cx } from './primitives'
 import { TransactionRow } from './ledger'
+import { hasExpired } from '#/lib/purchase'
 import { useI18n } from '#/i18n/context'
 import type { ReactNode } from 'react'
 import type { transactions } from '#/db/schema'
@@ -10,7 +11,17 @@ type Entry = typeof transactions.$inferSelect
  * UC-03: the operations behind a balance, newest first. Both account screens
  * draw this, so a purchase reads the same to the shop and to the customer.
  */
-export function TransactionHistory({ entries }: { entries: Array<Entry> }) {
+export function TransactionHistory({
+  entries,
+  now,
+  onCancel,
+}: {
+  entries: Array<Entry>
+  /** The moment the page was drawn, which is what makes a row lapse. */
+  now: Date
+  /** UC-04: the merchant can call off an operation nobody has answered. */
+  onCancel?: (transactionId: string) => void
+}) {
   const { t, date, time } = useI18n()
 
   if (entries.length === 0) {
@@ -25,21 +36,43 @@ export function TransactionHistory({ entries }: { entries: Array<Entry> }) {
 
   return (
     <Card data-testid="transactions">
-      {entries.map((entry) => (
-        <TransactionRow
-          key={entry.id}
-          kind={entry.kind}
-          title={
-            entry.description ??
-            (entry.kind === 'purchase' ? t('tx.purchase') : t('tx.payment'))
-          }
-          when={`${date(entry.createdAt)} · ${time(entry.createdAt)}`}
-          amountHalalas={entry.amountHalalas}
-          note={
-            entry.status === 'applied' ? undefined : t(`tx.${entry.status}`)
-          }
-        />
-      ))}
+      {entries.map((entry) => {
+        // A pending operation nobody answered in time is lapsed, worked out
+        // from its own date rather than from a job that swept it.
+        const lapsed = hasExpired(entry, now)
+
+        return (
+          <TransactionRow
+            key={entry.id}
+            kind={entry.kind}
+            title={
+              entry.description ??
+              (entry.kind === 'purchase' ? t('tx.purchase') : t('tx.payment'))
+            }
+            when={`${date(entry.createdAt)} · ${time(entry.createdAt)}`}
+            amountHalalas={entry.amountHalalas}
+            note={
+              entry.status === 'applied'
+                ? undefined
+                : lapsed
+                  ? t('tx.expired')
+                  : t(`tx.${entry.status}`)
+            }
+            action={
+              onCancel && entry.status === 'pending' && !lapsed ? (
+                <button
+                  type="button"
+                  data-testid="cancel-operation"
+                  className="text-[11px] font-black text-bad-text underline"
+                  onClick={() => onCancel(entry.id)}
+                >
+                  {t('operation.cancel')}
+                </button>
+              ) : undefined
+            }
+          />
+        )
+      })}
     </Card>
   )
 }
