@@ -194,6 +194,38 @@ export const en = {
   'payday.note': 'Everything you owe falls due together, to make paying simple',
   'payday.next': 'Next pay-day: {date}',
 
+  'settings.title': 'Shop settings',
+  'settings.open': 'Settings',
+  'settings.defaultsNote':
+    'What every customer stands on unless you set something else for them.',
+  'settings.save': 'Save',
+  'settings.saved': 'Saved.',
+  'settings.movedNone': 'Nobody was standing on the old figures.',
+  'settings.moved': 'Customers moved: {count}.',
+  'settings.overLimit':
+    '{names} now owe more than the new limit. They can record nothing new until the balance drops.',
+  'settings.customerTitle': '{name}’s terms',
+  'settings.customerNote':
+    'These stand in place of the shop’s defaults, for this customer only.',
+  'settings.ownFigure': 'Their own figure',
+  'settings.inherited': 'From the shop ({value})',
+  'settings.inheritedDays': 'From the shop ({days} days)',
+  'settings.reset': 'Back to the shop’s defaults',
+  'settings.balanceNow': 'Owes now',
+  'settings.belowBalance':
+    'That is under what they already owe ({balance}). Allowed, but they can record nothing new until it drops.',
+  'settings.historyTitle': 'What changed',
+  'settings.historyEmpty': 'Nothing has been changed yet.',
+  'settings.historyLimit': 'Limit {before} → {after}',
+  'settings.historyTerm': 'Term {before} → {after} days',
+  'settings.historyShop': 'the shop’s defaults',
+  'settings.historyBy': '{name}, {date}',
+  'settings.error.shop': 'You do not keep a shop.',
+  'settings.error.connection': 'This customer is not one of yours.',
+  'settings.error.limit': 'A limit between 1 and 100,000 ر.س',
+  'settings.error.term': 'A term between 1 and 90 days',
+  'settings.overridden': 'Own terms',
+
   'limit.used': '{percent}% of the limit used',
   'limit.nearlyFull': 'Close to the limit ({percent}%). Settling is advised',
   'limit.full': 'The limit is used up. No new purchase can be recorded',

@@ -14,6 +14,7 @@ export type EventKind =
   | 'payment.received'
   | 'connection.requested'
   | 'connection.accepted'
+  | 'terms.changed'
 
 export type LedgerEvent = {
   id: number

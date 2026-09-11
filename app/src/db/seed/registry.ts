@@ -14,10 +14,11 @@ export const SCENARIOS = new Map<string, Scenario>([
 export const DEFAULT_SCENARIO = poc.name
 
 /** Every table, children before parents, so the deletes never trip a foreign key. */
-const TABLES_IN_DELETION_ORDER = [
+export const TABLES_IN_DELETION_ORDER = [
   schema.events,
   schema.notifications,
   schema.paymentLinks,
+  schema.termChanges,
   schema.transactions,
   schema.invoices,
   schema.connections,

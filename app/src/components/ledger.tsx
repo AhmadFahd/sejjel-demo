@@ -211,7 +211,10 @@ export function BalanceHero({
   const { t, number } = useI18n()
 
   return (
-    <div className="relative mb-3 overflow-hidden rounded-(--radius-hero) bg-linear-140 from-ink to-[#6E877D] p-4.5 text-white">
+    <div
+      className="relative mb-3 overflow-hidden rounded-(--radius-hero) bg-linear-140 from-ink to-[#6E877D] p-4.5 text-white"
+      data-testid="balance-hero"
+    >
       <div className="relative z-1 flex items-start justify-between">
         <div>
           <div className="text-[15px] font-black">{title}</div>

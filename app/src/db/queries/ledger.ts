@@ -43,6 +43,11 @@ export type ConnectionSummary = {
   limitHalalas: number
   availableHalalas: number
   termDays: number
+  /** UC-13: null where this customer stands on the shop's default. */
+  limitOverrideHalalas: number | null
+  termOverrideDays: number | null
+  defaultLimitHalalas: number
+  defaultTermDays: number
   dueAt: Date | null
   dueState: DueState
   daysOverdue: number
@@ -84,6 +89,10 @@ function toSummary(
     limitHalalas,
     availableHalalas: availableOf(balanceHalalas, limitHalalas),
     termDays: termOf(source),
+    limitOverrideHalalas: row.connection.limitOverrideHalalas,
+    termOverrideDays: row.connection.termOverrideDays,
+    defaultLimitHalalas: row.merchant.defaultLimitHalalas,
+    defaultTermDays: row.merchant.defaultTermDays,
     dueAt,
     dueState: dueStateOf(dueAt, now),
     daysOverdue: dueAt ? daysOverdue(dueAt, now) : 0,
@@ -138,6 +147,27 @@ export async function listMerchantConnections(
     .orderBy(users.name, connections.id)
     .limit(page.limit ?? DEFAULT_PAGE_SIZE)
     .offset(page.offset ?? 0)
+  return rows.map((row) => toSummary(now, row))
+}
+
+/**
+ * Every active customer of one shop, unpaged. For work that has to touch all
+ * of them at once — changing the shop's default terms moves everybody who
+ * stands on them (UC-13) — where a page would quietly leave some behind.
+ */
+export async function listAllMerchantConnections(
+  db: Database,
+  merchantId: string,
+  now: Date = new Date(),
+) {
+  const rows = await summaryQuery(db)
+    .where(
+      and(
+        eq(connections.merchantId, merchantId),
+        eq(connections.status, 'active'),
+      ),
+    )
+    .orderBy(users.name, connections.id)
   return rows.map((row) => toSummary(now, row))
 }
 

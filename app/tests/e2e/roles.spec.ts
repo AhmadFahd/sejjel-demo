@@ -196,6 +196,98 @@ test('the limit stops the shop, being late only warns it', async ({ page }) => {
   await page.getByRole('button', { name: 'إلغاء العملية' }).click()
 })
 
+/**
+ * UC-13 on the fixture: أحمد stands on بقالة الريان's default of 1,000 and
+ * سالم has 1,500 of his own. Moving the default has to move the first and
+ * leave the second, and the shop has to be put back as it was found.
+ *
+ * The screens are reached by their own links rather than by `goto`, because
+ * each full page load opens another event stream and the browser runs out of
+ * connections to the host before the test runs out of steps.
+ */
+test('the shop’s default moves whoever stands on it, and no one else', async ({
+  page,
+}) => {
+  await signIn(page, '0550111222', '+966550111222')
+
+  const row = (name: string) =>
+    page.getByTestId('connection-row').filter({ hasText: name })
+  const back = () => page.getByRole('link', { name: 'رجوع' }).first().click()
+
+  await expect(row('سالم العتيبي').getByTestId('overridden')).toBeVisible()
+  await expect(row('أحمد محمد').getByTestId('overridden')).toHaveCount(0)
+
+  await page.getByTestId('settings').click()
+  await page.getByLabel('حد الائتمان الافتراضي').fill('2000')
+  await page.getByTestId('save-defaults').click()
+  await expect(page.getByTestId('defaults-saved')).toContainText('حُفظ')
+
+  // The change is on the record, with who made it and when.
+  await expect(page.getByTestId('term-history')).toContainText('1,000')
+  await expect(page.getByTestId('term-history')).toContainText('2,000')
+
+  await back()
+  await row('أحمد محمد').click()
+  await expect(page.getByTestId('balance-hero')).toContainText('2,000')
+
+  await back()
+  await row('سالم العتيبي').click()
+  await expect(page.getByTestId('balance-hero')).toContainText('1,500')
+
+  // Leave the fixture as it was found: the tests share one seeded ledger.
+  await back()
+  await page.getByTestId('settings').click()
+  await page.getByLabel('حد الائتمان الافتراضي').fill('1000')
+  await page.getByTestId('save-defaults').click()
+  await expect(page.getByTestId('defaults-saved')).toBeVisible()
+})
+
+/** UC-13: one customer put on their own figure, then back on the shop's. */
+test('a customer can be given their own limit and put back', async ({
+  page,
+}) => {
+  await signIn(page, '0550111222', '+966550111222')
+
+  const ahmed = () =>
+    page.getByTestId('connection-row').filter({ hasText: 'أحمد محمد' })
+  const back = () => page.getByRole('link', { name: 'رجوع' }).first().click()
+
+  await ahmed().click()
+  await page.getByTestId('customer-settings').click()
+
+  await page.getByLabel('قيمة خاصة به').first().check()
+  await page.getByLabel('حد الائتمان', { exact: true }).fill('400')
+
+  // 400 is under the 800 he already owes: allowed, and said plainly.
+  await expect(page.getByTestId('below-balance')).toContainText('800')
+
+  await page.getByTestId('save-terms').click()
+  await expect(page.getByTestId('terms-saved')).toBeVisible()
+
+  await back()
+  await expect(page.getByTestId('balance-hero')).toContainText('400')
+
+  // And nothing more can be recorded for him until the balance drops.
+  await page.getByTestId('record').click()
+  await page.getByLabel('المبلغ').fill('50')
+  await page.getByRole('button', { name: 'أرسل للعميل' }).click()
+  await expect(page.getByTestId('refusal')).toContainText('يتجاوز الحد')
+
+  await back()
+  await expect(ahmed().getByTestId('overridden')).toBeVisible()
+
+  // Back on the shop's default, and the fixture as it was found.
+  await ahmed().click()
+  await page.getByTestId('customer-settings').click()
+  await page.getByTestId('reset-terms').click()
+  await expect(page.getByTestId('terms-saved')).toBeVisible()
+  await expect(page.getByText('من المتجر').first()).toBeVisible()
+
+  await back()
+  await back()
+  await expect(ahmed().getByTestId('overridden')).toHaveCount(0)
+})
+
 test('a customer sees every shop they owe, and can open one', async ({
   page,
 }) => {
