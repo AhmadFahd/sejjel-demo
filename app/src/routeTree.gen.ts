@@ -10,10 +10,13 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as CustomerRouteRouteImport } from './routes/customer/route'
 import { Route as DesignRouteImport } from './routes/design'
+import { Route as MerchantRouteRouteImport } from './routes/merchant/route'
 import { Route as SignInRouteImport } from './routes/sign-in'
 import { Route as StatusRouteImport } from './routes/status'
 import { Route as WelcomeRouteImport } from './routes/welcome'
+import { Route as ApiEventsRouteImport } from './routes/api/events'
 import { Route as CustomerIndexRouteImport } from './routes/customer/index'
 import { Route as CustomerConnectionIdRouteImport } from './routes/customer/$connectionId'
 import { Route as MerchantIndexRouteImport } from './routes/merchant/index'
@@ -27,9 +30,19 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const CustomerRouteRoute = CustomerRouteRouteImport.update({
+  id: '/customer',
+  path: '/customer',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const DesignRoute = DesignRouteImport.update({
   id: '/design',
   path: '/design',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MerchantRouteRoute = MerchantRouteRouteImport.update({
+  id: '/merchant',
+  path: '/merchant',
   getParentRoute: () => rootRouteImport,
 } as any)
 const SignInRoute = SignInRouteImport.update({
@@ -47,35 +60,40 @@ const WelcomeRoute = WelcomeRouteImport.update({
   path: '/welcome',
   getParentRoute: () => rootRouteImport,
 } as any)
-const CustomerIndexRoute = CustomerIndexRouteImport.update({
-  id: '/customer/',
-  path: '/customer/',
+const ApiEventsRoute = ApiEventsRouteImport.update({
+  id: '/api/events',
+  path: '/api/events',
   getParentRoute: () => rootRouteImport,
+} as any)
+const CustomerIndexRoute = CustomerIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => CustomerRouteRoute,
 } as any)
 const CustomerConnectionIdRoute = CustomerConnectionIdRouteImport.update({
-  id: '/customer/$connectionId',
-  path: '/customer/$connectionId',
-  getParentRoute: () => rootRouteImport,
+  id: '/$connectionId',
+  path: '/$connectionId',
+  getParentRoute: () => CustomerRouteRoute,
 } as any)
 const MerchantIndexRoute = MerchantIndexRouteImport.update({
-  id: '/merchant/',
-  path: '/merchant/',
-  getParentRoute: () => rootRouteImport,
+  id: '/',
+  path: '/',
+  getParentRoute: () => MerchantRouteRoute,
 } as any)
 const MerchantConnectionIdRoute = MerchantConnectionIdRouteImport.update({
-  id: '/merchant/$connectionId',
-  path: '/merchant/$connectionId',
-  getParentRoute: () => rootRouteImport,
+  id: '/$connectionId',
+  path: '/$connectionId',
+  getParentRoute: () => MerchantRouteRoute,
 } as any)
 const MerchantNewRoute = MerchantNewRouteImport.update({
-  id: '/merchant/new',
-  path: '/merchant/new',
-  getParentRoute: () => rootRouteImport,
+  id: '/new',
+  path: '/new',
+  getParentRoute: () => MerchantRouteRoute,
 } as any)
 const MerchantRecordRoute = MerchantRecordRouteImport.update({
-  id: '/merchant/record',
-  path: '/merchant/record',
-  getParentRoute: () => rootRouteImport,
+  id: '/record',
+  path: '/record',
+  getParentRoute: () => MerchantRouteRoute,
 } as any)
 const ApiAuthSplatRoute = ApiAuthSplatRouteImport.update({
   id: '/api/auth/$',
@@ -85,10 +103,13 @@ const ApiAuthSplatRoute = ApiAuthSplatRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/customer': typeof CustomerRouteRouteWithChildren
+  '/merchant': typeof MerchantRouteRouteWithChildren
   '/design': typeof DesignRoute
   '/sign-in': typeof SignInRoute
   '/status': typeof StatusRoute
   '/welcome': typeof WelcomeRoute
+  '/api/events': typeof ApiEventsRoute
   '/customer/$connectionId': typeof CustomerConnectionIdRoute
   '/merchant/$connectionId': typeof MerchantConnectionIdRoute
   '/merchant/new': typeof MerchantNewRoute
@@ -103,6 +124,7 @@ export interface FileRoutesByTo {
   '/sign-in': typeof SignInRoute
   '/status': typeof StatusRoute
   '/welcome': typeof WelcomeRoute
+  '/api/events': typeof ApiEventsRoute
   '/customer/$connectionId': typeof CustomerConnectionIdRoute
   '/merchant/$connectionId': typeof MerchantConnectionIdRoute
   '/merchant/new': typeof MerchantNewRoute
@@ -114,10 +136,13 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/customer': typeof CustomerRouteRouteWithChildren
+  '/merchant': typeof MerchantRouteRouteWithChildren
   '/design': typeof DesignRoute
   '/sign-in': typeof SignInRoute
   '/status': typeof StatusRoute
   '/welcome': typeof WelcomeRoute
+  '/api/events': typeof ApiEventsRoute
   '/customer/$connectionId': typeof CustomerConnectionIdRoute
   '/merchant/$connectionId': typeof MerchantConnectionIdRoute
   '/merchant/new': typeof MerchantNewRoute
@@ -130,10 +155,13 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/customer'
+    | '/merchant'
     | '/design'
     | '/sign-in'
     | '/status'
     | '/welcome'
+    | '/api/events'
     | '/customer/$connectionId'
     | '/merchant/$connectionId'
     | '/merchant/new'
@@ -148,6 +176,7 @@ export interface FileRouteTypes {
     | '/sign-in'
     | '/status'
     | '/welcome'
+    | '/api/events'
     | '/customer/$connectionId'
     | '/merchant/$connectionId'
     | '/merchant/new'
@@ -158,10 +187,13 @@ export interface FileRouteTypes {
   id:
     | '__root__'
     | '/'
+    | '/customer'
+    | '/merchant'
     | '/design'
     | '/sign-in'
     | '/status'
     | '/welcome'
+    | '/api/events'
     | '/customer/$connectionId'
     | '/merchant/$connectionId'
     | '/merchant/new'
@@ -173,16 +205,13 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  CustomerRouteRoute: typeof CustomerRouteRouteWithChildren
+  MerchantRouteRoute: typeof MerchantRouteRouteWithChildren
   DesignRoute: typeof DesignRoute
   SignInRoute: typeof SignInRoute
   StatusRoute: typeof StatusRoute
   WelcomeRoute: typeof WelcomeRoute
-  CustomerConnectionIdRoute: typeof CustomerConnectionIdRoute
-  MerchantConnectionIdRoute: typeof MerchantConnectionIdRoute
-  MerchantNewRoute: typeof MerchantNewRoute
-  MerchantRecordRoute: typeof MerchantRecordRoute
-  CustomerIndexRoute: typeof CustomerIndexRoute
-  MerchantIndexRoute: typeof MerchantIndexRoute
+  ApiEventsRoute: typeof ApiEventsRoute
   ApiAuthSplatRoute: typeof ApiAuthSplatRoute
 }
 
@@ -195,11 +224,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/customer': {
+      id: '/customer'
+      path: '/customer'
+      fullPath: '/customer'
+      preLoaderRoute: typeof CustomerRouteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/design': {
       id: '/design'
       path: '/design'
       fullPath: '/design'
       preLoaderRoute: typeof DesignRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/merchant': {
+      id: '/merchant'
+      path: '/merchant'
+      fullPath: '/merchant'
+      preLoaderRoute: typeof MerchantRouteRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/sign-in': {
@@ -223,47 +266,54 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof WelcomeRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/events': {
+      id: '/api/events'
+      path: '/api/events'
+      fullPath: '/api/events'
+      preLoaderRoute: typeof ApiEventsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/customer/': {
       id: '/customer/'
-      path: '/customer'
+      path: '/'
       fullPath: '/customer/'
       preLoaderRoute: typeof CustomerIndexRouteImport
-      parentRoute: typeof rootRouteImport
+      parentRoute: typeof CustomerRouteRoute
     }
     '/customer/$connectionId': {
       id: '/customer/$connectionId'
-      path: '/customer/$connectionId'
+      path: '/$connectionId'
       fullPath: '/customer/$connectionId'
       preLoaderRoute: typeof CustomerConnectionIdRouteImport
-      parentRoute: typeof rootRouteImport
+      parentRoute: typeof CustomerRouteRoute
     }
     '/merchant/': {
       id: '/merchant/'
-      path: '/merchant'
+      path: '/'
       fullPath: '/merchant/'
       preLoaderRoute: typeof MerchantIndexRouteImport
-      parentRoute: typeof rootRouteImport
+      parentRoute: typeof MerchantRouteRoute
     }
     '/merchant/$connectionId': {
       id: '/merchant/$connectionId'
-      path: '/merchant/$connectionId'
+      path: '/$connectionId'
       fullPath: '/merchant/$connectionId'
       preLoaderRoute: typeof MerchantConnectionIdRouteImport
-      parentRoute: typeof rootRouteImport
+      parentRoute: typeof MerchantRouteRoute
     }
     '/merchant/new': {
       id: '/merchant/new'
-      path: '/merchant/new'
+      path: '/new'
       fullPath: '/merchant/new'
       preLoaderRoute: typeof MerchantNewRouteImport
-      parentRoute: typeof rootRouteImport
+      parentRoute: typeof MerchantRouteRoute
     }
     '/merchant/record': {
       id: '/merchant/record'
-      path: '/merchant/record'
+      path: '/record'
       fullPath: '/merchant/record'
       preLoaderRoute: typeof MerchantRecordRouteImport
-      parentRoute: typeof rootRouteImport
+      parentRoute: typeof MerchantRouteRoute
     }
     '/api/auth/$': {
       id: '/api/auth/$'
@@ -275,18 +325,47 @@ declare module '@tanstack/react-router' {
   }
 }
 
+interface CustomerRouteRouteChildren {
+  CustomerConnectionIdRoute: typeof CustomerConnectionIdRoute
+  CustomerIndexRoute: typeof CustomerIndexRoute
+}
+
+const CustomerRouteRouteChildren: CustomerRouteRouteChildren = {
+  CustomerConnectionIdRoute: CustomerConnectionIdRoute,
+  CustomerIndexRoute: CustomerIndexRoute,
+}
+
+const CustomerRouteRouteWithChildren = CustomerRouteRoute._addFileChildren(
+  CustomerRouteRouteChildren,
+)
+
+interface MerchantRouteRouteChildren {
+  MerchantConnectionIdRoute: typeof MerchantConnectionIdRoute
+  MerchantNewRoute: typeof MerchantNewRoute
+  MerchantRecordRoute: typeof MerchantRecordRoute
+  MerchantIndexRoute: typeof MerchantIndexRoute
+}
+
+const MerchantRouteRouteChildren: MerchantRouteRouteChildren = {
+  MerchantConnectionIdRoute: MerchantConnectionIdRoute,
+  MerchantNewRoute: MerchantNewRoute,
+  MerchantRecordRoute: MerchantRecordRoute,
+  MerchantIndexRoute: MerchantIndexRoute,
+}
+
+const MerchantRouteRouteWithChildren = MerchantRouteRoute._addFileChildren(
+  MerchantRouteRouteChildren,
+)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  CustomerRouteRoute: CustomerRouteRouteWithChildren,
+  MerchantRouteRoute: MerchantRouteRouteWithChildren,
   DesignRoute: DesignRoute,
   SignInRoute: SignInRoute,
   StatusRoute: StatusRoute,
   WelcomeRoute: WelcomeRoute,
-  CustomerConnectionIdRoute: CustomerConnectionIdRoute,
-  MerchantConnectionIdRoute: MerchantConnectionIdRoute,
-  MerchantNewRoute: MerchantNewRoute,
-  MerchantRecordRoute: MerchantRecordRoute,
-  CustomerIndexRoute: CustomerIndexRoute,
-  MerchantIndexRoute: MerchantIndexRoute,
+  ApiEventsRoute: ApiEventsRoute,
   ApiAuthSplatRoute: ApiAuthSplatRoute,
 }
 export const routeTree = rootRouteImport

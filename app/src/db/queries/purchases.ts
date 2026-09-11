@@ -3,6 +3,7 @@ import { transactions } from '../schema'
 import { dueDateFor } from '#/lib/payday'
 import { describePurchaseProblems, expiryFrom } from '#/lib/purchase'
 import { getConnectionSummary } from './ledger'
+import { announce } from './ledger-events'
 import type { Database } from '../client'
 import type { PurchaseProblem } from '#/lib/purchase'
 
@@ -68,6 +69,15 @@ export async function recordPendingPurchase(
     })
     .returning()
 
+  // The customer's phone is what this is waiting on, so it is the one told.
+  await announce(db, [
+    {
+      userId: summary.customerUserId,
+      kind: 'purchase.recorded',
+      subjectId: row.id,
+    },
+  ])
+
   return { ok: true, transactionId: row.id, repeated: false }
 }
 
@@ -100,5 +110,14 @@ export async function cancelPendingPurchase(
     .update(transactions)
     .set({ status: 'cancelled' })
     .where(eq(transactions.id, row.id))
+
+  await announce(db, [
+    {
+      userId: summary.customerUserId,
+      kind: 'purchase.cancelled',
+      subjectId: row.id,
+    },
+  ])
+
   return true
 }
