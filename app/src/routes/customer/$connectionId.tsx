@@ -1,7 +1,7 @@
 import { Link, createFileRoute, notFound } from '@tanstack/react-router'
 import { createServerFn } from '@tanstack/react-start'
 import { requireSide } from '#/auth/guard'
-import { AppBar } from '#/components/chrome'
+import { AppBar, buttonClass } from '#/components/chrome'
 import { Pager, TransactionHistory, pagerLinkClass } from '#/components/account'
 import {
   BalanceHero,
@@ -109,6 +109,17 @@ function CustomerAccount() {
           purchases={summary.purchases}
           payments={summary.payments}
         />
+
+        {summary.balanceHalalas > 0 ? (
+          <Link
+            to="/customer/pay/$connectionId"
+            params={{ connectionId: summary.connectionId }}
+            className={buttonClass('pay', 'mb-3')}
+            data-testid="pay"
+          >
+            {t('pay.open')}
+          </Link>
+        ) : null}
 
         <TransactionHistory entries={transactions} now={now} />
 

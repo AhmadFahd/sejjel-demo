@@ -27,6 +27,7 @@ import { Route as MerchantRecordRouteImport } from './routes/merchant/record'
 import { Route as MerchantScanRouteImport } from './routes/merchant/scan'
 import { Route as ApiAuthSplatRouteImport } from './routes/api/auth/$'
 import { Route as CustomerApproveTransactionIdRouteImport } from './routes/customer/approve/$transactionId'
+import { Route as CustomerPayConnectionIdRouteImport } from './routes/customer/pay/$connectionId'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -119,6 +120,11 @@ const CustomerApproveTransactionIdRoute =
     path: '/approve/$transactionId',
     getParentRoute: () => CustomerRouteRoute,
   } as any)
+const CustomerPayConnectionIdRoute = CustomerPayConnectionIdRouteImport.update({
+  id: '/pay/$connectionId',
+  path: '/pay/$connectionId',
+  getParentRoute: () => CustomerRouteRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -139,6 +145,7 @@ export interface FileRoutesByFullPath {
   '/merchant/': typeof MerchantIndexRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/customer/approve/$transactionId': typeof CustomerApproveTransactionIdRoute
+  '/customer/pay/$connectionId': typeof CustomerPayConnectionIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -157,6 +164,7 @@ export interface FileRoutesByTo {
   '/merchant': typeof MerchantIndexRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/customer/approve/$transactionId': typeof CustomerApproveTransactionIdRoute
+  '/customer/pay/$connectionId': typeof CustomerPayConnectionIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -178,6 +186,7 @@ export interface FileRoutesById {
   '/merchant/': typeof MerchantIndexRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/customer/approve/$transactionId': typeof CustomerApproveTransactionIdRoute
+  '/customer/pay/$connectionId': typeof CustomerPayConnectionIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -200,6 +209,7 @@ export interface FileRouteTypes {
     | '/merchant/'
     | '/api/auth/$'
     | '/customer/approve/$transactionId'
+    | '/customer/pay/$connectionId'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -218,6 +228,7 @@ export interface FileRouteTypes {
     | '/merchant'
     | '/api/auth/$'
     | '/customer/approve/$transactionId'
+    | '/customer/pay/$connectionId'
   id:
     | '__root__'
     | '/'
@@ -238,6 +249,7 @@ export interface FileRouteTypes {
     | '/merchant/'
     | '/api/auth/$'
     | '/customer/approve/$transactionId'
+    | '/customer/pay/$connectionId'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -380,6 +392,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CustomerApproveTransactionIdRouteImport
       parentRoute: typeof CustomerRouteRoute
     }
+    '/customer/pay/$connectionId': {
+      id: '/customer/pay/$connectionId'
+      path: '/pay/$connectionId'
+      fullPath: '/customer/pay/$connectionId'
+      preLoaderRoute: typeof CustomerPayConnectionIdRouteImport
+      parentRoute: typeof CustomerRouteRoute
+    }
   }
 }
 
@@ -388,6 +407,7 @@ interface CustomerRouteRouteChildren {
   CustomerCardRoute: typeof CustomerCardRoute
   CustomerIndexRoute: typeof CustomerIndexRoute
   CustomerApproveTransactionIdRoute: typeof CustomerApproveTransactionIdRoute
+  CustomerPayConnectionIdRoute: typeof CustomerPayConnectionIdRoute
 }
 
 const CustomerRouteRouteChildren: CustomerRouteRouteChildren = {
@@ -395,6 +415,7 @@ const CustomerRouteRouteChildren: CustomerRouteRouteChildren = {
   CustomerCardRoute: CustomerCardRoute,
   CustomerIndexRoute: CustomerIndexRoute,
   CustomerApproveTransactionIdRoute: CustomerApproveTransactionIdRoute,
+  CustomerPayConnectionIdRoute: CustomerPayConnectionIdRoute,
 }
 
 const CustomerRouteRouteWithChildren = CustomerRouteRoute._addFileChildren(
