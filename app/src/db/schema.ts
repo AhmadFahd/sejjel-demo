@@ -168,6 +168,17 @@ export const transactions = sqliteTable(
      */
     approvalToken: text('approval_token'),
     approvalExpiresAt: integer('approval_expires_at', { mode: 'timestamp' }),
+    /**
+     * UC-10: a settlement's life at the gateway. The ledger moves when the
+     * gateway says `paid`, never when the button was pressed, so these say
+     * which payment answered for this row and what it answered.
+     */
+    paymentId: text('payment_id'),
+    paymentMethod: text('payment_method', {
+      enum: ['apple_pay', 'mada', 'card'],
+    }),
+    receiptReference: text('receipt_reference'),
+    failureReason: text('failure_reason'),
     /** UC-06: the merchant was warned about an overdue customer and went on. */
     overdueAcknowledged: integer('overdue_acknowledged', { mode: 'boolean' })
       .notNull()

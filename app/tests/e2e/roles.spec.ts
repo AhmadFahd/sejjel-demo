@@ -310,6 +310,40 @@ test('the shop’s waiting screen moves on when the customer says no', async ({
   await customer.close()
 })
 
+/**
+ * UC-10: أحمد owes بقالة الريان 800. He settles 300 of it; the ledger moves
+ * when the gateway confirms, and the shop's position moves with it.
+ */
+test('a customer settles part of what they owe', async ({ page, browser }) => {
+  test.slow()
+  await signIn(page, '0550123456', '+966550123456')
+  await page
+    .getByTestId('connection-row')
+    .filter({ hasText: 'بقالة الريان' })
+    .click()
+  await page.getByTestId('pay').click()
+
+  await page.getByRole('button', { name: 'مبلغ جزئي' }).click()
+  await page.getByLabel('المبلغ').fill('300')
+  await page.getByTestId('method-mada').click()
+  await page.getByRole('button', { name: /ادفع/ }).click()
+
+  await expect(page.getByTestId('receipt')).toBeVisible()
+  await expect(page.getByTestId('receipt')).toContainText('FAKE-')
+
+  // What he owes that shop, and what the shop is owed, both moved.
+  await page.goto('/customer')
+  await expect(page.locator('main')).toContainText('920')
+
+  const shop = await browser.newContext()
+  const shopPhone = await shop.newPage()
+  await signIn(shopPhone, '0550111222', '+966550111222')
+  await expect(
+    shopPhone.getByTestId('connection-row').filter({ hasText: 'أحمد محمد' }),
+  ).toContainText('500')
+  await shop.close()
+})
+
 test('a customer cannot open another customer’s account', async ({ page }) => {
   await signIn(page, '0533456789', '+966533456789')
   await expect(page).toHaveURL(/\/customer$/)

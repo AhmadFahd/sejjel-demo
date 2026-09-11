@@ -15,6 +15,13 @@
       "when": 1789127962124,
       "tag": "0001_record_purchase",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "6",
+      "when": 1789143590588,
+      "tag": "0002_settle_balance",
+      "breakpoints": true
     }
   ]
 }
