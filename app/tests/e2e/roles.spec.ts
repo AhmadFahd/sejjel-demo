@@ -14,9 +14,11 @@ async function signIn(page: Page, typed: string, e164: string) {
   await page.goto('/sign-in')
   await page.getByLabel('رقم الجوال').fill(typed)
   await page.getByRole('button', { name: 'أرسل الرمز' }).click()
-  await expect(page.getByLabel('رمز التحقق')).toBeVisible()
-  await page.getByLabel('رمز التحقق').fill(codeSentTo(e164))
-  await page.getByRole('button', { name: 'دخول' }).click()
+
+  // One box at a time, the way a person types it; the last digit signs them in.
+  await expect(page.getByTestId('code-boxes')).toBeVisible()
+  await page.getByLabel('الرقم 1').click()
+  await page.keyboard.type(codeSentTo(e164))
 
   // The session lands with the navigation, so a goto before this races it.
   await expect(page).not.toHaveURL(/\/sign-in$/)
