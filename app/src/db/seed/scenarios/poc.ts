@@ -55,6 +55,11 @@ export const poc: Scenario = {
       phoneNumber: '+966500000001',
       name: 'نورة الحربي',
     })
+    // The same state, kept that way: somebody for a shop to ask for.
+    await addPerson(db, {
+      phoneNumber: '+966500000002',
+      name: 'عبدالله المطيري',
+    })
 
     const noorOwner = await addPerson(db, {
       phoneNumber: '+966551000001',

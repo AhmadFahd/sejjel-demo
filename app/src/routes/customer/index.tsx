@@ -1,9 +1,10 @@
 import { Link, createFileRoute } from '@tanstack/react-router'
 import { createServerFn } from '@tanstack/react-start'
 import { requireSide } from '#/auth/guard'
+import { ConnectionRequests } from '#/components/connection-requests'
 import { getCustomerTotals, listCustomerConnections } from '#/db/queries/ledger'
 import { paydayOnOrAfter } from '#/lib/payday'
-import { AppBar } from '#/components/chrome'
+import { AppBar, buttonClass } from '#/components/chrome'
 import {
   Avatar,
   Card,
@@ -20,6 +21,7 @@ const loadShops = createServerFn({ method: 'GET' }).handler(async () => {
   const { requireSignedInUser } = await import('#/auth/session.server')
   const { getDatabase } = await import('#/db/client')
   const { listAwaitingCustomer } = await import('#/db/queries/approval')
+  const { listConnectionRequests } = await import('#/db/queries/connect')
   const user = await requireSignedInUser()
 
   const db = getDatabase()
@@ -36,6 +38,7 @@ const loadShops = createServerFn({ method: 'GET' }).handler(async () => {
     totals,
     shops,
     awaiting: await listAwaitingCustomer(db, user.id, now),
+    requests: await listConnectionRequests(db, user.id),
     nextPaydayAt: paydayOnOrAfter(now),
     roles: user.roles,
   }
@@ -49,7 +52,8 @@ export const Route = createFileRoute('/customer/')({
 })
 
 function CustomerHome() {
-  const { totals, shops, awaiting, roles, nextPaydayAt } = Route.useLoaderData()
+  const { totals, shops, awaiting, requests, roles, nextPaydayAt } =
+    Route.useLoaderData()
   const { t, money, number, date } = useI18n()
 
   return (
@@ -84,6 +88,16 @@ function CustomerHome() {
             marked={totals.overdueHalalas > 0}
           />
         </div>
+
+        <Link
+          to="/customer/card"
+          className={buttonClass('ghost', 'mb-3')}
+          data-testid="my-card-link"
+        >
+          {t('card.open')}
+        </Link>
+
+        <ConnectionRequests requests={requests} />
 
         {awaiting.map((operation) => (
           <Link

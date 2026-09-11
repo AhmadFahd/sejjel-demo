@@ -324,6 +324,52 @@ test('a customer cannot open another customer’s account', async ({ page }) => 
   await expect(page.getByRole('heading', { level: 1 })).toHaveText('غير موجود')
 })
 
+/**
+ * UC-08: a person no shop keeps becomes a customer by being scanned, and only
+ * once they have agreed. Nothing of theirs is in the shop's list before that.
+ */
+test('a shop asks for a customer by scanning their card', async ({
+  page,
+  browser,
+}) => {
+  test.slow()
+  await signIn(page, '0500000002', '+966500000002')
+  await expect(page).toHaveURL(/\/welcome$/)
+  await page.getByTestId('my-card-link').click()
+  const card = await page.getByTestId('approval-text').innerText()
+
+  const shop = await browser.newContext()
+  const shopPhone = await shop.newPage()
+  await signIn(shopPhone, '0550111222', '+966550111222')
+  await expect(shopPhone.getByTestId('connection-row')).toHaveCount(3)
+
+  await shopPhone.goto('/merchant/scan')
+  await shopPhone.getByLabel('أو أدخل الرمز').fill(card)
+  await shopPhone.getByRole('button', { name: 'تسجيل' }).click()
+  await expect(shopPhone.getByTestId('connect-outcome')).toContainText(
+    'أُرسل الطلب',
+  )
+
+  // Still three customers: asking is not adding.
+  await shopPhone.goto('/merchant')
+  await expect(shopPhone.getByTestId('connection-row')).toHaveCount(3)
+
+  // The request reached the other phone without it being touched.
+  await expect(page.getByTestId('connection-request')).toContainText(
+    'بقالة الريان',
+  )
+  await page.getByRole('button', { name: 'موافقة' }).click()
+  await expect(page).toHaveURL(/\/customer$/)
+
+  await shopPhone.goto('/merchant')
+  await expect(shopPhone.getByTestId('connection-row')).toHaveCount(4)
+  await expect(
+    shopPhone.getByTestId('connection-row').filter({ hasText: 'عبدالله' }),
+  ).toBeVisible()
+
+  await shop.close()
+})
+
 test('signing out ends the session and the ledger is closed again', async ({
   page,
 }) => {

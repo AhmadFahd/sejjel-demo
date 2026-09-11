@@ -10,6 +10,7 @@ import { APPROVAL_SECONDS } from './approval'
 export { APPROVAL_SECONDS }
 
 export type Approval = {
+  kind?: 'approval'
   /** The operation this approves, and nothing else. */
   transactionId: string
   /** The shop it was issued to, and nobody else. */
@@ -17,6 +18,18 @@ export type Approval = {
   /** Seconds since the epoch. */
   expiresAt: number
   /** Makes two codes for the same operation different from each other. */
+  nonce: string
+}
+
+/**
+ * UC-08: the code on a customer's own card. It says who they are and nothing
+ * else, and it runs out on the same two minutes an approval does, so one
+ * photographed off a screen cannot be used by whoever took the picture.
+ */
+export type Identity = {
+  kind: 'identity'
+  customerUserId: string
+  expiresAt: number
   nonce: string
 }
 
@@ -32,24 +45,46 @@ function sign(body: string, env?: NodeJS.ProcessEnv): string {
   return createHmac('sha256', secret(env)).update(body).digest('base64url')
 }
 
+function seal(
+  payload: Record<string, unknown>,
+  now: Date,
+  env?: NodeJS.ProcessEnv,
+): string {
+  const body = Buffer.from(
+    JSON.stringify({
+      ...payload,
+      expiresAt: Math.floor(now.getTime() / 1000) + APPROVAL_SECONDS,
+      nonce: randomUUID(),
+    }),
+  ).toString('base64url')
+  return `${body}.${sign(body, env)}`
+}
+
 export function issueApproval(
   input: { transactionId: string; merchantId: string },
   now: Date = new Date(),
   env?: NodeJS.ProcessEnv,
 ): string {
-  const approval: Approval = {
-    transactionId: input.transactionId,
-    merchantId: input.merchantId,
-    expiresAt: Math.floor(now.getTime() / 1000) + APPROVAL_SECONDS,
-    nonce: randomUUID(),
-  }
+  return seal({ kind: 'approval', ...input }, now, env)
+}
 
-  const body = Buffer.from(JSON.stringify(approval)).toString('base64url')
-  return `${body}.${sign(body, env)}`
+export function issueIdentity(
+  customerUserId: string,
+  now: Date = new Date(),
+  env?: NodeJS.ProcessEnv,
+): string {
+  return seal({ kind: 'identity', customerUserId }, now, env)
 }
 
 export type ApprovalCheck =
   { ok: true; approval: Approval } | { ok: false; problem: ApprovalProblem }
+
+export type IdentityCheck =
+  { ok: true; identity: Identity } | { ok: false; problem: ApprovalProblem }
+
+export type CodeCheck =
+  | { ok: true; payload: Approval | Identity }
+  | { ok: false; problem: ApprovalProblem }
 
 /**
  * A code is refused for exactly one reason, and the merchant is told which:
@@ -57,11 +92,11 @@ export type ApprovalCheck =
  * run out. Tampering shows up as a broken signature, since the body is what
  * is signed.
  */
-export function readApproval(
+export function readCode(
   code: string,
   now: Date = new Date(),
   env?: NodeJS.ProcessEnv,
-): ApprovalCheck {
+): CodeCheck {
   const [body, signature] = code.trim().split('.')
   if (!body || !signature) return { ok: false, problem: 'shape' }
 
@@ -71,26 +106,54 @@ export function readApproval(
     return { ok: false, problem: 'signature' }
   }
 
-  let approval: Approval
+  let payload: Approval | Identity
   try {
-    approval = JSON.parse(
-      Buffer.from(body, 'base64url').toString('utf8'),
-    ) as Approval
+    payload = JSON.parse(Buffer.from(body, 'base64url').toString('utf8')) as
+      Approval | Identity
   } catch {
     return { ok: false, problem: 'shape' }
   }
 
-  if (
-    typeof approval.transactionId !== 'string' ||
-    typeof approval.merchantId !== 'string' ||
-    typeof approval.expiresAt !== 'number'
-  ) {
+  if (typeof payload.expiresAt !== 'number') {
     return { ok: false, problem: 'shape' }
   }
 
-  if (approval.expiresAt * 1000 <= now.getTime()) {
+  const shaped =
+    payload.kind === 'identity'
+      ? typeof payload.customerUserId === 'string'
+      : typeof payload.transactionId === 'string' &&
+        typeof payload.merchantId === 'string'
+  if (!shaped) return { ok: false, problem: 'shape' }
+
+  if (payload.expiresAt * 1000 <= now.getTime()) {
     return { ok: false, problem: 'expired' }
   }
 
-  return { ok: true, approval }
+  return { ok: true, payload }
+}
+
+/** The same read, for a caller that will only take an approval. */
+export function readApproval(
+  code: string,
+  now: Date = new Date(),
+  env?: NodeJS.ProcessEnv,
+): ApprovalCheck {
+  const check = readCode(code, now, env)
+  if (!check.ok) return check
+  return check.payload.kind === 'identity'
+    ? { ok: false, problem: 'shape' }
+    : { ok: true, approval: check.payload }
+}
+
+/** And for one that will only take a customer's card. */
+export function readIdentity(
+  code: string,
+  now: Date = new Date(),
+  env?: NodeJS.ProcessEnv,
+): IdentityCheck {
+  const check = readCode(code, now, env)
+  if (!check.ok) return check
+  return check.payload.kind === 'identity'
+    ? { ok: true, identity: check.payload }
+    : { ok: false, problem: 'shape' }
 }

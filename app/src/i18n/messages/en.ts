@@ -153,6 +153,18 @@ export const en = {
   'scan.error.elsewhere': 'That code was issued to another shop.',
   'scan.error.already': 'That operation is already on the ledger.',
   'scan.error.gone': 'That operation is no longer waiting.',
+  'scan.asked': 'Asked. They appear here once they agree.',
+  'scan.connected': 'Already one of your customers.',
+  'scan.error.self': 'That is your own card.',
+  'scan.invite': 'No سجّل yet? Send them this to sign up:',
+  'card.title': 'Your card',
+  'card.body': 'Show this to a shop to be added to their ledger.',
+  'card.open': 'My card',
+  'request.title': 'A shop wants to add you',
+  'request.terms':
+    'A limit of {limit}, due {days} days after each purchase, on the pay-day that follows.',
+  'request.agree': 'Agree',
+  'request.refuse': 'No thanks',
 
   'payday.title': 'One due day: every Tuesday',
   'payday.note': 'Everything you owe falls due together, to make paying simple',

@@ -19,6 +19,7 @@ import { Route as WelcomeRouteImport } from './routes/welcome'
 import { Route as ApiEventsRouteImport } from './routes/api/events'
 import { Route as CustomerIndexRouteImport } from './routes/customer/index'
 import { Route as CustomerConnectionIdRouteImport } from './routes/customer/$connectionId'
+import { Route as CustomerCardRouteImport } from './routes/customer/card'
 import { Route as MerchantIndexRouteImport } from './routes/merchant/index'
 import { Route as MerchantConnectionIdRouteImport } from './routes/merchant/$connectionId'
 import { Route as MerchantNewRouteImport } from './routes/merchant/new'
@@ -77,6 +78,11 @@ const CustomerConnectionIdRoute = CustomerConnectionIdRouteImport.update({
   path: '/$connectionId',
   getParentRoute: () => CustomerRouteRoute,
 } as any)
+const CustomerCardRoute = CustomerCardRouteImport.update({
+  id: '/card',
+  path: '/card',
+  getParentRoute: () => CustomerRouteRoute,
+} as any)
 const MerchantIndexRoute = MerchantIndexRouteImport.update({
   id: '/',
   path: '/',
@@ -124,6 +130,7 @@ export interface FileRoutesByFullPath {
   '/welcome': typeof WelcomeRoute
   '/api/events': typeof ApiEventsRoute
   '/customer/$connectionId': typeof CustomerConnectionIdRoute
+  '/customer/card': typeof CustomerCardRoute
   '/merchant/$connectionId': typeof MerchantConnectionIdRoute
   '/merchant/new': typeof MerchantNewRoute
   '/merchant/record': typeof MerchantRecordRoute
@@ -141,6 +148,7 @@ export interface FileRoutesByTo {
   '/welcome': typeof WelcomeRoute
   '/api/events': typeof ApiEventsRoute
   '/customer/$connectionId': typeof CustomerConnectionIdRoute
+  '/customer/card': typeof CustomerCardRoute
   '/merchant/$connectionId': typeof MerchantConnectionIdRoute
   '/merchant/new': typeof MerchantNewRoute
   '/merchant/record': typeof MerchantRecordRoute
@@ -161,6 +169,7 @@ export interface FileRoutesById {
   '/welcome': typeof WelcomeRoute
   '/api/events': typeof ApiEventsRoute
   '/customer/$connectionId': typeof CustomerConnectionIdRoute
+  '/customer/card': typeof CustomerCardRoute
   '/merchant/$connectionId': typeof MerchantConnectionIdRoute
   '/merchant/new': typeof MerchantNewRoute
   '/merchant/record': typeof MerchantRecordRoute
@@ -182,6 +191,7 @@ export interface FileRouteTypes {
     | '/welcome'
     | '/api/events'
     | '/customer/$connectionId'
+    | '/customer/card'
     | '/merchant/$connectionId'
     | '/merchant/new'
     | '/merchant/record'
@@ -199,6 +209,7 @@ export interface FileRouteTypes {
     | '/welcome'
     | '/api/events'
     | '/customer/$connectionId'
+    | '/customer/card'
     | '/merchant/$connectionId'
     | '/merchant/new'
     | '/merchant/record'
@@ -218,6 +229,7 @@ export interface FileRouteTypes {
     | '/welcome'
     | '/api/events'
     | '/customer/$connectionId'
+    | '/customer/card'
     | '/merchant/$connectionId'
     | '/merchant/new'
     | '/merchant/record'
@@ -312,6 +324,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CustomerConnectionIdRouteImport
       parentRoute: typeof CustomerRouteRoute
     }
+    '/customer/card': {
+      id: '/customer/card'
+      path: '/card'
+      fullPath: '/customer/card'
+      preLoaderRoute: typeof CustomerCardRouteImport
+      parentRoute: typeof CustomerRouteRoute
+    }
     '/merchant/': {
       id: '/merchant/'
       path: '/'
@@ -366,12 +385,14 @@ declare module '@tanstack/react-router' {
 
 interface CustomerRouteRouteChildren {
   CustomerConnectionIdRoute: typeof CustomerConnectionIdRoute
+  CustomerCardRoute: typeof CustomerCardRoute
   CustomerIndexRoute: typeof CustomerIndexRoute
   CustomerApproveTransactionIdRoute: typeof CustomerApproveTransactionIdRoute
 }
 
 const CustomerRouteRouteChildren: CustomerRouteRouteChildren = {
   CustomerConnectionIdRoute: CustomerConnectionIdRoute,
+  CustomerCardRoute: CustomerCardRoute,
   CustomerIndexRoute: CustomerIndexRoute,
   CustomerApproveTransactionIdRoute: CustomerApproveTransactionIdRoute,
 }

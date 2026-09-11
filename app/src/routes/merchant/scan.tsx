@@ -2,7 +2,7 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 import { Link, createFileRoute, useRouter } from '@tanstack/react-router'
 import { requireSide } from '#/auth/guard'
 import { applyScannedCode } from '#/auth/approval'
-import { AppBar, Button } from '#/components/chrome'
+import { AppBar, Button, buttonClass } from '#/components/chrome'
 import { Card } from '#/components/primitives'
 import { useI18n } from '#/i18n/context'
 
@@ -25,7 +25,13 @@ function makeDetector(): Detector | null {
 }
 
 type Problem =
-  'shape' | 'signature' | 'expired' | 'elsewhere' | 'already' | 'gone'
+  'shape' | 'signature' | 'expired' | 'elsewhere' | 'already' | 'gone' | 'self'
+
+/** What the scan turned out to be, once the server read the code. */
+type Outcome =
+  | { kind: 'applied' }
+  | { kind: 'asked' }
+  | { kind: 'connected'; connectionId: string }
 
 /** UC-07: the merchant's scan is what applies the operation. */
 export const Route = createFileRoute('/merchant/scan')({
@@ -35,12 +41,14 @@ export const Route = createFileRoute('/merchant/scan')({
 
 function ScanCode() {
   const { t } = useI18n()
+  const origin =
+    typeof window === 'undefined' ? 'sejjel' : window.location.origin
   const router = useRouter()
   const video = useRef<HTMLVideoElement>(null)
   const [typed, setTyped] = useState('')
   const [busy, setBusy] = useState(false)
   const [problem, setProblem] = useState<Problem | null>(null)
-  const [applied, setApplied] = useState(false)
+  const [outcome, setOutcome] = useState<Outcome | null>(null)
   const [camera, setCamera] = useState<'idle' | 'on' | 'unavailable'>('idle')
 
   const apply = useCallback(
@@ -50,13 +58,18 @@ function ScanCode() {
       const result = await applyScannedCode({ data: { code: code.trim() } })
       setBusy(false)
 
-      if (result.applied) {
-        setApplied(true)
-        setProblem(null)
-        await router.invalidate()
+      if (result.outcome === 'refused') {
+        setProblem(result.problem)
         return
       }
-      setProblem(result.problem)
+
+      setProblem(null)
+      setOutcome(
+        result.outcome === 'connected'
+          ? { kind: 'connected', connectionId: result.connectionId }
+          : { kind: result.outcome },
+      )
+      await router.invalidate()
     },
     [busy, router],
   )
@@ -64,7 +77,7 @@ function ScanCode() {
   // The camera, where the device and the browser both allow one. A phone that
   // refuses is not stuck: the code under the QR can be typed instead.
   useEffect(() => {
-    if (applied) return
+    if (outcome) return
 
     const detector = makeDetector()
     if (!detector) {
@@ -107,7 +120,7 @@ function ScanCode() {
       clearInterval(timer)
       for (const track of stream?.getTracks() ?? []) track.stop()
     }
-  }, [applied, apply])
+  }, [outcome, apply])
 
   return (
     <>
@@ -121,11 +134,31 @@ function ScanCode() {
         </Link>
         <h1 className="mb-3 text-xl font-black text-ink">{t('scan.title')}</h1>
 
-        {applied ? (
-          <Card data-testid="applied">
-            <p className="text-[15px] font-black text-good-text">
-              {t('scan.applied')}
+        {outcome ? (
+          <Card
+            data-testid={
+              outcome.kind === 'applied' ? 'applied' : 'connect-outcome'
+            }
+          >
+            <p className="mb-3 text-[15px] font-black text-good-text">
+              {t(
+                outcome.kind === 'applied'
+                  ? 'scan.applied'
+                  : outcome.kind === 'asked'
+                    ? 'scan.asked'
+                    : 'scan.connected',
+              )}
             </p>
+            {outcome.kind === 'connected' ? (
+              <Link
+                to="/merchant/record"
+                search={{ customer: outcome.connectionId }}
+                className={buttonClass('primary')}
+                data-testid="record-for-them"
+              >
+                {t('operation.new')}
+              </Link>
+            ) : null}
           </Card>
         ) : (
           <Card>
@@ -159,6 +192,16 @@ function ScanCode() {
             <Button tone="primary" disabled={busy} onClick={() => apply(typed)}>
               {t('scan.apply')}
             </Button>
+
+            {/* UC-08: somebody who has never used سجّل has no card to scan.
+                Nothing goes on the ledger for them until they sign up and
+                agree, so all the shop can do is point them at it. */}
+            <p className="mt-4 text-[11.5px] font-bold text-muted">
+              {t('scan.invite')}{' '}
+              <span dir="ltr" className="font-black text-steel">
+                {origin}
+              </span>
+            </p>
           </Card>
         )}
 
