@@ -23,6 +23,7 @@ import {
   Toast,
   useToast,
 } from '#/components/chrome'
+import { CodeBoxes } from '#/components/code-boxes'
 import { I18nProvider, useI18n } from '#/i18n/context'
 import { LOCALES, directionOf } from '#/i18n/locales'
 import {
@@ -56,6 +57,7 @@ function Panel({ locale }: { locale: Locale }) {
   const { t, money, date, time } = useI18n()
   const toast = useToast()
   const [sheetOpen, setSheetOpen] = useState(false)
+  const [code, setCode] = useState('')
   const [customer] = SAMPLE_CUSTOMERS
 
   return (
@@ -169,6 +171,13 @@ function Panel({ locale }: { locale: Locale }) {
               amountHalalas={entry.amountHalalas}
             />
           ))}
+        </Card>
+
+        <Card>
+          <p className="mb-2 text-[12.5px] font-extrabold text-muted">
+            {t('auth.codeLabel')}
+          </p>
+          <CodeBoxes code={code} onCode={setCode} />
         </Card>
 
         <div className="grid gap-2.5">

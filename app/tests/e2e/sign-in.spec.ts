@@ -1,6 +1,7 @@
 import { readFileSync } from 'node:fs'
 import { expect, test } from '@playwright/test'
 import { OTP_LOG } from '../../playwright.config'
+import type { Page } from '@playwright/test'
 
 /**
  * The fake OTP sender writes every code it "sends" to a file. Reading it here
@@ -13,6 +14,15 @@ function codeSentTo(phoneNumber: string): string {
   return line.split(' ')[1]
 }
 
+/**
+ * The code goes in one box at a time, the way a person types it, and the last
+ * digit signs them in without anything else being pressed.
+ */
+async function typeCode(page: Page, code: string) {
+  await page.getByLabel('الرقم 1').click()
+  await page.keyboard.type(code)
+}
+
 test('a seeded customer signs in with a code, and stays signed in', async ({
   page,
 }) => {
@@ -21,9 +31,8 @@ test('a seeded customer signs in with a code, and stays signed in', async ({
   await page.getByLabel('رقم الجوال').fill('0550123456')
   await page.getByRole('button', { name: 'أرسل الرمز' }).click()
 
-  await expect(page.getByLabel('رمز التحقق')).toBeVisible()
-  await page.getByLabel('رمز التحقق').fill(codeSentTo('+966550123456'))
-  await page.getByRole('button', { name: 'دخول' }).click()
+  await expect(page.getByTestId('code-boxes')).toBeVisible()
+  await typeCode(page, codeSentTo('+966550123456'))
 
   // أحمد owes three shops and keeps none, so he lands on the customer side.
   await expect(page).toHaveURL(/\/customer$/)
@@ -41,8 +50,8 @@ test('a wrong code is refused', async ({ page }) => {
 
   await page.getByLabel('رقم الجوال').fill('0533456789')
   await page.getByRole('button', { name: 'أرسل الرمز' }).click()
-  await page.getByLabel('رمز التحقق').fill('000000')
-  await page.getByRole('button', { name: 'دخول' }).click()
+  await expect(page.getByTestId('code-boxes')).toBeVisible()
+  await typeCode(page, '000000')
 
   await expect(page.getByRole('alert')).toBeVisible()
   await expect(page).toHaveURL(/\/sign-in$/)
@@ -55,9 +64,8 @@ test('a number nobody has connected gets no account', async ({ page }) => {
   await page.getByRole('button', { name: 'أرسل الرمز' }).click()
 
   // Even if a code goes out, verifying it must not create a person.
-  await expect(page.getByLabel('رمز التحقق')).toBeVisible()
-  await page.getByLabel('رمز التحقق').fill(codeSentTo('+966500000000'))
-  await page.getByRole('button', { name: 'دخول' }).click()
+  await expect(page.getByTestId('code-boxes')).toBeVisible()
+  await typeCode(page, codeSentTo('+966500000000'))
 
   await expect(page.getByRole('alert')).toBeVisible()
 })
@@ -69,9 +77,8 @@ test('the language a signed-in person picks follows their account', async ({
   await page.goto('/sign-in')
   await page.getByLabel('رقم الجوال').fill('0555987210')
   await page.getByRole('button', { name: 'أرسل الرمز' }).click()
-  await expect(page.getByLabel('رمز التحقق')).toBeVisible()
-  await page.getByLabel('رمز التحقق').fill(codeSentTo('+966555987210'))
-  await page.getByRole('button', { name: 'دخول' }).click()
+  await expect(page.getByTestId('code-boxes')).toBeVisible()
+  await typeCode(page, codeSentTo('+966555987210'))
   await expect(page).toHaveURL(/\/customer$/)
 
   await page.getByTestId('locale-switch').click()

@@ -5,6 +5,7 @@ import { getDatabase } from '#/db/client'
 import { accounts, sessions, users, verifications } from '#/db/schema'
 import { getProviders, providerConfigFromEnv } from '#/providers/registry'
 import { log } from '#/lib/log'
+import { OTP_LENGTH } from './otp'
 import { SAUDI_MOBILE, fixedOtpFromEnv } from './phone'
 
 /** Five minutes is long enough to read an SMS and short enough to be worth stealing. */
@@ -101,6 +102,7 @@ function createAuth() {
     emailAndPassword: { enabled: false },
     plugins: [
       phoneNumber({
+        otpLength: OTP_LENGTH,
         expiresIn: OTP_TTL_SECONDS,
         allowedAttempts: ALLOWED_ATTEMPTS,
         phoneNumberValidator: (value) => SAUDI_MOBILE.test(value),

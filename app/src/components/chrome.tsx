@@ -156,6 +156,9 @@ const BUTTON_TONES: Record<ButtonTone, string> = {
 export function buttonClass(tone: ButtonTone = 'primary', className?: string) {
   return cx(
     'flex w-full items-center justify-center gap-2 rounded-(--radius-control) p-3.5 text-[14.5px] font-black transition active:scale-[0.98]',
+    // A button that cannot be pressed has to look like one, or the only way to
+    // find out is to press it.
+    'disabled:opacity-50 disabled:active:scale-100',
     BUTTON_TONES[tone],
     className,
   )

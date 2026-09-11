@@ -19,6 +19,19 @@ export function normaliseSaudiMobile(input: string): string | null {
   return SAUDI_MOBILE.test(candidate) ? candidate : null
 }
 
+/** `0550123456`: the digits of a Saudi mobile as it is written locally. */
+export const LOCAL_MOBILE_LENGTH = 10
+
+/**
+ * Local digits cut into the groups they are read in, wherever they stop:
+ * `0550 123 456`, or `0550 1` part-way through being typed.
+ */
+export function groupLocalMobile(digits: string): string {
+  return [digits.slice(0, 4), digits.slice(4, 7), digits.slice(7, 10)]
+    .filter(Boolean)
+    .join(' ')
+}
+
 /**
  * How a Saudi number is read aloud and written down: `0550 123 456`, not the
  * E.164 the database keeps. A number that is not one of ours is handed back
@@ -26,8 +39,7 @@ export function normaliseSaudiMobile(input: string): string | null {
  */
 export function localSaudiMobile(e164: string): string {
   if (!SAUDI_MOBILE.test(e164)) return e164
-  const digits = `0${e164.slice(4)}`
-  return `${digits.slice(0, 4)} ${digits.slice(4, 7)} ${digits.slice(7)}`
+  return groupLocalMobile(`0${e164.slice(4)}`)
 }
 
 /**
