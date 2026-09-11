@@ -132,30 +132,38 @@ function MerchantHome() {
           </Card>
         ) : (
           data.customers.map((row, index) => (
-            <Card key={row.connectionId} data-testid="connection-row">
-              <div className="mb-3 flex items-center gap-2.5">
-                <Avatar name={row.customerName} index={index} />
-                <div className="flex-1">
-                  <div className="text-[15px] font-black text-ink">
-                    {row.customerName}
+            <Link
+              key={row.connectionId}
+              to="/merchant/$connectionId"
+              params={{ connectionId: row.connectionId }}
+              className="block"
+              data-testid="connection-row"
+            >
+              <Card>
+                <div className="mb-3 flex items-center gap-2.5">
+                  <Avatar name={row.customerName} index={index} />
+                  <div className="flex-1">
+                    <div className="text-[15px] font-black text-ink">
+                      {row.customerName}
+                    </div>
+                    <MobileNumber>
+                      {localSaudiMobile(row.customerMobile)}
+                    </MobileNumber>
                   </div>
-                  <MobileNumber>
-                    {localSaudiMobile(row.customerMobile)}
-                  </MobileNumber>
+                  <StatusPill status={row.status} />
                 </div>
-                <StatusPill status={row.status} />
-              </div>
-              <KeyValueRow
-                label={t('ledger.balance')}
-                emphasis
-                tone={row.status === 'overdue' ? 'bad' : 'plain'}
-              >
-                {money(row.balanceHalalas)}
-              </KeyValueRow>
-              <KeyValueRow label={t('ledger.dueDate')}>
-                {row.dueAt ? date(row.dueAt) : t('ledger.noDueDate')}
-              </KeyValueRow>
-            </Card>
+                <KeyValueRow
+                  label={t('ledger.balance')}
+                  emphasis
+                  tone={row.status === 'overdue' ? 'bad' : 'plain'}
+                >
+                  {money(row.balanceHalalas)}
+                </KeyValueRow>
+                <KeyValueRow label={t('ledger.dueDate')}>
+                  {row.dueAt ? date(row.dueAt) : t('ledger.noDueDate')}
+                </KeyValueRow>
+              </Card>
+            </Link>
           ))
         )}
 

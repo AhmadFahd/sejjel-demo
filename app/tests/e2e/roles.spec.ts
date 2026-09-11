@@ -90,6 +90,47 @@ test('a customer is sent back from the shop side', async ({ page }) => {
  * is the sum of the two he still owes, so it is a check that the customer's
  * figures come from the same derivation the merchant's do.
  */
+/**
+ * UC-03: the shop opens one customer's whole account from the dashboard, and
+ * only its own. سالم owes 1,250 against a 1,500 limit, so 250 is available.
+ */
+test('a shopkeeper opens a customer account, and only their own', async ({
+  page,
+  browser,
+}) => {
+  // Two sign-ins, each with a code, do not fit in the default budget.
+  test.slow()
+  await signIn(page, '0550111222', '+966550111222')
+
+  await page
+    .getByTestId('connection-row')
+    .filter({ hasText: 'سالم العتيبي' })
+    .click()
+
+  await expect(page.getByText('سالم العتيبي')).toBeVisible()
+  await expect(page.getByText('0533 456 789')).toBeVisible()
+  const main = page.locator('main')
+  await expect(main).toContainText('1,250')
+  await expect(main).toContainText('250')
+  await expect(page.getByTestId('transactions')).toContainText('مواد بناء')
+  await expect(page.getByTestId('limit-bar')).toBeVisible()
+
+  // The same id, on the phone of the shop next door, is an account that is
+  // not there. A second context rather than a second sign-in: two shopkeepers
+  // are two phones.
+  const salemAtRiyan = new URL(page.url()).pathname
+  const nextDoor = await browser.newContext()
+  const theirPhone = await nextDoor.newPage()
+  await signIn(theirPhone, '0551000001', '+966551000001')
+
+  await theirPhone.goto(salemAtRiyan)
+
+  await expect(theirPhone.getByRole('heading', { level: 1 })).toHaveText(
+    'غير موجود',
+  )
+  await nextDoor.close()
+})
+
 test('a customer sees every shop they owe, and can open one', async ({
   page,
 }) => {

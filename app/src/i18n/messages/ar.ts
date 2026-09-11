@@ -82,6 +82,9 @@ export const ar = {
   'ledger.noOperations': 'لا توجد عمليات على هذا الحساب بعد.',
   'tx.purchase': 'شراء',
   'tx.payment': 'سداد',
+  'tx.pending': 'بانتظار الموافقة',
+  'tx.cancelled': 'ملغاة',
+  'tx.failed': 'فشلت',
 
   'notFound.title': 'غير موجود',
   'notFound.body': 'هذه الصفحة غير موجودة، أو ليست لك.',
