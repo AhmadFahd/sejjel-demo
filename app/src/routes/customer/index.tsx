@@ -19,6 +19,7 @@ import { useI18n } from '#/i18n/context'
 const loadShops = createServerFn({ method: 'GET' }).handler(async () => {
   const { requireSignedInUser } = await import('#/auth/session.server')
   const { getDatabase } = await import('#/db/client')
+  const { listAwaitingCustomer } = await import('#/db/queries/approval')
   const user = await requireSignedInUser()
 
   const db = getDatabase()
@@ -34,6 +35,7 @@ const loadShops = createServerFn({ method: 'GET' }).handler(async () => {
   return {
     totals,
     shops,
+    awaiting: await listAwaitingCustomer(db, user.id, now),
     nextPaydayAt: paydayOnOrAfter(now),
     roles: user.roles,
   }
@@ -47,7 +49,7 @@ export const Route = createFileRoute('/customer/')({
 })
 
 function CustomerHome() {
-  const { totals, shops, roles, nextPaydayAt } = Route.useLoaderData()
+  const { totals, shops, awaiting, roles, nextPaydayAt } = Route.useLoaderData()
   const { t, money, number, date } = useI18n()
 
   return (
@@ -82,6 +84,30 @@ function CustomerHome() {
             marked={totals.overdueHalalas > 0}
           />
         </div>
+
+        {awaiting.map((operation) => (
+          <Link
+            key={operation.transactionId}
+            to="/customer/approve/$transactionId"
+            params={{ transactionId: operation.transactionId }}
+            className="block"
+            data-testid="awaiting"
+          >
+            <Card className="border-[1.5px] border-gold">
+              <div className="mb-1 text-[13px] font-black text-warn-text">
+                {t('approval.awaiting')}
+              </div>
+              <div className="flex items-center justify-between gap-2">
+                <span className="text-[15px] font-black text-ink">
+                  {operation.merchantName}
+                </span>
+                <b className="tabular text-[15px] font-black text-ink">
+                  {money(operation.amountHalalas)}
+                </b>
+              </div>
+            </Card>
+          </Link>
+        ))}
 
         <Card className="p-4">
           <PaydayStrip nextPaydayAt={nextPaydayAt} />

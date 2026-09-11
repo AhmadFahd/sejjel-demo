@@ -227,6 +227,89 @@ test('an operation recorded on one phone reaches the other', async ({
   await shop.close()
 })
 
+/**
+ * UC-07, end to end across two phones: the shop records, the customer approves
+ * and shows the code, the shop applies it, and both screens move on by
+ * themselves. The code is read from the screen rather than through the camera,
+ * which is the same path a scan takes once the camera has read it.
+ */
+test('a purchase is agreed on one phone and applied on the other', async ({
+  page,
+  browser,
+}) => {
+  test.slow()
+  await signIn(page, '0550111222', '+966550111222')
+  await page.getByTestId('record').click()
+  await page.getByLabel('العميل').selectOption({ label: 'خالد علي' })
+  await page.getByLabel('المبلغ').fill('120')
+  await page.getByLabel('الوصف (اختياري)').fill('أرز وسكر')
+  await page.getByRole('button', { name: 'أرسل للعميل' }).click()
+  await expect(page.getByTestId('waiting')).toBeVisible()
+
+  const customer = await browser.newContext()
+  const theirPhone = await customer.newPage()
+  await signIn(theirPhone, '0555987210', '+966555987210')
+
+  await theirPhone.getByTestId('awaiting').click()
+  await expect(theirPhone.getByTestId('operation')).toContainText('أرز وسكر')
+  await theirPhone.getByRole('button', { name: 'موافقة' }).click()
+  await expect(theirPhone.getByTestId('approval-qr')).toBeVisible()
+  await expect(theirPhone.getByTestId('countdown')).toContainText('صالح لمدة')
+  const code = await theirPhone.getByTestId('approval-text').innerText()
+
+  // The shop's phone: what the camera would have read, applied.
+  await page.getByTestId('go-scan').click()
+  await page.getByLabel('أو أدخل الرمز').fill(code)
+  await page.getByRole('button', { name: 'تسجيل' }).click()
+  await expect(page.getByTestId('applied')).toBeVisible()
+
+  // A second scan of the same code applies nothing more.
+  await page.goto('/merchant/scan')
+  await page.getByLabel('أو أدخل الرمز').fill(code)
+  await page.getByRole('button', { name: 'تسجيل' }).click()
+  await expect(page.getByTestId('applied')).toBeVisible()
+
+  // Both sides now read the same ledger: خالد owes 120 and nobody refreshed.
+  await page.goto('/merchant')
+  const khalid = page
+    .getByTestId('connection-row')
+    .filter({ hasText: 'خالد علي' })
+  await expect(khalid).toContainText('120')
+  await expect(theirPhone.locator('main')).toContainText('120')
+
+  await customer.close()
+})
+
+/**
+ * The other half of UC-07: the shop's waiting screen moves on because the
+ * ledger changed, not because a timer ran out. Nobody touches this page
+ * between the customer declining and it saying so.
+ */
+test('the shop’s waiting screen moves on when the customer says no', async ({
+  page,
+  browser,
+}) => {
+  test.slow()
+  await signIn(page, '0550111222', '+966550111222')
+  await page.getByTestId('record').click()
+  await page.getByLabel('العميل').selectOption({ label: 'سالم العتيبي' })
+  await page.getByLabel('المبلغ').fill('60')
+  await page.getByRole('button', { name: 'أرسل للعميل' }).click()
+  await expect(page.getByTestId('waiting')).toBeVisible()
+
+  const customer = await browser.newContext()
+  const theirPhone = await customer.newPage()
+  await signIn(theirPhone, '0533456789', '+966533456789')
+  await theirPhone.getByTestId('awaiting').click()
+  await theirPhone.getByRole('button', { name: 'رفض' }).click()
+
+  await expect(page.getByTestId('operation-settled')).toContainText(
+    'رفض العميل',
+  )
+
+  await customer.close()
+})
+
 test('a customer cannot open another customer’s account', async ({ page }) => {
   await signIn(page, '0533456789', '+966533456789')
   await expect(page).toHaveURL(/\/customer$/)

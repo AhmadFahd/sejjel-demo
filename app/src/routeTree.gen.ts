@@ -23,7 +23,9 @@ import { Route as MerchantIndexRouteImport } from './routes/merchant/index'
 import { Route as MerchantConnectionIdRouteImport } from './routes/merchant/$connectionId'
 import { Route as MerchantNewRouteImport } from './routes/merchant/new'
 import { Route as MerchantRecordRouteImport } from './routes/merchant/record'
+import { Route as MerchantScanRouteImport } from './routes/merchant/scan'
 import { Route as ApiAuthSplatRouteImport } from './routes/api/auth/$'
+import { Route as CustomerApproveTransactionIdRouteImport } from './routes/customer/approve/$transactionId'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -95,11 +97,22 @@ const MerchantRecordRoute = MerchantRecordRouteImport.update({
   path: '/record',
   getParentRoute: () => MerchantRouteRoute,
 } as any)
+const MerchantScanRoute = MerchantScanRouteImport.update({
+  id: '/scan',
+  path: '/scan',
+  getParentRoute: () => MerchantRouteRoute,
+} as any)
 const ApiAuthSplatRoute = ApiAuthSplatRouteImport.update({
   id: '/api/auth/$',
   path: '/api/auth/$',
   getParentRoute: () => rootRouteImport,
 } as any)
+const CustomerApproveTransactionIdRoute =
+  CustomerApproveTransactionIdRouteImport.update({
+    id: '/approve/$transactionId',
+    path: '/approve/$transactionId',
+    getParentRoute: () => CustomerRouteRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -114,9 +127,11 @@ export interface FileRoutesByFullPath {
   '/merchant/$connectionId': typeof MerchantConnectionIdRoute
   '/merchant/new': typeof MerchantNewRoute
   '/merchant/record': typeof MerchantRecordRoute
+  '/merchant/scan': typeof MerchantScanRoute
   '/customer/': typeof CustomerIndexRoute
   '/merchant/': typeof MerchantIndexRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
+  '/customer/approve/$transactionId': typeof CustomerApproveTransactionIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -129,9 +144,11 @@ export interface FileRoutesByTo {
   '/merchant/$connectionId': typeof MerchantConnectionIdRoute
   '/merchant/new': typeof MerchantNewRoute
   '/merchant/record': typeof MerchantRecordRoute
+  '/merchant/scan': typeof MerchantScanRoute
   '/customer': typeof CustomerIndexRoute
   '/merchant': typeof MerchantIndexRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
+  '/customer/approve/$transactionId': typeof CustomerApproveTransactionIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -147,9 +164,11 @@ export interface FileRoutesById {
   '/merchant/$connectionId': typeof MerchantConnectionIdRoute
   '/merchant/new': typeof MerchantNewRoute
   '/merchant/record': typeof MerchantRecordRoute
+  '/merchant/scan': typeof MerchantScanRoute
   '/customer/': typeof CustomerIndexRoute
   '/merchant/': typeof MerchantIndexRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
+  '/customer/approve/$transactionId': typeof CustomerApproveTransactionIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -166,9 +185,11 @@ export interface FileRouteTypes {
     | '/merchant/$connectionId'
     | '/merchant/new'
     | '/merchant/record'
+    | '/merchant/scan'
     | '/customer/'
     | '/merchant/'
     | '/api/auth/$'
+    | '/customer/approve/$transactionId'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -181,9 +202,11 @@ export interface FileRouteTypes {
     | '/merchant/$connectionId'
     | '/merchant/new'
     | '/merchant/record'
+    | '/merchant/scan'
     | '/customer'
     | '/merchant'
     | '/api/auth/$'
+    | '/customer/approve/$transactionId'
   id:
     | '__root__'
     | '/'
@@ -198,9 +221,11 @@ export interface FileRouteTypes {
     | '/merchant/$connectionId'
     | '/merchant/new'
     | '/merchant/record'
+    | '/merchant/scan'
     | '/customer/'
     | '/merchant/'
     | '/api/auth/$'
+    | '/customer/approve/$transactionId'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -315,6 +340,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof MerchantRecordRouteImport
       parentRoute: typeof MerchantRouteRoute
     }
+    '/merchant/scan': {
+      id: '/merchant/scan'
+      path: '/scan'
+      fullPath: '/merchant/scan'
+      preLoaderRoute: typeof MerchantScanRouteImport
+      parentRoute: typeof MerchantRouteRoute
+    }
     '/api/auth/$': {
       id: '/api/auth/$'
       path: '/api/auth/$'
@@ -322,17 +354,26 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiAuthSplatRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/customer/approve/$transactionId': {
+      id: '/customer/approve/$transactionId'
+      path: '/approve/$transactionId'
+      fullPath: '/customer/approve/$transactionId'
+      preLoaderRoute: typeof CustomerApproveTransactionIdRouteImport
+      parentRoute: typeof CustomerRouteRoute
+    }
   }
 }
 
 interface CustomerRouteRouteChildren {
   CustomerConnectionIdRoute: typeof CustomerConnectionIdRoute
   CustomerIndexRoute: typeof CustomerIndexRoute
+  CustomerApproveTransactionIdRoute: typeof CustomerApproveTransactionIdRoute
 }
 
 const CustomerRouteRouteChildren: CustomerRouteRouteChildren = {
   CustomerConnectionIdRoute: CustomerConnectionIdRoute,
   CustomerIndexRoute: CustomerIndexRoute,
+  CustomerApproveTransactionIdRoute: CustomerApproveTransactionIdRoute,
 }
 
 const CustomerRouteRouteWithChildren = CustomerRouteRoute._addFileChildren(
@@ -343,6 +384,7 @@ interface MerchantRouteRouteChildren {
   MerchantConnectionIdRoute: typeof MerchantConnectionIdRoute
   MerchantNewRoute: typeof MerchantNewRoute
   MerchantRecordRoute: typeof MerchantRecordRoute
+  MerchantScanRoute: typeof MerchantScanRoute
   MerchantIndexRoute: typeof MerchantIndexRoute
 }
 
@@ -350,6 +392,7 @@ const MerchantRouteRouteChildren: MerchantRouteRouteChildren = {
   MerchantConnectionIdRoute: MerchantConnectionIdRoute,
   MerchantNewRoute: MerchantNewRoute,
   MerchantRecordRoute: MerchantRecordRoute,
+  MerchantScanRoute: MerchantScanRoute,
   MerchantIndexRoute: MerchantIndexRoute,
 }
 
