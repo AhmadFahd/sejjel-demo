@@ -26,6 +26,8 @@ import { Route as MerchantNewRouteImport } from './routes/merchant/new'
 import { Route as MerchantRecordRouteImport } from './routes/merchant/record'
 import { Route as MerchantScanRouteImport } from './routes/merchant/scan'
 import { Route as MerchantSettingsRouteImport } from './routes/merchant/settings'
+import { Route as PrototypeLandingRouteImport } from './routes/prototype/landing'
+import { Route as PrototypeShellRouteImport } from './routes/prototype/shell'
 import { Route as ApiAuthSplatRouteImport } from './routes/api/auth/$'
 import { Route as CustomerApproveTransactionIdRouteImport } from './routes/customer/approve/$transactionId'
 import { Route as CustomerPayConnectionIdRouteImport } from './routes/customer/pay/$connectionId'
@@ -116,6 +118,16 @@ const MerchantSettingsRoute = MerchantSettingsRouteImport.update({
   path: '/settings',
   getParentRoute: () => MerchantRouteRoute,
 } as any)
+const PrototypeLandingRoute = PrototypeLandingRouteImport.update({
+  id: '/prototype/landing',
+  path: '/prototype/landing',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PrototypeShellRoute = PrototypeShellRouteImport.update({
+  id: '/prototype/shell',
+  path: '/prototype/shell',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiAuthSplatRoute = ApiAuthSplatRouteImport.update({
   id: '/api/auth/$',
   path: '/api/auth/$',
@@ -155,6 +167,8 @@ export interface FileRoutesByFullPath {
   '/merchant/record': typeof MerchantRecordRoute
   '/merchant/scan': typeof MerchantScanRoute
   '/merchant/settings': typeof MerchantSettingsRoute
+  '/prototype/landing': typeof PrototypeLandingRoute
+  '/prototype/shell': typeof PrototypeShellRoute
   '/customer/': typeof CustomerIndexRoute
   '/merchant/': typeof MerchantIndexRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
@@ -176,6 +190,8 @@ export interface FileRoutesByTo {
   '/merchant/record': typeof MerchantRecordRoute
   '/merchant/scan': typeof MerchantScanRoute
   '/merchant/settings': typeof MerchantSettingsRoute
+  '/prototype/landing': typeof PrototypeLandingRoute
+  '/prototype/shell': typeof PrototypeShellRoute
   '/customer': typeof CustomerIndexRoute
   '/merchant': typeof MerchantIndexRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
@@ -200,6 +216,8 @@ export interface FileRoutesById {
   '/merchant/record': typeof MerchantRecordRoute
   '/merchant/scan': typeof MerchantScanRoute
   '/merchant/settings': typeof MerchantSettingsRoute
+  '/prototype/landing': typeof PrototypeLandingRoute
+  '/prototype/shell': typeof PrototypeShellRoute
   '/customer/': typeof CustomerIndexRoute
   '/merchant/': typeof MerchantIndexRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
@@ -225,6 +243,8 @@ export interface FileRouteTypes {
     | '/merchant/record'
     | '/merchant/scan'
     | '/merchant/settings'
+    | '/prototype/landing'
+    | '/prototype/shell'
     | '/customer/'
     | '/merchant/'
     | '/api/auth/$'
@@ -246,6 +266,8 @@ export interface FileRouteTypes {
     | '/merchant/record'
     | '/merchant/scan'
     | '/merchant/settings'
+    | '/prototype/landing'
+    | '/prototype/shell'
     | '/customer'
     | '/merchant'
     | '/api/auth/$'
@@ -269,6 +291,8 @@ export interface FileRouteTypes {
     | '/merchant/record'
     | '/merchant/scan'
     | '/merchant/settings'
+    | '/prototype/landing'
+    | '/prototype/shell'
     | '/customer/'
     | '/merchant/'
     | '/api/auth/$'
@@ -286,6 +310,8 @@ export interface RootRouteChildren {
   StatusRoute: typeof StatusRoute
   WelcomeRoute: typeof WelcomeRoute
   ApiEventsRoute: typeof ApiEventsRoute
+  PrototypeLandingRoute: typeof PrototypeLandingRoute
+  PrototypeShellRoute: typeof PrototypeShellRoute
   ApiAuthSplatRoute: typeof ApiAuthSplatRoute
 }
 
@@ -410,6 +436,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof MerchantSettingsRouteImport
       parentRoute: typeof MerchantRouteRoute
     }
+    '/prototype/landing': {
+      id: '/prototype/landing'
+      path: '/prototype/landing'
+      fullPath: '/prototype/landing'
+      preLoaderRoute: typeof PrototypeLandingRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/prototype/shell': {
+      id: '/prototype/shell'
+      path: '/prototype/shell'
+      fullPath: '/prototype/shell'
+      preLoaderRoute: typeof PrototypeShellRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/auth/$': {
       id: '/api/auth/$'
       path: '/api/auth/$'
@@ -494,6 +534,8 @@ const rootRouteChildren: RootRouteChildren = {
   StatusRoute: StatusRoute,
   WelcomeRoute: WelcomeRoute,
   ApiEventsRoute: ApiEventsRoute,
+  PrototypeLandingRoute: PrototypeLandingRoute,
+  PrototypeShellRoute: PrototypeShellRoute,
   ApiAuthSplatRoute: ApiAuthSplatRoute,
 }
 export const routeTree = rootRouteImport
