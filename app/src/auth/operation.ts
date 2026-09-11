@@ -5,6 +5,8 @@ export type NewOperation = {
   amountHalalas: number
   description: string
   requestId: string
+  /** UC-06: the merchant read the overdue warning and went on. */
+  acknowledgedOverdue: boolean
 }
 
 /**
@@ -20,6 +22,7 @@ export const recordOperation = createServerFn({ method: 'POST' })
       amountHalalas: Number(raw.amountHalalas),
       description: String(raw.description ?? ''),
       requestId: String(raw.requestId ?? ''),
+      acknowledgedOverdue: Boolean(raw.acknowledgedOverdue),
     }
   })
   .handler(async ({ data }) => {
@@ -28,7 +31,15 @@ export const recordOperation = createServerFn({ method: 'POST' })
     const { recordPendingPurchase } = await import('#/db/queries/purchases')
     const user = await requireSignedInUser()
     const shop = user.roles.merchant
-    if (!shop) return { problems: ['connection' as const] }
+    if (!shop) {
+      return {
+        problems: ['connection' as const],
+        overByHalalas: 0,
+        availableHalalas: 0,
+        overdueHalalas: 0,
+        daysOverdue: 0,
+      }
+    }
 
     const result = await recordPendingPurchase(getDatabase(), {
       connectionId: data.connectionId,
@@ -36,11 +47,18 @@ export const recordOperation = createServerFn({ method: 'POST' })
       amountHalalas: data.amountHalalas,
       description: data.description,
       requestId: data.requestId,
+      acknowledgedOverdue: data.acknowledgedOverdue,
     })
 
     return result.ok
       ? { problems: [], transactionId: result.transactionId }
-      : { problems: result.problems }
+      : {
+          problems: result.problems,
+          overByHalalas: result.overByHalalas ?? 0,
+          availableHalalas: result.availableHalalas ?? 0,
+          overdueHalalas: result.overdueHalalas ?? 0,
+          daysOverdue: result.daysOverdue ?? 0,
+        }
   })
 
 export const cancelOperation = createServerFn({ method: 'POST' })

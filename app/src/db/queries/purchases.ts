@@ -1,7 +1,7 @@
 import { and, eq } from 'drizzle-orm'
 import { transactions } from '../schema'
 import { dueDateFor } from '#/lib/payday'
-import { describePurchaseProblems, expiryFrom } from '#/lib/purchase'
+import { assessPurchase, expiryFrom } from '#/lib/purchase'
 import { getConnectionSummary } from './ledger'
 import { announce } from './ledger-events'
 import type { Database } from '../client'
@@ -9,7 +9,15 @@ import type { PurchaseProblem } from '#/lib/purchase'
 
 export type RecordResult =
   | { ok: true; transactionId: string; repeated: boolean }
-  | { ok: false; problems: Array<PurchaseProblem | 'connection'> }
+  | {
+      ok: false
+      problems: Array<PurchaseProblem | 'connection'>
+      /** What the screen needs to say why: UC-05's figures and UC-06's. */
+      overByHalalas?: number
+      availableHalalas?: number
+      overdueHalalas?: number
+      daysOverdue?: number
+    }
 
 /**
  * UC-04: a purchase lands pending, because the customer has not agreed to it
@@ -27,6 +35,8 @@ export async function recordPendingPurchase(
     amountHalalas: number
     description?: string
     requestId: string
+    /** UC-06: the merchant saw the overdue warning and went on. */
+    acknowledgedOverdue?: boolean
     now?: Date
   },
 ): Promise<RecordResult> {
@@ -44,12 +54,24 @@ export async function recordPendingPurchase(
     return { ok: false, problems: ['connection'] }
   }
 
-  const problems = describePurchaseProblems({
+  const check = assessPurchase({
     amountHalalas: input.amountHalalas,
     balanceHalalas: summary.balanceHalalas,
     limitHalalas: summary.limitHalalas,
+    dueState: summary.dueState,
+    daysOverdue: summary.daysOverdue,
+    acknowledgedOverdue: input.acknowledgedOverdue,
   })
-  if (problems.length > 0) return { ok: false, problems }
+  if (check.problems.length > 0) {
+    return {
+      ok: false,
+      problems: check.problems,
+      overByHalalas: check.overByHalalas,
+      availableHalalas: check.availableHalalas,
+      overdueHalalas: check.overdueHalalas,
+      daysOverdue: check.daysOverdue,
+    }
+  }
 
   const [row] = await db
     .insert(transactions)
@@ -65,6 +87,8 @@ export async function recordPendingPurchase(
       termDaysSnapshot: summary.termDays,
       dueAt: dueDateFor(now, summary.termDays),
       approvalExpiresAt: expiryFrom(now),
+      // UC-06: who was warned and went on is visible on the operation itself.
+      overdueAcknowledged: Boolean(input.acknowledgedOverdue),
       createdAt: now,
     })
     .returning()

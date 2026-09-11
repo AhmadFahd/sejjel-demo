@@ -1,6 +1,7 @@
 import { and, desc, eq } from 'drizzle-orm'
 import { connections, merchants, transactions } from '../schema'
 import { hasExpired } from '#/lib/purchase'
+import { wouldBreachLimit } from '../derive'
 import { issueApproval, readApproval } from '#/lib/approval.server'
 import { getConnectionSummary } from './ledger'
 import { announce } from './ledger-events'
@@ -200,7 +201,7 @@ export type ApplyResult =
   | { ok: true; transactionId: string; repeated: boolean }
   | {
       ok: false
-      problem: ApprovalProblem | 'gone' | 'elsewhere' | 'already'
+      problem: ApprovalProblem | 'gone' | 'elsewhere' | 'already' | 'limit'
     }
 
 /**
@@ -222,6 +223,33 @@ export async function applyApproval(
   // A code is only good for the shop it was issued to.
   if (approval.merchantId !== input.merchantId) {
     return { ok: false, problem: 'elsewhere' }
+  }
+
+  // UC-05: the limit is checked again here, not only when the operation was
+  // entered, because another purchase may have landed in between.
+  const waiting = (
+    await db
+      .select()
+      .from(transactions)
+      .where(
+        and(
+          eq(transactions.id, approval.transactionId),
+          eq(transactions.status, 'pending'),
+        ),
+      )
+  ).at(0)
+  if (waiting) {
+    const account = await getConnectionSummary(db, waiting.connectionId, now)
+    if (
+      account &&
+      wouldBreachLimit(
+        account.balanceHalalas,
+        account.limitHalalas,
+        waiting.amountHalalas,
+      )
+    ) {
+      return { ok: false, problem: 'limit' }
+    }
   }
 
   const applied = await db

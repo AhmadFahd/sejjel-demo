@@ -25,7 +25,14 @@ function makeDetector(): Detector | null {
 }
 
 type Problem =
-  'shape' | 'signature' | 'expired' | 'elsewhere' | 'already' | 'gone' | 'self'
+  | 'shape'
+  | 'signature'
+  | 'expired'
+  | 'elsewhere'
+  | 'already'
+  | 'gone'
+  | 'self'
+  | 'limit'
 
 /** What the scan turned out to be, once the server read the code. */
 type Outcome =

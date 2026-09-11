@@ -2,6 +2,7 @@ import { beforeEach, describe, expect, it } from 'vitest'
 import type { Database } from '#/db/client'
 import {
   MAX_PURCHASE_RIYALS,
+  assessPurchase,
   describePurchaseProblems,
   expiryFrom,
   hasExpired,
@@ -15,7 +16,11 @@ import { getConnectionSummary, listTransactions } from '#/db/queries/ledger'
 import { riyalsToHalalas } from '#/lib/money'
 import { PAYDAY_WEEKDAY, riyadhWeekday } from '#/lib/payday'
 import { createTestDatabase } from '../support/database'
-import { makeConnection, makeMerchant } from '../support/factories'
+import {
+  makeConnection,
+  makeMerchant,
+  makeTransaction,
+} from '../support/factories'
 
 describe('describePurchaseProblems', () => {
   const account = {
@@ -58,6 +63,86 @@ describe('describePurchaseProblems', () => {
         amountHalalas: riyalsToHalalas(MAX_PURCHASE_RIYALS + 1),
       }),
     ).toEqual(['ceiling'])
+  })
+})
+
+describe('assessPurchase', () => {
+  const account = {
+    balanceHalalas: riyalsToHalalas(800),
+    limitHalalas: riyalsToHalalas(1000),
+  }
+
+  it('allows the purchase that lands exactly on the limit', () => {
+    const check = assessPurchase({
+      ...account,
+      amountHalalas: riyalsToHalalas(200),
+    })
+
+    expect(check.problems).toEqual([])
+    expect(check.overByHalalas).toBe(0)
+    expect(check.availableHalalas).toBe(riyalsToHalalas(200))
+  })
+
+  it('refuses the one that is a halala over, and says by how much', () => {
+    const check = assessPurchase({
+      ...account,
+      amountHalalas: riyalsToHalalas(200) + 1,
+    })
+
+    expect(check.problems).toEqual(['limit'])
+    expect(check.overByHalalas).toBe(1)
+    expect(check.availableHalalas).toBe(riyalsToHalalas(200))
+  })
+
+  it('warns about a customer who is late but inside their limit', () => {
+    const check = assessPurchase({
+      ...account,
+      amountHalalas: riyalsToHalalas(100),
+      dueState: 'overdue',
+      daysOverdue: 9,
+    })
+
+    expect(check.problems).toEqual(['overdue'])
+    expect(check.overdueHalalas).toBe(riyalsToHalalas(800))
+    expect(check.daysOverdue).toBe(9)
+  })
+
+  it('lets the merchant go past the warning', () => {
+    expect(
+      assessPurchase({
+        ...account,
+        amountHalalas: riyalsToHalalas(100),
+        dueState: 'overdue',
+        daysOverdue: 9,
+        acknowledgedOverdue: true,
+      }).problems,
+    ).toEqual([])
+  })
+
+  it('does not call a settled account late, whatever its old dates say', () => {
+    expect(
+      assessPurchase({
+        balanceHalalas: 0,
+        limitHalalas: riyalsToHalalas(1000),
+        amountHalalas: riyalsToHalalas(100),
+        dueState: 'overdue',
+        daysOverdue: 40,
+      }).problems,
+    ).toEqual([])
+  })
+
+  it('stops at the limit even when the customer is also late', () => {
+    const check = assessPurchase({
+      ...account,
+      amountHalalas: riyalsToHalalas(500),
+      dueState: 'overdue',
+      daysOverdue: 9,
+      acknowledgedOverdue: true,
+    })
+
+    // The line the shop set holds whatever the merchant agrees to.
+    expect(check.problems).toEqual(['limit'])
+    expect(check.overByHalalas).toBe(riyalsToHalalas(300))
   })
 })
 
@@ -177,7 +262,12 @@ describe('recordPendingPurchase', () => {
       requestId: 'too-much',
     })
 
-    expect(result).toEqual({ ok: false, problems: ['limit'] })
+    expect(result).toMatchObject({
+      ok: false,
+      problems: ['limit'],
+      overByHalalas: riyalsToHalalas(1),
+      availableHalalas: riyalsToHalalas(1000),
+    })
     expect(await listTransactions(db, connection.id)).toHaveLength(0)
   })
 
@@ -192,7 +282,64 @@ describe('recordPendingPurchase', () => {
       requestId: 'not-mine',
     })
 
-    expect(result).toEqual({ ok: false, problems: ['connection'] })
+    expect(result).toMatchObject({ ok: false, problems: ['connection'] })
+  })
+})
+
+describe('recording for a customer who is late', () => {
+  async function lateAccount() {
+    const merchant = await makeMerchant(db, {
+      defaultLimitHalalas: riyalsToHalalas(1000),
+      defaultTermDays: 30,
+    })
+    const connection = await makeConnection(db, { merchantId: merchant.id })
+    // Owed, and past a date that has gone.
+    await makeTransaction(db, {
+      connectionId: connection.id,
+      amountHalalas: riyalsToHalalas(400),
+      dueAt: new Date('2026-09-01T00:00:00+03:00'),
+    })
+    return { merchant, connection }
+  }
+
+  const now = new Date('2026-09-15T10:00:00+03:00')
+
+  it('warns rather than records, until the merchant says go on', async () => {
+    const { merchant, connection } = await lateAccount()
+
+    const warned = await recordPendingPurchase(db, {
+      connectionId: connection.id,
+      merchantId: merchant.id,
+      amountHalalas: riyalsToHalalas(100),
+      requestId: 'warned',
+      now,
+    })
+
+    expect(warned).toMatchObject({
+      ok: false,
+      problems: ['overdue'],
+      overdueHalalas: riyalsToHalalas(400),
+      daysOverdue: 14,
+    })
+    expect(await listTransactions(db, connection.id)).toHaveLength(1)
+  })
+
+  it('records who was warned and went on anyway', async () => {
+    const { merchant, connection } = await lateAccount()
+
+    const recorded = await recordPendingPurchase(db, {
+      connectionId: connection.id,
+      merchantId: merchant.id,
+      amountHalalas: riyalsToHalalas(100),
+      requestId: 'went-on',
+      acknowledgedOverdue: true,
+      now,
+    })
+
+    expect(recorded).toMatchObject({ ok: true })
+    const rows = await listTransactions(db, connection.id)
+    const recordedRow = rows.find((row) => row.status === 'pending')
+    expect(recordedRow?.overdueAcknowledged).toBe(true)
   })
 })
 
