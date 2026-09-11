@@ -15,5 +15,8 @@ export default defineConfig({
   test: {
     environment: 'node',
     include: ['tests/unit/**/*.test.ts'],
+    // Signing an approval needs a secret, the same way the server does. A
+    // fixed one here keeps the tests from depending on the machine.
+    env: { AUTH_SECRET: 'a-secret-only-the-tests-use' },
   },
 })

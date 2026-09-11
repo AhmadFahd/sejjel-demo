@@ -4,7 +4,7 @@ import { createServerFn } from '@tanstack/react-start'
 import { requireSide } from '#/auth/guard'
 import { localSaudiMobile } from '#/auth/phone'
 import { cancelOperation, recordOperation } from '#/auth/operation'
-import { AppBar, Button } from '#/components/chrome'
+import { AppBar, Button, buttonClass } from '#/components/chrome'
 import { Card, KeyValueRow, MobileNumber } from '#/components/primitives'
 import { LimitBar } from '#/components/ledger'
 import { parseAmount } from '#/lib/money'
@@ -12,36 +12,60 @@ import { PENDING_MINUTES, projectBalance } from '#/lib/purchase'
 import { useI18n } from '#/i18n/context'
 import type { PurchaseProblem } from '#/lib/purchase'
 
-const loadCustomers = createServerFn({ method: 'GET' }).handler(async () => {
-  const { requireSignedInUser } = await import('#/auth/session.server')
-  const { getDatabase } = await import('#/db/client')
-  const { listMerchantConnections } = await import('#/db/queries/ledger')
-  const user = await requireSignedInUser()
-  const shop = user.roles.merchant
-  if (!shop) return null
+const loadCustomers = createServerFn({ method: 'GET' })
+  .validator((input: unknown): { pending: string } => ({
+    pending: String((input as { pending?: unknown }).pending ?? ''),
+  }))
+  .handler(async ({ data }) => {
+    const { requireSignedInUser } = await import('#/auth/session.server')
+    const { getDatabase } = await import('#/db/client')
+    const { listMerchantConnections, listTransactions } =
+      await import('#/db/queries/ledger')
+    const user = await requireSignedInUser()
+    const shop = user.roles.merchant
+    if (!shop) return null
 
-  // Everyone the shop could record against, in one list: a grocery has the
-  // customer standing there, and picking them should not need a search.
-  return {
-    customers: await listMerchantConnections(
-      getDatabase(),
-      shop.id,
-      new Date(),
-      {
-        limit: 200,
-      },
-    ),
-  }
-})
+    const db = getDatabase()
+
+    // Everyone the shop could record against, in one list: a grocery has the
+    // customer standing there, and picking them should not need a search.
+    const customers = await listMerchantConnections(db, shop.id, new Date(), {
+      limit: 200,
+    })
+
+    // The status of the operation being waited on, read fresh. The stream
+    // invalidates this loader, which is how the waiting screen moves on
+    // without a timer.
+    let waitingOn: { id: string; status: string } | null = null
+    if (data.pending) {
+      for (const row of customers) {
+        const rows = await listTransactions(db, row.connectionId, { limit: 50 })
+        const found = rows.find((entry) => entry.id === data.pending)
+        if (found) {
+          waitingOn = { id: found.id, status: found.status }
+          break
+        }
+      }
+    }
+
+    return { customers, waitingOn }
+  })
 
 /** UC-04: عملية جديدة — what the customer just bought, on credit. */
 export const Route = createFileRoute('/merchant/record')({
   beforeLoad: () => requireSide('merchant'),
-  validateSearch: (search: Record<string, unknown>): { customer?: string } => {
+  validateSearch: (
+    search: Record<string, unknown>,
+  ): { customer?: string; pending?: string } => {
     const customer = String(search.customer ?? '')
-    return customer ? { customer } : {}
+    const pending = String(search.pending ?? '')
+    return {
+      ...(customer ? { customer } : {}),
+      ...(pending ? { pending } : {}),
+    }
   },
-  loader: () => loadCustomers(),
+  loaderDeps: ({ search }) => ({ pending: search.pending ?? '' }),
+  loader: ({ deps }) => loadCustomers({ data: { pending: deps.pending } }),
   component: RecordOperation,
 })
 
@@ -65,6 +89,9 @@ function RecordOperation() {
 
   if (!data) return null
 
+  // The operation is settled when the ledger says so, not when a timer does.
+  const settled = data.waitingOn !== null && data.waitingOn.status !== 'pending'
+
   const chosen = data.customers.find((row) => row.connectionId === connectionId)
   const amountHalalas = parseAmount(amount) ?? 0
   const projection = chosen
@@ -85,7 +112,13 @@ function RecordOperation() {
 
     if (result.problems.length === 0 && result.transactionId) {
       setPendingId(result.transactionId)
-      await router.invalidate()
+      // The id goes in the URL so the loader can watch the operation, and the
+      // stream's invalidation is what moves this screen on.
+      await router.navigate({
+        to: '/merchant/record',
+        search: { pending: result.transactionId },
+        replace: true,
+      })
     }
   }
 
@@ -94,11 +127,15 @@ function RecordOperation() {
     setBusy(true)
     await cancelOperation({ data: { transactionId: pendingId } })
     setBusy(false)
+    await startOver()
+  }
+
+  const startOver = async () => {
     setPendingId(null)
     setAmount('')
     setDescription('')
     setRequestId(crypto.randomUUID())
-    await router.invalidate()
+    await router.navigate({ to: '/merchant/record', search: {}, replace: true })
   }
 
   const field =
@@ -119,7 +156,23 @@ function RecordOperation() {
           {t('operation.new')}
         </h1>
 
-        {pendingId ? (
+        {settled ? (
+          <Card data-testid="operation-settled">
+            <h2 className="mb-1 text-base font-black text-good-text">
+              {t(
+                data.waitingOn?.status === 'applied'
+                  ? 'operation.applied'
+                  : 'operation.declined',
+              )}
+            </h2>
+            <p className="mb-3 text-[13px] font-bold text-muted">
+              {t('operation.settledBody')}
+            </p>
+            <Button tone="primary" onClick={startOver}>
+              {t('operation.new')}
+            </Button>
+          </Card>
+        ) : pendingId ? (
           <Card data-testid="waiting">
             <h2 className="mb-1 text-base font-black text-ink">
               {t('operation.waiting')}
@@ -127,6 +180,13 @@ function RecordOperation() {
             <p className="mb-3 text-[13px] font-bold text-muted">
               {t('operation.waitingBody', { minutes: PENDING_MINUTES })}
             </p>
+            <Link
+              to="/merchant/scan"
+              className={buttonClass('primary', 'mb-2.5')}
+              data-testid="go-scan"
+            >
+              {t('scan.title')}
+            </Link>
             <Button tone="ghost" disabled={busy} onClick={callOff}>
               {t('operation.cancel')}
             </Button>
