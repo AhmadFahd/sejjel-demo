@@ -67,7 +67,12 @@ export const declineOperationFn = createServerFn({ method: 'POST' })
     }
   })
 
-/** The merchant's side: the scan is what applies the operation. */
+/**
+ * The merchant's side. One camera reads two kinds of code: an approval, which
+ * applies an operation, and a customer's own card, which asks to keep them.
+ * Which one it is, is in the code, so the shopkeeper does not have to choose a
+ * mode before pointing the phone.
+ */
 export const applyScannedCode = createServerFn({ method: 'POST' })
   .validator((input: unknown): { code: string } => ({
     code: String((input as { code?: unknown }).code ?? ''),
@@ -76,16 +81,42 @@ export const applyScannedCode = createServerFn({ method: 'POST' })
     const { requireSignedInUser } = await import('./session.server')
     const { getDatabase } = await import('#/db/client')
     const { applyApproval } = await import('#/db/queries/approval')
+    const { connectByIdentity } = await import('#/db/queries/connect')
+    const { readCode } = await import('#/lib/approval.server')
     const user = await requireSignedInUser()
     const shop = user.roles.merchant
-    if (!shop) return { applied: false, problem: 'elsewhere' as const }
+    if (!shop)
+      return { outcome: 'refused' as const, problem: 'elsewhere' as const }
 
-    const result = await applyApproval(getDatabase(), {
+    const db = getDatabase()
+    const read = readCode(data.code)
+
+    if (read.ok && read.payload.kind === 'identity') {
+      const connected = await connectByIdentity(db, {
+        code: data.code,
+        merchantId: shop.id,
+      })
+      return connected.ok
+        ? {
+            outcome: connected.waiting
+              ? ('asked' as const)
+              : ('connected' as const),
+            problem: null,
+            connectionId: connected.connectionId,
+          }
+        : { outcome: 'refused' as const, problem: connected.problem }
+    }
+
+    const result = await applyApproval(db, {
       code: data.code,
       merchantId: shop.id,
     })
 
     return result.ok
-      ? { applied: true, problem: null, transactionId: result.transactionId }
-      : { applied: false, problem: result.problem }
+      ? {
+          outcome: 'applied' as const,
+          problem: null,
+          transactionId: result.transactionId,
+        }
+      : { outcome: 'refused' as const, problem: result.problem }
   })
