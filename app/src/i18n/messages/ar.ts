@@ -119,6 +119,11 @@ export const ar = {
   'operation.error.amount': 'أدخل المبلغ بالريال.',
   'operation.error.ceiling': 'المبلغ أكبر من حد العملية الواحدة.',
   'operation.error.limit': 'هذه العملية تتجاوز حد العميل.',
+  'operation.error.overdue':
+    'هذا العميل متأخر {days} يومًا على {amount}. يمكنك المتابعة رغم ذلك.',
+  'operation.error.limitBy':
+    'المبلغ يتجاوز الحد بـ {over}. المتاح {available}.',
+  'operation.continue': 'سجّلها على أي حال',
   'operation.error.connection': 'هذا العميل ليس من عملائك.',
 
   'approval.title': 'الموافقة على العملية',
@@ -151,6 +156,7 @@ export const ar = {
   'scan.error.elsewhere': 'الرمز صادر لمتجر آخر.',
   'scan.error.already': 'العملية مسجّلة على الدفتر أصلًا.',
   'scan.error.gone': 'لم تعد العملية بانتظار الموافقة.',
+  'scan.error.limit': 'العملية تتجاوز حد العميل الآن.',
   'scan.asked': 'أُرسل الطلب. يظهر العميل هنا بعد موافقته.',
   'scan.connected': 'هذا العميل مسجّل لديك أصلًا.',
   'scan.error.self': 'هذه بطاقتك أنت.',

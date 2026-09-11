@@ -169,6 +169,33 @@ test('a shopkeeper records an operation, and can call it off', async ({
   await expect(history).toContainText('ملغاة')
 })
 
+/**
+ * UC-05 and UC-06 at the counter: سالم is past his date and has 250 left of a
+ * 1,500 limit. The warning can be gone past; the limit cannot.
+ */
+test('the limit stops the shop, being late only warns it', async ({ page }) => {
+  await signIn(page, '0550111222', '+966550111222')
+  await page.getByTestId('record').click()
+  await page.getByLabel('العميل').selectOption({ label: 'سالم العتيبي' })
+
+  // Past the limit: refused, with the figures.
+  await page.getByLabel('المبلغ').fill('300')
+  await page.getByRole('button', { name: 'أرسل للعميل' }).click()
+  await expect(page.getByTestId('refusal')).toContainText('يتجاوز الحد')
+  await expect(page.getByTestId('refusal')).toContainText('250')
+  await expect(page.getByTestId('record-anyway')).toHaveCount(0)
+
+  // Inside the limit but late: warned, and the warning can be passed.
+  await page.getByLabel('المبلغ').fill('100')
+  await page.getByRole('button', { name: 'أرسل للعميل' }).click()
+  await expect(page.getByTestId('refusal')).toContainText('متأخر')
+  await page.getByTestId('record-anyway').click()
+  await expect(page.getByTestId('waiting')).toBeVisible()
+
+  // Leave the fixture as it was found: the tests share one seeded ledger.
+  await page.getByRole('button', { name: 'إلغاء العملية' }).click()
+})
+
 test('a customer sees every shop they owe, and can open one', async ({
   page,
 }) => {
@@ -295,12 +322,14 @@ test('the shop’s waiting screen moves on when the customer says no', async ({
   await page.getByLabel('العميل').selectOption({ label: 'سالم العتيبي' })
   await page.getByLabel('المبلغ').fill('60')
   await page.getByRole('button', { name: 'أرسل للعميل' }).click()
+  // سالم is past his date, so the shop is warned before it can record.
+  await page.getByTestId('record-anyway').click()
   await expect(page.getByTestId('waiting')).toBeVisible()
 
   const customer = await browser.newContext()
   const theirPhone = await customer.newPage()
   await signIn(theirPhone, '0533456789', '+966533456789')
-  await theirPhone.getByTestId('awaiting').click()
+  await theirPhone.getByTestId('awaiting').filter({ hasText: '60' }).click()
   await theirPhone.getByRole('button', { name: 'رفض' }).click()
 
   await expect(page.getByTestId('operation-settled')).toContainText(

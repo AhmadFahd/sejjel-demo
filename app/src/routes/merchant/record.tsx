@@ -5,7 +5,7 @@ import { requireSide } from '#/auth/guard'
 import { localSaudiMobile } from '#/auth/phone'
 import { cancelOperation, recordOperation } from '#/auth/operation'
 import { AppBar, Button, buttonClass } from '#/components/chrome'
-import { Card, KeyValueRow, MobileNumber } from '#/components/primitives'
+import { Card, KeyValueRow, MobileNumber, cx } from '#/components/primitives'
 import { LimitBar } from '#/components/ledger'
 import { parseAmount } from '#/lib/money'
 import { PENDING_MINUTES, projectBalance } from '#/lib/purchase'
@@ -74,13 +74,20 @@ type Problem = PurchaseProblem | 'connection'
 function RecordOperation() {
   const data = Route.useLoaderData()
   const { customer } = Route.useSearch()
-  const { t, money } = useI18n()
+  const { t, money, number } = useI18n()
   const router = useRouter()
 
   const [connectionId, setConnectionId] = useState(customer ?? '')
   const [amount, setAmount] = useState('')
   const [description, setDescription] = useState('')
   const [problems, setProblems] = useState<Array<Problem>>([])
+  // What the refusal or the warning is about, in figures.
+  const [figures, setFigures] = useState({
+    overByHalalas: 0,
+    availableHalalas: 0,
+    overdueHalalas: 0,
+    daysOverdue: 0,
+  })
   const [busy, setBusy] = useState(false)
   const [pendingId, setPendingId] = useState<string | null>(null)
   // One id per operation being entered, so a second tap on a slow connection
@@ -102,13 +109,25 @@ function RecordOperation() {
       })
     : null
 
-  const send = async () => {
+  const send = async (acknowledgedOverdue = false) => {
     setBusy(true)
     const result = await recordOperation({
-      data: { connectionId, amountHalalas, description, requestId },
+      data: {
+        connectionId,
+        amountHalalas,
+        description,
+        requestId,
+        acknowledgedOverdue,
+      },
     })
     setBusy(false)
     setProblems(result.problems)
+    setFigures({
+      overByHalalas: result.overByHalalas ?? 0,
+      availableHalalas: result.availableHalalas ?? 0,
+      overdueHalalas: result.overdueHalalas ?? 0,
+      daysOverdue: result.daysOverdue ?? 0,
+    })
 
     if (result.problems.length === 0 && result.transactionId) {
       setPendingId(result.transactionId)
@@ -268,23 +287,55 @@ function RecordOperation() {
               <Button
                 tone="primary"
                 disabled={busy || !connectionId || amountHalalas <= 0}
-                onClick={send}
+                onClick={() => send()}
               >
                 {t('operation.submit')}
               </Button>
             </div>
 
             {problems.length > 0 ? (
-              <ul role="alert" className="mt-4 space-y-1">
-                {problems.map((problem) => (
-                  <li
-                    key={problem}
-                    className="text-[12.5px] font-extrabold text-bad-text"
-                  >
-                    {t(`operation.error.${problem}`)}
-                  </li>
-                ))}
-              </ul>
+              <div role="alert" className="mt-4" data-testid="refusal">
+                <ul className="space-y-1">
+                  {problems.map((problem) => (
+                    <li
+                      key={problem}
+                      className={cx(
+                        'text-[12.5px] font-extrabold',
+                        problem === 'overdue'
+                          ? 'text-warn-text'
+                          : 'text-bad-text',
+                      )}
+                    >
+                      {problem === 'limit'
+                        ? t('operation.error.limitBy', {
+                            over: money(figures.overByHalalas),
+                            available: money(figures.availableHalalas),
+                          })
+                        : problem === 'overdue'
+                          ? t('operation.error.overdue', {
+                              days: number(figures.daysOverdue),
+                              amount: money(figures.overdueHalalas),
+                            })
+                          : t(`operation.error.${problem}`)}
+                    </li>
+                  ))}
+                </ul>
+
+                {/* UC-06: being late warns rather than stops, and going on
+                    anyway is recorded against the operation. */}
+                {problems.includes('overdue') ? (
+                  <div className="mt-3">
+                    <Button
+                      tone="gold"
+                      disabled={busy}
+                      data-testid="record-anyway"
+                      onClick={() => send(true)}
+                    >
+                      {t('operation.continue')}
+                    </Button>
+                  </div>
+                ) : null}
+              </div>
             ) : null}
           </Card>
         )}

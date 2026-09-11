@@ -121,6 +121,11 @@ export const en = {
   'operation.error.amount': 'Enter an amount in riyals.',
   'operation.error.ceiling': 'That is more than one operation can be.',
   'operation.error.limit': 'This would take the balance past the limit.',
+  'operation.error.overdue':
+    'This customer is {days} days past due on {amount}. You can go ahead anyway.',
+  'operation.error.limitBy':
+    'That is {over} over the limit. {available} is available.',
+  'operation.continue': 'Record it anyway',
   'operation.error.connection': 'This customer is not one of yours.',
 
   'approval.title': 'Approve this operation',
@@ -153,6 +158,7 @@ export const en = {
   'scan.error.elsewhere': 'That code was issued to another shop.',
   'scan.error.already': 'That operation is already on the ledger.',
   'scan.error.gone': 'That operation is no longer waiting.',
+  'scan.error.limit': 'That would take the account past its limit now.',
   'scan.asked': 'Asked. They appear here once they agree.',
   'scan.connected': 'Already one of your customers.',
   'scan.error.self': 'That is your own card.',

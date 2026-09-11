@@ -17,7 +17,12 @@ import { getConnectionSummary } from '#/db/queries/ledger'
 import { eventsSince } from '#/db/queries/events'
 import { riyalsToHalalas } from '#/lib/money'
 import { createTestDatabase } from '../support/database'
-import { makeConnection, makeMerchant, makeUser } from '../support/factories'
+import {
+  makeConnection,
+  makeMerchant,
+  makeTransaction,
+  makeUser,
+} from '../support/factories'
 
 const issued = { transactionId: 'tx-1', merchantId: 'shop-1' }
 
@@ -222,6 +227,33 @@ describe('applying a scanned code', () => {
         true,
       )
     }
+  })
+
+  it('is refused when another operation has taken the room since', async () => {
+    const { transactionId, merchant, customer, connection } =
+      await pendingOperation()
+    const approval = await approveOperation(db, {
+      transactionId,
+      customerUserId: customer.id,
+    })
+    if (!approval.ok) throw new Error('the approval was refused')
+
+    // 250 was fine when it was entered. 900 lands in between, and the limit
+    // is 1,000: the scan has to check again rather than trust the entry.
+    await makeTransaction(db, {
+      connectionId: connection.id,
+      amountHalalas: riyalsToHalalas(900),
+    })
+
+    expect(
+      await applyApproval(db, {
+        code: approval.code,
+        merchantId: merchant.id,
+      }),
+    ).toEqual({ ok: false, problem: 'limit' })
+
+    const summary = await getConnectionSummary(db, connection.id)
+    expect(summary?.balanceHalalas).toBe(riyalsToHalalas(900))
   })
 
   it('is refused by the shop next door', async () => {
