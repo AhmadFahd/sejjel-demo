@@ -25,9 +25,11 @@ import { Route as MerchantConnectionIdRouteImport } from './routes/merchant/$con
 import { Route as MerchantNewRouteImport } from './routes/merchant/new'
 import { Route as MerchantRecordRouteImport } from './routes/merchant/record'
 import { Route as MerchantScanRouteImport } from './routes/merchant/scan'
+import { Route as MerchantSettingsRouteImport } from './routes/merchant/settings'
 import { Route as ApiAuthSplatRouteImport } from './routes/api/auth/$'
 import { Route as CustomerApproveTransactionIdRouteImport } from './routes/customer/approve/$transactionId'
 import { Route as CustomerPayConnectionIdRouteImport } from './routes/customer/pay/$connectionId'
+import { Route as MerchantTermsConnectionIdRouteImport } from './routes/merchant/terms/$connectionId'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -109,6 +111,11 @@ const MerchantScanRoute = MerchantScanRouteImport.update({
   path: '/scan',
   getParentRoute: () => MerchantRouteRoute,
 } as any)
+const MerchantSettingsRoute = MerchantSettingsRouteImport.update({
+  id: '/settings',
+  path: '/settings',
+  getParentRoute: () => MerchantRouteRoute,
+} as any)
 const ApiAuthSplatRoute = ApiAuthSplatRouteImport.update({
   id: '/api/auth/$',
   path: '/api/auth/$',
@@ -125,6 +132,12 @@ const CustomerPayConnectionIdRoute = CustomerPayConnectionIdRouteImport.update({
   path: '/pay/$connectionId',
   getParentRoute: () => CustomerRouteRoute,
 } as any)
+const MerchantTermsConnectionIdRoute =
+  MerchantTermsConnectionIdRouteImport.update({
+    id: '/terms/$connectionId',
+    path: '/terms/$connectionId',
+    getParentRoute: () => MerchantRouteRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -141,11 +154,13 @@ export interface FileRoutesByFullPath {
   '/merchant/new': typeof MerchantNewRoute
   '/merchant/record': typeof MerchantRecordRoute
   '/merchant/scan': typeof MerchantScanRoute
+  '/merchant/settings': typeof MerchantSettingsRoute
   '/customer/': typeof CustomerIndexRoute
   '/merchant/': typeof MerchantIndexRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/customer/approve/$transactionId': typeof CustomerApproveTransactionIdRoute
   '/customer/pay/$connectionId': typeof CustomerPayConnectionIdRoute
+  '/merchant/terms/$connectionId': typeof MerchantTermsConnectionIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -160,11 +175,13 @@ export interface FileRoutesByTo {
   '/merchant/new': typeof MerchantNewRoute
   '/merchant/record': typeof MerchantRecordRoute
   '/merchant/scan': typeof MerchantScanRoute
+  '/merchant/settings': typeof MerchantSettingsRoute
   '/customer': typeof CustomerIndexRoute
   '/merchant': typeof MerchantIndexRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/customer/approve/$transactionId': typeof CustomerApproveTransactionIdRoute
   '/customer/pay/$connectionId': typeof CustomerPayConnectionIdRoute
+  '/merchant/terms/$connectionId': typeof MerchantTermsConnectionIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -182,11 +199,13 @@ export interface FileRoutesById {
   '/merchant/new': typeof MerchantNewRoute
   '/merchant/record': typeof MerchantRecordRoute
   '/merchant/scan': typeof MerchantScanRoute
+  '/merchant/settings': typeof MerchantSettingsRoute
   '/customer/': typeof CustomerIndexRoute
   '/merchant/': typeof MerchantIndexRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/customer/approve/$transactionId': typeof CustomerApproveTransactionIdRoute
   '/customer/pay/$connectionId': typeof CustomerPayConnectionIdRoute
+  '/merchant/terms/$connectionId': typeof MerchantTermsConnectionIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -205,11 +224,13 @@ export interface FileRouteTypes {
     | '/merchant/new'
     | '/merchant/record'
     | '/merchant/scan'
+    | '/merchant/settings'
     | '/customer/'
     | '/merchant/'
     | '/api/auth/$'
     | '/customer/approve/$transactionId'
     | '/customer/pay/$connectionId'
+    | '/merchant/terms/$connectionId'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -224,11 +245,13 @@ export interface FileRouteTypes {
     | '/merchant/new'
     | '/merchant/record'
     | '/merchant/scan'
+    | '/merchant/settings'
     | '/customer'
     | '/merchant'
     | '/api/auth/$'
     | '/customer/approve/$transactionId'
     | '/customer/pay/$connectionId'
+    | '/merchant/terms/$connectionId'
   id:
     | '__root__'
     | '/'
@@ -245,11 +268,13 @@ export interface FileRouteTypes {
     | '/merchant/new'
     | '/merchant/record'
     | '/merchant/scan'
+    | '/merchant/settings'
     | '/customer/'
     | '/merchant/'
     | '/api/auth/$'
     | '/customer/approve/$transactionId'
     | '/customer/pay/$connectionId'
+    | '/merchant/terms/$connectionId'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -378,6 +403,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof MerchantScanRouteImport
       parentRoute: typeof MerchantRouteRoute
     }
+    '/merchant/settings': {
+      id: '/merchant/settings'
+      path: '/settings'
+      fullPath: '/merchant/settings'
+      preLoaderRoute: typeof MerchantSettingsRouteImport
+      parentRoute: typeof MerchantRouteRoute
+    }
     '/api/auth/$': {
       id: '/api/auth/$'
       path: '/api/auth/$'
@@ -398,6 +430,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/customer/pay/$connectionId'
       preLoaderRoute: typeof CustomerPayConnectionIdRouteImport
       parentRoute: typeof CustomerRouteRoute
+    }
+    '/merchant/terms/$connectionId': {
+      id: '/merchant/terms/$connectionId'
+      path: '/terms/$connectionId'
+      fullPath: '/merchant/terms/$connectionId'
+      preLoaderRoute: typeof MerchantTermsConnectionIdRouteImport
+      parentRoute: typeof MerchantRouteRoute
     }
   }
 }
@@ -427,7 +466,9 @@ interface MerchantRouteRouteChildren {
   MerchantNewRoute: typeof MerchantNewRoute
   MerchantRecordRoute: typeof MerchantRecordRoute
   MerchantScanRoute: typeof MerchantScanRoute
+  MerchantSettingsRoute: typeof MerchantSettingsRoute
   MerchantIndexRoute: typeof MerchantIndexRoute
+  MerchantTermsConnectionIdRoute: typeof MerchantTermsConnectionIdRoute
 }
 
 const MerchantRouteRouteChildren: MerchantRouteRouteChildren = {
@@ -435,7 +476,9 @@ const MerchantRouteRouteChildren: MerchantRouteRouteChildren = {
   MerchantNewRoute: MerchantNewRoute,
   MerchantRecordRoute: MerchantRecordRoute,
   MerchantScanRoute: MerchantScanRoute,
+  MerchantSettingsRoute: MerchantSettingsRoute,
   MerchantIndexRoute: MerchantIndexRoute,
+  MerchantTermsConnectionIdRoute: MerchantTermsConnectionIdRoute,
 }
 
 const MerchantRouteRouteWithChildren = MerchantRouteRoute._addFileChildren(

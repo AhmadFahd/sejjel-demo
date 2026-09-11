@@ -38,6 +38,14 @@ export function formatMoney(
   return locale === 'ar' ? `${amount} ${currency}` : `${currency} ${amount}`
 }
 
+/** Names in a sentence: أ و ب in Arabic, A and B in English. */
+export function formatList(values: Array<string>, locale: Locale) {
+  return new Intl.ListFormat(INTL_TAG[locale], {
+    style: 'long',
+    type: 'conjunction',
+  }).format(values)
+}
+
 export function formatDate(date: Date, locale: Locale) {
   return new Intl.DateTimeFormat(INTL_TAG[locale], {
     timeZone: TIME_ZONE,

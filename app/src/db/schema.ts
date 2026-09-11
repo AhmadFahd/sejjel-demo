@@ -197,6 +197,45 @@ export const transactions = sqliteTable(
   ],
 )
 
+/**
+ * UC-13: every change to a shop's terms, so a limit that moved has a record
+ * of who moved it and when. A row with no connection is a change to the
+ * shop's defaults; one with a connection is an override on that customer.
+ *
+ * The before and after are stored rather than derived, because the default a
+ * customer inherited at the time cannot be read back off a later row.
+ */
+export const termChanges = sqliteTable(
+  'term_changes',
+  {
+    id: id(),
+    merchantId: text('merchant_id')
+      .notNull()
+      .references(() => merchants.id),
+    connectionId: text('connection_id').references(() => connections.id),
+    changedByUserId: text('changed_by_user_id')
+      .notNull()
+      .references(() => users.id),
+    /**
+     * The terms in force before and after, in halalas and in days, rather
+     * than the override that was typed: a reader of the history wants what
+     * the customer was actually held to, not which default it came from.
+     */
+    limitBeforeHalalas: integer('limit_before_halalas'),
+    limitAfterHalalas: integer('limit_after_halalas'),
+    termBeforeDays: integer('term_before_days'),
+    termAfterDays: integer('term_after_days'),
+    createdAt: createdAt(),
+  },
+  (table) => [
+    index('term_changes_merchant_idx').on(table.merchantId, table.createdAt),
+    index('term_changes_connection_idx').on(
+      table.connectionId,
+      table.createdAt,
+    ),
+  ],
+)
+
 export const notifications = sqliteTable(
   'notifications',
   {
@@ -346,6 +385,21 @@ export const merchantsRelations = relations(merchants, ({ one, many }) => ({
   connections: many(connections),
 }))
 
+export const termChangesRelations = relations(termChanges, ({ one }) => ({
+  merchant: one(merchants, {
+    fields: [termChanges.merchantId],
+    references: [merchants.id],
+  }),
+  connection: one(connections, {
+    fields: [termChanges.connectionId],
+    references: [connections.id],
+  }),
+  changedBy: one(users, {
+    fields: [termChanges.changedByUserId],
+    references: [users.id],
+  }),
+}))
+
 export const connectionsRelations = relations(connections, ({ one, many }) => ({
   merchant: one(merchants, {
     fields: [connections.merchantId],
@@ -373,6 +427,7 @@ export const schema = {
   users,
   merchants,
   connections,
+  termChanges,
   invoices,
   transactions,
   notifications,

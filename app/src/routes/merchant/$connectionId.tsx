@@ -126,6 +126,15 @@ function MerchantAccount() {
           {t('operation.new')}
         </Link>
 
+        <Link
+          to="/merchant/terms/$connectionId"
+          params={{ connectionId: summary.connectionId }}
+          className={buttonClass('ghost', 'mb-3')}
+          data-testid="customer-settings"
+        >
+          {t('settings.open')}
+        </Link>
+
         <TransactionHistory
           entries={transactions}
           now={now}

@@ -31,6 +31,7 @@ export function LedgerStream({ enabled }: { enabled: boolean }) {
       'payment.received',
       'connection.requested',
       'connection.accepted',
+      'terms.changed',
     ]) {
       source.addEventListener(kind, refresh)
     }

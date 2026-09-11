@@ -86,6 +86,13 @@ function MerchantHome() {
       <AppBar
         actions={
           <>
+            <Link
+              to="/merchant/settings"
+              className="text-[12.5px] font-black text-white/80"
+              data-testid="settings"
+            >
+              {t('settings.open')}
+            </Link>
             <SideSwitch roles={data.roles} side="merchant" />
             <SignOutButton />
           </>
@@ -158,6 +165,18 @@ function MerchantHome() {
                       {localSaudiMobile(row.customerMobile)}
                     </MobileNumber>
                   </div>
+                  {/* UC-13: a customer standing on their own figures rather
+                      than the shop's is marked, as the prototype marks them. */}
+                  {row.limitOverrideHalalas !== null ||
+                  row.termOverrideDays !== null ? (
+                    <span
+                      className="text-[12px] font-black text-gold-dark"
+                      title={t('settings.overridden')}
+                      data-testid="overridden"
+                    >
+                      ✦
+                    </span>
+                  ) : null}
                   <StatusPill status={row.status} />
                 </div>
                 <KeyValueRow

@@ -1,5 +1,6 @@
 import { createServerFn } from '@tanstack/react-start'
 import { riyalsToHalalas } from '#/lib/money'
+import { describeTermsProblems } from '#/lib/terms'
 
 export type NewShop = {
   name: string
@@ -7,27 +8,21 @@ export type NewShop = {
   defaultTermDays: number
 }
 
-/** What a shop cannot be opened without, and what it cannot be opened with. */
+/**
+ * What a shop cannot be opened without, and what it cannot be opened with.
+ * The limit and the term are held to the same bounds a shop is later allowed
+ * to change them to (UC-13), so opening one cannot start outside them.
+ */
 export function describeShopProblems(shop: NewShop): Array<string> {
   const problems: Array<string> = []
-
   if (shop.name.trim().length < 2) problems.push('name')
-  if (
-    !Number.isInteger(shop.defaultLimitRiyals) ||
-    shop.defaultLimitRiyals <= 0 ||
-    shop.defaultLimitRiyals > 100_000
-  ) {
-    problems.push('limit')
-  }
-  if (
-    !Number.isInteger(shop.defaultTermDays) ||
-    shop.defaultTermDays < 1 ||
-    shop.defaultTermDays > 90
-  ) {
-    problems.push('term')
-  }
-
-  return problems
+  return [
+    ...problems,
+    ...describeTermsProblems({
+      limitRiyals: shop.defaultLimitRiyals,
+      termDays: shop.defaultTermDays,
+    }),
+  ]
 }
 
 export const registerShop = createServerFn({ method: 'POST' })

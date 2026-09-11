@@ -1,5 +1,11 @@
 import { createContext, useContext, useMemo } from 'react'
-import { formatDate, formatMoney, formatNumber, formatTime } from './format'
+import {
+  formatDate,
+  formatList,
+  formatMoney,
+  formatNumber,
+  formatTime,
+} from './format'
 import { createTranslate } from './translate'
 import { directionOf } from './locales'
 import type { ReactNode } from 'react'
@@ -14,6 +20,7 @@ export type I18n = {
   number: (value: number) => string
   date: (value: Date) => string
   time: (value: Date) => string
+  list: (values: Array<string>) => string
 }
 
 const I18nContext = createContext<I18n | null>(null)
@@ -28,6 +35,7 @@ export function createI18n(locale: Locale): I18n {
     number: (value) => formatNumber(value, locale),
     date: (value) => formatDate(value, locale),
     time: (value) => formatTime(value, locale),
+    list: (values) => formatList(values, locale),
   }
 }
 

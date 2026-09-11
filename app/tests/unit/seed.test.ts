@@ -3,6 +3,7 @@ import type { Database } from '#/db/client'
 import {
   DEFAULT_SCENARIO,
   SCENARIOS,
+  TABLES_IN_DELETION_ORDER,
   applyScenario,
   isEmpty,
   reset,
@@ -11,7 +12,7 @@ import {
   listCustomerConnections,
   listMerchantConnections,
 } from '#/db/queries/ledger'
-import { merchants, users } from '#/db/schema'
+import { merchants, schema, users } from '#/db/schema'
 import { riyalsToHalalas } from '#/lib/money'
 import { PAYDAY_WEEKDAY, riyadhWeekday } from '#/lib/payday'
 import { eq } from 'drizzle-orm'
@@ -133,6 +134,20 @@ describe('scenarios', () => {
     await reset(db)
 
     expect(await isEmpty(db)).toBe(true)
+  })
+
+  /**
+   * A table added to the schema and forgotten here makes `reset` trip a
+   * foreign key, which is how the deploy's repair and the browser suite's
+   * re-seed both fail. Cheaper to catch as a list than as a stack trace.
+   */
+  it('deletes every table there is', () => {
+    const listed = new Set(TABLES_IN_DELETION_ORDER)
+    const missing = Object.entries(schema)
+      .filter(([, table]) => !listed.has(table))
+      .map(([name]) => name)
+
+    expect(missing).toEqual([])
   })
 
   it('names a default that exists', () => {
