@@ -112,9 +112,9 @@ function FloatingLocaleSwitch() {
     select: (state) => state.location.pathname,
   })
 
-  // The nav prototypes put a language control in the bar itself, which is the
-  // thing being judged; a second one floating over it would be in the way.
-  if (pathname.startsWith('/prototype')) return null
+  // The public page carries the language control in its own bar; a second one
+  // floating over it would be two of the same control on one screen.
+  if (pathname === '/') return null
 
   return (
     <div className="flex justify-end p-4">

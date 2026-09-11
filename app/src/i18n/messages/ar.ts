@@ -15,6 +15,21 @@ export const ar = {
   'shell.node': 'Node',
   'shell.startedAt': 'بدأ الخادم',
 
+  'landing.eyebrow': 'دفتر المحل، بلا ورق',
+  'landing.title': 'الدفتر بين المحل وعميله، على الجوال',
+  'landing.body':
+    'المحل يكتب العملية، العميل يوافق عليها من جواله، ويوم الثلاثاء يسدد. رقم واحد يراه الطرفان، فلا خلاف عليه بعدها.',
+  'landing.cta': 'ابدأ برقم جوالك',
+  'landing.mockShop': 'بقالة الحي',
+  'landing.mockLimit': '{percent}٪ من الحد مستخدم',
+  'landing.footer': 'سجّل — دفتر بين تاجر وعميل. المبالغ بالريال السعودي.',
+
+  'nav.shop': 'المحل',
+  'nav.record': 'عملية',
+  'nav.scan': 'مسح',
+  'nav.ledger': 'دفتري',
+  'nav.card': 'بطاقتي',
+
   'auth.title': 'تسجيل الدخول',
   'auth.phoneLabel': 'رقم الجوال',
   'auth.phonePlaceholder': '05X XXX XXXX',
