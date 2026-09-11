@@ -191,6 +191,42 @@ test('a customer sees every shop they owe, and can open one', async ({
   await expect(page.getByTestId('pager')).toHaveCount(0)
 })
 
+/**
+ * #14: the two phones stay in step over the event stream. أحمد's account page
+ * stays open while the shop records something on it, and the row arrives
+ * without him touching the screen.
+ */
+test('an operation recorded on one phone reaches the other', async ({
+  page,
+  browser,
+}) => {
+  test.slow()
+  await signIn(page, '0550123456', '+966550123456')
+  await page
+    .getByTestId('connection-row')
+    .filter({ hasText: 'بقالة الريان' })
+    .click()
+  await expect(page.getByTestId('transactions')).toBeVisible()
+
+  const shop = await browser.newContext()
+  const shopPhone = await shop.newPage()
+  await signIn(shopPhone, '0550111222', '+966550111222')
+  await shopPhone.getByTestId('record').click()
+  await shopPhone.getByLabel('العميل').selectOption({ label: 'أحمد محمد' })
+  await shopPhone.getByLabel('المبلغ').fill('75')
+  await shopPhone.getByLabel('الوصف (اختياري)').fill('خبز وحليب')
+  await shopPhone.getByRole('button', { name: 'أرسل للعميل' }).click()
+  await expect(shopPhone.getByTestId('waiting')).toBeVisible()
+
+  // Nobody reloaded this page: the stream brought it.
+  await expect(page.getByTestId('transactions')).toContainText('خبز وحليب')
+  await expect(page.getByTestId('transactions')).toContainText(
+    'بانتظار الموافقة',
+  )
+
+  await shop.close()
+})
+
 test('a customer cannot open another customer’s account', async ({ page }) => {
   await signIn(page, '0533456789', '+966533456789')
   await expect(page).toHaveURL(/\/customer$/)
