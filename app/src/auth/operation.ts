@@ -7,6 +7,8 @@ export type NewOperation = {
   requestId: string
   /** UC-06: the merchant read the overdue warning and went on. */
   acknowledgedOverdue: boolean
+  /** UC-11: the invoice, already uploaded and waiting to be attached. */
+  invoiceId: string | null
 }
 
 /**
@@ -23,6 +25,7 @@ export const recordOperation = createServerFn({ method: 'POST' })
       description: String(raw.description ?? ''),
       requestId: String(raw.requestId ?? ''),
       acknowledgedOverdue: Boolean(raw.acknowledgedOverdue),
+      invoiceId: raw.invoiceId ? String(raw.invoiceId) : null,
     }
   })
   .handler(async ({ data }) => {
@@ -48,6 +51,7 @@ export const recordOperation = createServerFn({ method: 'POST' })
       description: data.description,
       requestId: data.requestId,
       acknowledgedOverdue: data.acknowledgedOverdue,
+      invoiceId: data.invoiceId,
     })
 
     return result.ok

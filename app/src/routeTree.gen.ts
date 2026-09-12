@@ -21,6 +21,7 @@ import { Route as CustomerIndexRouteImport } from './routes/customer/index'
 import { Route as CustomerConnectionIdRouteImport } from './routes/customer/$connectionId'
 import { Route as CustomerCardRouteImport } from './routes/customer/card'
 import { Route as CustomerNotificationsRouteImport } from './routes/customer/notifications'
+import { Route as InvoiceInvoiceIdRouteImport } from './routes/invoice/$invoiceId'
 import { Route as MerchantIndexRouteImport } from './routes/merchant/index'
 import { Route as MerchantConnectionIdRouteImport } from './routes/merchant/$connectionId'
 import { Route as MerchantNewRouteImport } from './routes/merchant/new'
@@ -31,6 +32,8 @@ import { Route as MerchantScanRouteImport } from './routes/merchant/scan'
 import { Route as MerchantSettingsRouteImport } from './routes/merchant/settings'
 import { Route as ShopMerchantIdRouteImport } from './routes/shop/$merchantId'
 import { Route as ApiAuthSplatRouteImport } from './routes/api/auth/$'
+import { Route as ApiInvoicesIndexRouteImport } from './routes/api/invoices/index'
+import { Route as ApiInvoicesInvoiceIdRouteImport } from './routes/api/invoices/$invoiceId'
 import { Route as CustomerApproveTransactionIdRouteImport } from './routes/customer/approve/$transactionId'
 import { Route as CustomerPayConnectionIdRouteImport } from './routes/customer/pay/$connectionId'
 import { Route as MerchantTermsConnectionIdRouteImport } from './routes/merchant/terms/$connectionId'
@@ -95,6 +98,11 @@ const CustomerNotificationsRoute = CustomerNotificationsRouteImport.update({
   path: '/notifications',
   getParentRoute: () => CustomerRouteRoute,
 } as any)
+const InvoiceInvoiceIdRoute = InvoiceInvoiceIdRouteImport.update({
+  id: '/invoice/$invoiceId',
+  path: '/invoice/$invoiceId',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const MerchantIndexRoute = MerchantIndexRouteImport.update({
   id: '/',
   path: '/',
@@ -145,6 +153,16 @@ const ApiAuthSplatRoute = ApiAuthSplatRouteImport.update({
   path: '/api/auth/$',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiInvoicesIndexRoute = ApiInvoicesIndexRouteImport.update({
+  id: '/api/invoices/',
+  path: '/api/invoices/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiInvoicesInvoiceIdRoute = ApiInvoicesInvoiceIdRouteImport.update({
+  id: '/api/invoices/$invoiceId',
+  path: '/api/invoices/$invoiceId',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const CustomerApproveTransactionIdRoute =
   CustomerApproveTransactionIdRouteImport.update({
     id: '/approve/$transactionId',
@@ -175,6 +193,7 @@ export interface FileRoutesByFullPath {
   '/customer/$connectionId': typeof CustomerConnectionIdRoute
   '/customer/card': typeof CustomerCardRoute
   '/customer/notifications': typeof CustomerNotificationsRoute
+  '/invoice/$invoiceId': typeof InvoiceInvoiceIdRoute
   '/merchant/$connectionId': typeof MerchantConnectionIdRoute
   '/merchant/new': typeof MerchantNewRoute
   '/merchant/notifications': typeof MerchantNotificationsRoute
@@ -186,9 +205,11 @@ export interface FileRoutesByFullPath {
   '/customer/': typeof CustomerIndexRoute
   '/merchant/': typeof MerchantIndexRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
+  '/api/invoices/$invoiceId': typeof ApiInvoicesInvoiceIdRoute
   '/customer/approve/$transactionId': typeof CustomerApproveTransactionIdRoute
   '/customer/pay/$connectionId': typeof CustomerPayConnectionIdRoute
   '/merchant/terms/$connectionId': typeof MerchantTermsConnectionIdRoute
+  '/api/invoices/': typeof ApiInvoicesIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -200,6 +221,7 @@ export interface FileRoutesByTo {
   '/customer/$connectionId': typeof CustomerConnectionIdRoute
   '/customer/card': typeof CustomerCardRoute
   '/customer/notifications': typeof CustomerNotificationsRoute
+  '/invoice/$invoiceId': typeof InvoiceInvoiceIdRoute
   '/merchant/$connectionId': typeof MerchantConnectionIdRoute
   '/merchant/new': typeof MerchantNewRoute
   '/merchant/notifications': typeof MerchantNotificationsRoute
@@ -211,9 +233,11 @@ export interface FileRoutesByTo {
   '/customer': typeof CustomerIndexRoute
   '/merchant': typeof MerchantIndexRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
+  '/api/invoices/$invoiceId': typeof ApiInvoicesInvoiceIdRoute
   '/customer/approve/$transactionId': typeof CustomerApproveTransactionIdRoute
   '/customer/pay/$connectionId': typeof CustomerPayConnectionIdRoute
   '/merchant/terms/$connectionId': typeof MerchantTermsConnectionIdRoute
+  '/api/invoices': typeof ApiInvoicesIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -228,6 +252,7 @@ export interface FileRoutesById {
   '/customer/$connectionId': typeof CustomerConnectionIdRoute
   '/customer/card': typeof CustomerCardRoute
   '/customer/notifications': typeof CustomerNotificationsRoute
+  '/invoice/$invoiceId': typeof InvoiceInvoiceIdRoute
   '/merchant/$connectionId': typeof MerchantConnectionIdRoute
   '/merchant/new': typeof MerchantNewRoute
   '/merchant/notifications': typeof MerchantNotificationsRoute
@@ -239,9 +264,11 @@ export interface FileRoutesById {
   '/customer/': typeof CustomerIndexRoute
   '/merchant/': typeof MerchantIndexRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
+  '/api/invoices/$invoiceId': typeof ApiInvoicesInvoiceIdRoute
   '/customer/approve/$transactionId': typeof CustomerApproveTransactionIdRoute
   '/customer/pay/$connectionId': typeof CustomerPayConnectionIdRoute
   '/merchant/terms/$connectionId': typeof MerchantTermsConnectionIdRoute
+  '/api/invoices/': typeof ApiInvoicesIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -257,6 +284,7 @@ export interface FileRouteTypes {
     | '/customer/$connectionId'
     | '/customer/card'
     | '/customer/notifications'
+    | '/invoice/$invoiceId'
     | '/merchant/$connectionId'
     | '/merchant/new'
     | '/merchant/notifications'
@@ -268,9 +296,11 @@ export interface FileRouteTypes {
     | '/customer/'
     | '/merchant/'
     | '/api/auth/$'
+    | '/api/invoices/$invoiceId'
     | '/customer/approve/$transactionId'
     | '/customer/pay/$connectionId'
     | '/merchant/terms/$connectionId'
+    | '/api/invoices/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -282,6 +312,7 @@ export interface FileRouteTypes {
     | '/customer/$connectionId'
     | '/customer/card'
     | '/customer/notifications'
+    | '/invoice/$invoiceId'
     | '/merchant/$connectionId'
     | '/merchant/new'
     | '/merchant/notifications'
@@ -293,9 +324,11 @@ export interface FileRouteTypes {
     | '/customer'
     | '/merchant'
     | '/api/auth/$'
+    | '/api/invoices/$invoiceId'
     | '/customer/approve/$transactionId'
     | '/customer/pay/$connectionId'
     | '/merchant/terms/$connectionId'
+    | '/api/invoices'
   id:
     | '__root__'
     | '/'
@@ -309,6 +342,7 @@ export interface FileRouteTypes {
     | '/customer/$connectionId'
     | '/customer/card'
     | '/customer/notifications'
+    | '/invoice/$invoiceId'
     | '/merchant/$connectionId'
     | '/merchant/new'
     | '/merchant/notifications'
@@ -320,9 +354,11 @@ export interface FileRouteTypes {
     | '/customer/'
     | '/merchant/'
     | '/api/auth/$'
+    | '/api/invoices/$invoiceId'
     | '/customer/approve/$transactionId'
     | '/customer/pay/$connectionId'
     | '/merchant/terms/$connectionId'
+    | '/api/invoices/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -334,8 +370,11 @@ export interface RootRouteChildren {
   StatusRoute: typeof StatusRoute
   WelcomeRoute: typeof WelcomeRoute
   ApiEventsRoute: typeof ApiEventsRoute
+  InvoiceInvoiceIdRoute: typeof InvoiceInvoiceIdRoute
   ShopMerchantIdRoute: typeof ShopMerchantIdRoute
   ApiAuthSplatRoute: typeof ApiAuthSplatRoute
+  ApiInvoicesInvoiceIdRoute: typeof ApiInvoicesInvoiceIdRoute
+  ApiInvoicesIndexRoute: typeof ApiInvoicesIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -424,6 +463,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CustomerNotificationsRouteImport
       parentRoute: typeof CustomerRouteRoute
     }
+    '/invoice/$invoiceId': {
+      id: '/invoice/$invoiceId'
+      path: '/invoice/$invoiceId'
+      fullPath: '/invoice/$invoiceId'
+      preLoaderRoute: typeof InvoiceInvoiceIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/merchant/': {
       id: '/merchant/'
       path: '/'
@@ -492,6 +538,20 @@ declare module '@tanstack/react-router' {
       path: '/api/auth/$'
       fullPath: '/api/auth/$'
       preLoaderRoute: typeof ApiAuthSplatRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/invoices/': {
+      id: '/api/invoices/'
+      path: '/api/invoices'
+      fullPath: '/api/invoices/'
+      preLoaderRoute: typeof ApiInvoicesIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/invoices/$invoiceId': {
+      id: '/api/invoices/$invoiceId'
+      path: '/api/invoices/$invoiceId'
+      fullPath: '/api/invoices/$invoiceId'
+      preLoaderRoute: typeof ApiInvoicesInvoiceIdRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/customer/approve/$transactionId': {
@@ -577,8 +637,11 @@ const rootRouteChildren: RootRouteChildren = {
   StatusRoute: StatusRoute,
   WelcomeRoute: WelcomeRoute,
   ApiEventsRoute: ApiEventsRoute,
+  InvoiceInvoiceIdRoute: InvoiceInvoiceIdRoute,
   ShopMerchantIdRoute: ShopMerchantIdRoute,
   ApiAuthSplatRoute: ApiAuthSplatRoute,
+  ApiInvoicesInvoiceIdRoute: ApiInvoicesInvoiceIdRoute,
+  ApiInvoicesIndexRoute: ApiInvoicesIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

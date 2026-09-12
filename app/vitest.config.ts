@@ -17,6 +17,11 @@ export default defineConfig({
     include: ['tests/unit/**/*.test.ts'],
     // Signing an approval needs a secret, the same way the server does. A
     // fixed one here keeps the tests from depending on the machine.
-    env: { AUTH_SECRET: 'a-secret-only-the-tests-use' },
+    env: {
+      AUTH_SECRET: 'a-secret-only-the-tests-use',
+      // UC-11: the invoice tests write real files, into a directory of their
+      // own that the repository ignores.
+      STORAGE_ROOT: './.vitest-storage',
+    },
   },
 })

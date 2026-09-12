@@ -180,6 +180,16 @@ export const en = {
   'operation.continue': 'Record it anyway',
   'operation.error.connection': 'This customer is not one of yours.',
 
+  'invoice.label': 'Invoice',
+  'invoice.attach': 'Attach the invoice',
+  'invoice.clear': 'Remove',
+  'invoice.open': 'See the invoice',
+  'invoice.title': 'The invoice',
+  'invoice.missing': 'This invoice is not here.',
+  'invoice.error.type': 'A photograph or a PDF, nothing else.',
+  'invoice.error.size': 'That file is larger than 5 MB.',
+  'invoice.error.empty': 'That file is empty.',
+
   'approval.title': 'Approve this operation',
   'approval.approve': 'Approve',
   'approval.decline': 'Decline',

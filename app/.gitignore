@@ -16,4 +16,5 @@ playwright-report
 *.db
 *.db-journal
 storage/
+.vitest-storage
 .e2e
