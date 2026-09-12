@@ -74,7 +74,3 @@ export async function requireSignedInUser(): Promise<SignedInUser> {
   if (!user) throw new Error('UNAUTHENTICATED')
   return user
 }
-
-export async function endSession() {
-  await getAuth().api.signOut({ headers: getRequest().headers })
-}

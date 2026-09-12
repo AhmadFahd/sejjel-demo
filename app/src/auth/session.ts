@@ -29,9 +29,3 @@ export const loadSignedInUser = createServerFn({ method: 'GET' }).handler(
     }
   },
 )
-
-export const signOut = createServerFn({ method: 'POST' }).handler(async () => {
-  const { endSession } = await import('./session.server')
-  await endSession()
-  return { signedOut: true }
-})
