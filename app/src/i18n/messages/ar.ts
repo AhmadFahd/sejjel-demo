@@ -147,6 +147,7 @@ export const ar = {
   'notFound.body': 'هذه الصفحة غير موجودة، أو ليست لك.',
   'notFound.home': 'العودة إلى التطبيق',
   'nav.back': 'رجوع',
+  'nav.home': 'سجّل، الصفحة الرئيسية',
   'page.previous': 'السابق',
   'page.next': 'التالي',
   'page.position': 'صفحة {page} من {pages}',

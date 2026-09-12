@@ -1,4 +1,3 @@
-import { useRouter } from '@tanstack/react-router'
 import { setHideAmounts } from '#/auth/shell'
 import { useViewer } from '#/auth/viewer'
 import { cx } from './primitives'
@@ -25,8 +24,7 @@ const STRUCK = [
  */
 export function AmountsEye() {
   const { t, amountsHidden } = useI18n()
-  const { signedIn } = useViewer()
-  const router = useRouter()
+  const { signedIn, hideAmounts } = useViewer()
   if (!signedIn) return null
 
   // The label says what the press will do, not what the state is: the state
@@ -45,9 +43,19 @@ export function AmountsEye() {
         'flex items-center rounded-full px-3 py-2 transition lg:px-4',
         amountsHidden ? 'bg-brand text-white' : 'text-muted',
       )}
-      onClick={async () => {
-        await setHideAmounts({ data: !amountsHidden })
-        await router.invalidate()
+      onClick={() => {
+        // #88: the figures turn over on the press and the row catches up
+        // behind them. This used to wait for the write and then for every
+        // loader an invalidation touches, so the one control in the app whose
+        // whole point is speed was the slowest thing in it — and nothing else
+        // on screen reads this choice, so there is nothing to re-fetch.
+        const hidden = !amountsHidden
+        hideAmounts(hidden)
+        void setHideAmounts({ data: hidden }).catch(() => {
+          // The row is the truth. If it did not take the choice, the screen
+          // should not be claiming otherwise.
+          hideAmounts(!hidden)
+        })
       }}
     >
       <svg

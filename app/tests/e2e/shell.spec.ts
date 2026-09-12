@@ -62,3 +62,24 @@ test('the gallery shows every component in both directions', async ({
     '80',
   )
 })
+
+/**
+ * #88: the logo at the top of the sign-in screen is the way to the front of
+ * the app, and every button in it looks pressable. The second half was one
+ * rule rather than two components: Tailwind 4 leaves a `button` with the arrow
+ * a `<div>` gets, so the whole app read as unpressable beside its own links.
+ */
+test('the logo goes home, and a button says it can be pressed', async ({
+  page,
+}) => {
+  await go(page, '/sign-in')
+
+  await expect(page.getByTestId('locale-switch')).toHaveCSS('cursor', 'pointer')
+
+  await page.getByRole('link', { name: 'سجّل، الصفحة الرئيسية' }).click()
+
+  await expect(page).toHaveURL(/\/$/)
+  await expect(page.getByRole('heading', { level: 1 })).toHaveText(
+    'دفترك مع المحل، في جوالك',
+  )
+})
