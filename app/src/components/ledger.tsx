@@ -1,7 +1,9 @@
 import { Card, KeyValueRow, StatusPill, cx } from './primitives'
 import { useI18n } from '#/i18n/context'
+import { limitUse } from '#/lib/limit'
 import type { ReactNode } from 'react'
 import type { LedgerStatus } from '#/db/derive'
+import type { LimitLevel } from '#/lib/limit'
 
 /**
  * UC-19: the gold strip that says when everything falls due. The date is worked
@@ -71,28 +73,28 @@ export function LimitBar({
   onDark?: boolean
 }) {
   const { t, money } = useI18n()
-  if (limitHalalas <= 0) return null
+  const use = limitUse(usedHalalas, limitHalalas)
+  if (!use) return null
 
-  const percent = Math.min(100, Math.round((usedHalalas / limitHalalas) * 100))
-  const remaining = Math.max(0, limitHalalas - usedHalalas)
+  const { percent, level } = use
 
-  const fill =
-    percent >= 100
-      ? 'bg-linear-to-r from-warn to-bad'
-      : percent >= 85
-        ? 'bg-linear-to-r from-gold to-warn'
-        : percent >= 60
-          ? 'bg-linear-to-r from-gold-light to-gold'
-          : 'bg-linear-to-r from-good/70 to-good'
+  const fill: Record<LimitLevel, string> = {
+    ok: 'bg-linear-to-r from-good/70 to-good',
+    warm: 'bg-linear-to-r from-gold-light to-gold',
+    hot: 'bg-linear-to-r from-gold to-warn',
+    full: 'bg-linear-to-r from-warn to-bad',
+  }
 
   const note =
-    percent >= 100
+    level === 'full'
       ? t('limit.full')
-      : percent >= 85
+      : level === 'hot'
         ? t('limit.nearlyFull', { percent })
         : t('limit.used', { percent })
 
-  const alarming = percent >= 85
+  // On the dark card the limit and what is left are already in the row of
+  // facts above, so the bar does not say them twice.
+  const alarming = level === 'hot' || level === 'full'
 
   return (
     <div className="mt-3" data-testid="limit-bar" data-percent={percent}>
@@ -107,7 +109,7 @@ export function LimitBar({
           <span>
             {t('ledger.available')}
             <b className="tabular ms-1 text-[13px] text-ink">
-              {money(remaining)}
+              {money(use.remainingHalalas)}
             </b>
           </span>
         </div>
@@ -119,7 +121,7 @@ export function LimitBar({
         )}
       >
         <div
-          className={cx('h-full rounded-full transition-[width]', fill)}
+          className={cx('h-full rounded-full transition-[width]', fill[level])}
           style={{ width: `${percent}%` }}
         />
       </div>

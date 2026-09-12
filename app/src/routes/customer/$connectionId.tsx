@@ -5,6 +5,7 @@ import { AppBar, buttonClass } from '#/components/chrome'
 import { Pager, TransactionHistory, pagerLinkClass } from '#/components/account'
 import {
   BalanceHero,
+  LimitBar,
   OperationsCounter,
   PaydayStrip,
 } from '#/components/ledger'
@@ -100,6 +101,14 @@ function CustomerAccount() {
             },
           ]}
         >
+          {/* UC-18: how much of this shop's limit is spent, where the
+              customer decides whether to buy or to settle first. */}
+          <LimitBar
+            usedHalalas={summary.balanceHalalas}
+            limitHalalas={summary.limitHalalas}
+            onDark
+          />
+
           <div className="relative z-1 mt-3">
             <PaydayStrip nextPaydayAt={nextPaydayAt} onDark />
           </div>
