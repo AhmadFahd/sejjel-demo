@@ -1,157 +1,156 @@
-import {
-  Link,
-  createFileRoute,
-  redirect,
-  useNavigate,
-} from '@tanstack/react-router'
+import { Link, createFileRoute, redirect } from '@tanstack/react-router'
 import { loadSignedInUser } from '#/auth/session'
 import { homeFor } from '#/auth/roles'
+import { Mark, ShaddaTexture, Wordmark } from '#/components/brand'
 import { LocaleToggle } from '#/components/locale-toggle'
-import { Mark } from '#/components/brand'
+import { paydayOnOrAfter } from '#/lib/payday'
 import { useI18n } from '#/i18n/context'
-import { PrototypeSwitcher } from '#/components/prototype-switcher'
-import { LandingPaper } from './-landing-brand/paper'
-import { LandingField } from './-landing-brand/field'
-import { LandingLedger } from './-landing-brand/ledger'
-
-/** What the phone in the hero is showing. A picture of the thing, not data. */
-const MOCK_BALANCE_HALALAS = 80_000
-const MOCK_LIMIT_PERCENT = 68
 
 /**
- * PROTOTYPE, and throwaway — everything under `-landing-brand/`, the switcher,
- * and the `variant` parameter go once one of them wins.
- *
- * The question: what does this page look like when it is built from
- * `brand/identity-ar.html` rather than from the tokens the prototype inherited?
- * Three variants of the public page, switchable via `?variant=`, on the
- * existing `/` route. `current` is the page as it stands today, so the brand
- * ones are judged against it and not against a memory of it.
+ * A page of the ledger, made up: the product is a record, so the page that
+ * sells one shows a record rather than a picture of a phone beside a promise.
+ * The purchase less the payment is the balance, because a reader who adds it
+ * up should find it adds up.
  */
-const VARIANTS = [
-  { key: 'current', name: 'As it stands today' },
-  // The names read in English: this bar is scaffolding for whoever is
-  // choosing, not copy, and it is never translated or shipped.
-  { key: 'paper', name: 'Paper — a document, rules not cards' },
-  { key: 'field', name: 'Field — green ground, mark at poster size' },
-  { key: 'ledger', name: 'Ledger — the sheet is the pitch' },
-]
-
-export const Route = createFileRoute('/')({
-  beforeLoad: async () => {
-    const user = await loadSignedInUser()
-    if (user) throw redirect({ to: homeFor(user.roles) })
-  },
-  validateSearch: (search: Record<string, unknown>): { variant?: string } => {
-    const variant = search.variant
-    return typeof variant === 'string' &&
-      VARIANTS.some((candidate) => candidate.key === variant)
-      ? { variant }
-      : {}
-  },
-  component: LandingRoute,
-})
-
-function LandingRoute() {
-  const search = Route.useSearch()
-  const variant = search.variant ?? 'current'
-  const navigate = useNavigate({ from: '/' })
-
-  return (
-    <>
-      {variant === 'paper' ? <LandingPaper /> : null}
-      {variant === 'field' ? <LandingField /> : null}
-      {variant === 'ledger' ? <LandingLedger /> : null}
-      {variant === 'current' ? <Landing /> : null}
-
-      <PrototypeSwitcher
-        variants={VARIANTS}
-        current={variant}
-        chosen={search.variant !== undefined}
-        onPick={(key) =>
-          void navigate({
-            search: key === 'current' ? {} : { variant: key },
-            replace: true,
-          })
-        }
-      />
-    </>
-  )
+const SHEET = {
+  purchaseHalalas: 100_000,
+  paymentHalalas: 20_000,
+  balanceHalalas: 80_000,
+  /** How long before the due date each line was written. */
+  purchaseDaysBefore: 34,
+  paymentDaysBefore: 27,
 }
+
+const DAY_MS = 24 * 60 * 60 * 1000
 
 /**
  * The public page, and the front door for everybody else: a person already on
  * a side of the ledger is sent to it rather than shown the pitch for the thing
  * they are already using.
  */
+export const Route = createFileRoute('/')({
+  beforeLoad: async () => {
+    const user = await loadSignedInUser()
+    if (user) throw redirect({ to: homeFor(user.roles) })
+  },
+  /**
+   * The dates on the sheet, worked out where the page is rendered rather than
+   * written into it: a hard-coded month goes stale, and a clock read while
+   * drawing would disagree with the one that drew it on the server.
+   */
+  loader: () => {
+    const dueAt = paydayOnOrAfter(new Date())
+    return {
+      dueAt,
+      purchaseAt: new Date(dueAt.getTime() - SHEET.purchaseDaysBefore * DAY_MS),
+      paymentAt: new Date(dueAt.getTime() - SHEET.paymentDaysBefore * DAY_MS),
+    }
+  },
+  component: Landing,
+})
+
 function Landing() {
-  const { t } = useI18n()
+  const { t, money, date } = useI18n()
+  const { dueAt, purchaseAt, paymentAt } = Route.useLoaderData()
 
   return (
-    <div className="flex min-h-dvh flex-col bg-bone pb-24 sm:pb-0">
-      <header className="bg-brand text-white">
-        <div className="mx-auto flex max-w-6xl items-center gap-2.5 px-5 py-3.5 sm:px-8">
-          <Mark title={t('appName')} className="h-9 flex-none text-bone" />
-          <div>
-            <div className="text-[19px] leading-none font-black">
-              {t('appName')}
-            </div>
-            <div className="hidden text-[10.5px] font-bold text-white/70 sm:block">
-              {t('appTagline')}
-            </div>
-          </div>
-
-          <div className="ms-auto flex items-center gap-1">
-            <LocaleToggle className="text-white/70 hover:bg-white/10 hover:text-white" />
+    <div className="min-h-dvh bg-bone pb-28 sm:pb-0">
+      <div className="mx-auto max-w-[760px] px-5 sm:px-8">
+        <header className="flex items-center justify-between gap-4 py-7">
+          <Wordmark title={t('appName')} className="w-[150px] sm:w-[180px]" />
+          <div className="flex items-center gap-2">
+            <LocaleToggle className="text-brand hover:bg-brand/10" />
             <Link
               to="/sign-in"
-              className="inline-flex items-center rounded-full bg-white px-4 py-2 text-[13px] font-black whitespace-nowrap text-ink transition active:scale-[0.98]"
+              className="rounded-full border-[1.5px] border-brand px-4 py-1.5 text-[0.8rem] font-black text-brand"
             >
               {t('auth.title')}
             </Link>
           </div>
-        </div>
-      </header>
+        </header>
 
-      {/* The hero takes whatever the screen has left, so a tall monitor does
-          not end the page halfway down with a band of nothing under it. */}
-      <section className="flex flex-1 items-center bg-brand text-white">
-        <div className="mx-auto grid w-full max-w-6xl items-center gap-10 px-5 pb-12 sm:px-8 lg:grid-cols-[1.1fr_0.9fr] lg:gap-14 lg:pb-20">
-          <div>
-            <span className="inline-flex items-center rounded-full bg-white/10 px-3 py-1 text-[11px] font-black text-bone/80">
-              {t('landing.eyebrow')}
+        <h1 className="text-[clamp(1.7rem,4.5vw,2.6rem)] leading-[1.3] font-black text-balance text-brand">
+          {t('landing.title')}
+        </h1>
+        <p className="mt-4 max-w-[56ch] text-[1rem] leading-[1.9] font-normal text-ink">
+          {t('landing.body')}
+        </p>
+
+        {/* The sheet. Its head names whose page this is; a ledger's does. */}
+        <section className="mt-10 overflow-hidden rounded-[14px] border border-hairline">
+          <div className="flex items-baseline justify-between gap-3 border-b border-hairline bg-brand/[0.06] px-5 py-3.5">
+            <span className="text-[0.95rem] font-black text-brand">
+              {t('landing.mockShop')}
             </span>
-            <h1 className="mt-4 text-[30px] leading-[1.15] font-black sm:text-[40px] lg:text-[52px]">
-              {t('landing.title')}
-            </h1>
-            <p className="mt-4 max-w-lg text-[14px] leading-relaxed font-bold text-white/75 sm:text-[16px]">
-              {t('landing.body')}
-            </p>
-            <div className="mt-7 hidden sm:block">
-              <Link to="/sign-in" className={CALL_TO_ACTION}>
-                {t('landing.cta')}
-              </Link>
-            </div>
-            <p className="mt-4 text-[12px] font-bold text-white/50">
-              {t('auth.trust')}
-            </p>
+            <span className="text-[0.8rem] font-normal text-ink/60">
+              {t('payday.title')}
+            </span>
           </div>
 
-          {/* A screen of the thing, rather than a promise about it. */}
-          <PhoneMock />
-        </div>
-      </section>
+          <Row
+            when={date(purchaseAt)}
+            what={t('ledger.purchases')}
+            amount={money(SHEET.purchaseHalalas)}
+          />
+          <Row
+            when={date(paymentAt)}
+            what={t('ledger.payments')}
+            amount={money(SHEET.paymentHalalas)}
+          />
+          <Row
+            when={date(dueAt)}
+            what={t('ledger.dueDate')}
+            amount={money(SHEET.balanceHalalas)}
+            pending
+          />
 
-      <footer className="border-t border-line bg-bone">
-        <div className="mx-auto max-w-6xl px-5 py-7 text-[12px] font-bold text-muted sm:px-8">
+          {/* The closing line, the way a page of a ledger closes. */}
+          <div className="flex items-baseline justify-between gap-3 border-t-2 border-brand/25 px-5 py-4">
+            <span className="text-[0.9rem] font-bold text-ink/70">
+              {t('ledger.balance')}
+            </span>
+            <b className="tabular text-[1.5rem] font-black text-brand">
+              {money(SHEET.balanceHalalas)}
+            </b>
+          </div>
+
+          {/* The last line of the sheet is the action: signing in is the next
+              entry, not a separate errand. The phone gets it as a bar instead,
+              where it stays in reach. */}
+          <Link
+            to="/sign-in"
+            className="hidden items-center justify-between gap-3 bg-brand px-5 py-4 text-bone transition active:brightness-95 sm:flex"
+          >
+            <span className="text-[0.98rem] font-black">
+              {t('landing.cta')}
+            </span>
+            <span className="text-[1.1rem] leading-none font-black rtl:-scale-x-100">
+              →
+            </span>
+          </Link>
+
+          {/* The shadda texture at the foot of the sheet, which is the use the
+              guide puts the finer of the two patterns to: a small area, the
+              back of a card, and never behind anything that has to be read. */}
+          <div className="relative h-12 border-t border-hairline">
+            <ShaddaTexture unit={0.45} className="absolute inset-0 size-full" />
+          </div>
+        </section>
+
+        <p className="mt-4 text-[0.88rem] font-normal text-ink/60">
+          {t('auth.trust')}
+        </p>
+
+        <footer className="mt-12 border-t border-hairline py-6 text-[0.88rem] font-normal text-ink/55">
           {t('landing.footer')}
-        </div>
-      </footer>
+        </footer>
+      </div>
 
-      {/* On a phone the one action stays in reach, the way the dock does on
-          the screens behind sign-in. */}
-      <div className="fixed inset-x-0 bottom-0 z-40 border-t border-line bg-card/95 p-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] backdrop-blur sm:hidden">
-        <Link to="/sign-in" className={`${CALL_TO_ACTION} w-full`}>
+      <div className="fixed inset-x-0 bottom-0 z-40 border-t border-hairline bg-bone px-5 pt-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] sm:hidden">
+        <Link
+          to="/sign-in"
+          className="flex w-full items-center justify-center rounded-[14px] bg-brand py-3.5 text-[0.95rem] font-black text-bone"
+        >
           {t('landing.cta')}
         </Link>
       </div>
@@ -159,52 +158,36 @@ function Landing() {
   )
 }
 
-const CALL_TO_ACTION =
-  'inline-flex items-center justify-center rounded-(--radius-control) bg-bone px-6 py-3.5 text-[14.5px] font-black text-brand transition active:scale-[0.98]'
-
 /**
- * The app's own card, at the size it is read on. The figures are a fixture, so
- * they are formatted the way real ones are rather than written out per
- * language: a page that shows Arabic numerals in one column and Western ones
- * in the other has already lost the argument it is making.
+ * One line of the sheet. A line that is documented carries the icon; a line
+ * still waiting for the other side does not — which is the whole difference
+ * the product sells, said without a sentence.
  */
-function PhoneMock() {
-  const { t, money, number } = useI18n()
-
+function Row({
+  when,
+  what,
+  amount,
+  pending = false,
+}: {
+  when: string
+  what: string
+  amount: string
+  pending?: boolean
+}) {
   return (
-    <div className="mx-auto w-full max-w-[300px]">
-      <div className="rounded-[34px] border-[6px] border-black/40 bg-bone p-3 shadow-2xl shadow-black/40">
-        <div className="mb-3 flex items-center gap-2">
-          <Mark title={t('appName')} className="h-7 flex-none text-brand" />
-          <span className="text-[13px] font-black text-ink">
-            {t('landing.mockShop')}
-          </span>
-        </div>
-
-        <div className="rounded-(--radius-card) bg-card p-4 shadow-(--shadow-card)">
-          <div className="text-[11px] font-bold text-muted">
-            {t('ledger.balance')}
-          </div>
-          <div className="tabular mt-1 text-[26px] font-black text-ink">
-            {money(MOCK_BALANCE_HALALAS)}
-          </div>
-          <div className="mt-3 h-1.5 overflow-hidden rounded-full bg-neutral-bg">
-            <div
-              className="h-full rounded-full bg-brand"
-              style={{ width: `${MOCK_LIMIT_PERCENT}%` }}
-            />
-          </div>
-          <div className="mt-2 text-[11px] font-bold text-muted">
-            {t('landing.mockLimit', { percent: number(MOCK_LIMIT_PERCENT) })}
-          </div>
-        </div>
-
-        <div className="mt-2 rounded-(--radius-control) border border-brand/20 bg-brand/[0.06] p-3">
-          <div className="text-[12px] font-black text-ink">
-            {t('payday.title')}
-          </div>
-        </div>
-      </div>
+    <div className="flex items-center gap-3 border-b border-hairline px-5 py-3.5 last:border-b-0">
+      <span className="tabular w-[88px] shrink-0 text-[0.8rem] font-normal text-ink/55 sm:w-[110px]">
+        {when}
+      </span>
+      <span className="flex-1 text-[0.92rem] font-bold text-ink">{what}</span>
+      {pending ? (
+        <span className="size-6 shrink-0 rounded-full border-[1.5px] border-dashed border-ink/30" />
+      ) : (
+        <Mark className="h-6 shrink-0 text-brand" />
+      )}
+      <b className="tabular w-[110px] shrink-0 text-end text-[0.95rem] font-black text-brand">
+        {amount}
+      </b>
     </div>
   )
 }
