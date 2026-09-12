@@ -6,7 +6,6 @@ import {
   useRouter,
 } from '@tanstack/react-router'
 import { createServerFn } from '@tanstack/react-start'
-import { requireSideOf } from '#/auth/enter'
 import {
   acceptShopTerms,
   approveOperationFn,
@@ -37,7 +36,6 @@ const loadOperation = createServerFn({ method: 'GET' })
 
 /** UC-07: nothing lands on a ledger without the person standing there agreeing. */
 export const Route = createFileRoute('/customer/approve/$transactionId')({
-  beforeLoad: ({ context }) => requireSideOf(context.person, 'customer'),
   loader: async ({ params }) => {
     const operation = await loadOperation({
       data: { transactionId: params.transactionId },

@@ -1,7 +1,6 @@
 import { useState } from 'react'
 import { Link, createFileRoute, useRouter } from '@tanstack/react-router'
 import { createServerFn } from '@tanstack/react-start'
-import { requireSideOf } from '#/auth/enter'
 import { localSaudiMobile } from '#/auth/phone'
 import { cancelOperation, recordOperation } from '#/auth/operation'
 import { Button, buttonClass } from '#/components/chrome'
@@ -51,7 +50,6 @@ const loadCustomers = createServerFn({ method: 'GET' })
 
 /** UC-04: عملية جديدة — what the customer just bought, on credit. */
 export const Route = createFileRoute('/merchant/record')({
-  beforeLoad: ({ context }) => requireSideOf(context.person, 'merchant'),
   validateSearch: (
     search: Record<string, unknown>,
   ): { customer?: string; pending?: string } => {

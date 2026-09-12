@@ -6,7 +6,6 @@ import {
   useRouterState,
 } from '@tanstack/react-router'
 import { createServerFn } from '@tanstack/react-start'
-import { requireSideOf } from '#/auth/enter'
 import { localSaudiMobile } from '#/auth/phone'
 import { Pager, pagerLinkClass } from '#/components/account'
 import { LoadingDots } from '#/components/loading'
@@ -74,7 +73,6 @@ const loadLog = createServerFn({ method: 'GET' })
 
 /** Every operation in the shop, searchable, a page at a time. */
 export const Route = createFileRoute('/merchant/log')({
-  beforeLoad: ({ context }) => requireSideOf(context.person, 'merchant'),
   validateSearch: (search: Record<string, unknown>): Search => {
     const page = Math.trunc(Number(search.page))
     return {

@@ -1,6 +1,5 @@
 import { Link, createFileRoute, notFound } from '@tanstack/react-router'
 import { createServerFn } from '@tanstack/react-start'
-import { requireSideOf } from '#/auth/enter'
 import { buttonClass } from '#/components/chrome'
 import { Pager, TransactionHistory, pagerLinkClass } from '#/components/account'
 import {
@@ -48,7 +47,6 @@ const loadAccount = createServerFn({ method: 'GET' })
 
 /** UC-09: one shop's history, as the customer who owes it sees it. */
 export const Route = createFileRoute('/customer/$connectionId')({
-  beforeLoad: ({ context }) => requireSideOf(context.person, 'customer'),
   validateSearch: (search: Record<string, unknown>): { page?: number } => {
     const page = Math.trunc(Number(search.page))
     return Number.isFinite(page) && page > 1 ? { page } : {}

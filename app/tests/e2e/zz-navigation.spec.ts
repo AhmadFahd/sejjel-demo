@@ -54,6 +54,33 @@ test('a customer holds one event stream, on the ledger and on the card', async (
 })
 
 /**
+ * #79: a tap inside a side costs one round trip, the screen's own. The entry
+ * read — who is asking, what is unread, whether they belong here — used to be
+ * a second one in front of it, on every navigation, because it sat in a
+ * `beforeLoad` and `beforeLoad` keeps nothing.
+ */
+test('a tap inside a side costs one round trip, not two', async ({ page }) => {
+  await signIn(page, CUSTOMER.typed, CUSTOMER.e164)
+  await expect(page).toHaveURL(/\/customer$/)
+  await hydrated(page)
+
+  const calls: Array<string> = []
+  page.on('request', (request) => {
+    if (request.url().includes('/_serverFn/')) calls.push(request.url())
+  })
+
+  await page.getByTestId('my-card-link').click()
+  await expect(page.getByTestId('my-card')).toBeVisible()
+  expect(calls).toHaveLength(1)
+
+  // And back, where the ledger's own loader is the only thing left to ask.
+  calls.length = 0
+  await page.getByTestId('dock').getByText('دفتري').click()
+  await expect(page.getByTestId('connection-row').first()).toBeVisible()
+  expect(calls).toHaveLength(1)
+})
+
+/**
  * #75: nothing said anything while a screen was on its way, so the app looked
  * frozen. The bar says it, from the first round trip onwards, and the screen
  * a person is looking at stays where it is until the next one is ready.
@@ -99,9 +126,12 @@ test('recording a purchase keeps what was typed while the screen waits', async (
     router.invalidate()
   })
 
-  await expect(page.getByTestId('loading-bar')).toBeVisible()
+  // Nothing is drawn for this one, and that is right: a reload behind a
+  // screen that is already up blocks nobody, so there is nothing to say. What
+  // matters is that the operation is still here afterwards.
   await expect(page.getByLabel('المبلغ')).toHaveValue('75')
   await expect(page.getByRole('button', { name: 'أرسل للعميل' })).toBeEnabled()
+  await expect(page.getByTestId('loading')).toHaveCount(0)
 })
 
 /**
