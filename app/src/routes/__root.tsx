@@ -4,6 +4,7 @@ import {
   Scripts,
   createRootRoute,
   useRouter,
+  useRouterState,
 } from '@tanstack/react-router'
 import { TanStackRouterDevtoolsPanel } from '@tanstack/react-router-devtools'
 import { TanStackDevtools } from '@tanstack/react-devtools'
@@ -80,11 +81,13 @@ function RootDocument({ children }: { children: ReactNode }) {
       </head>
       <body>
         <I18nProvider locale={locale ?? DEFAULT_LOCALE}>
-          <LocaleSwitch />
+          <FloatingLocaleSwitch />
           {children}
         </I18nProvider>
         <TanStackDevtools
-          config={{ position: 'bottom-right' }}
+          // The bottom of the screen belongs to the dock now, so the
+          // devtools handle moves out of its way.
+          config={{ position: 'top-left' }}
           plugins={[
             {
               name: 'Tanstack Router',
@@ -102,9 +105,16 @@ function RootDocument({ children }: { children: ReactNode }) {
  * The whole document changes direction with the language, so the switch
  * reloads the route rather than swapping strings underneath a fixed layout.
  */
-function LocaleSwitch() {
+function FloatingLocaleSwitch() {
   const { locale, t } = useI18n()
   const router = useRouter()
+  const pathname = useRouterState({
+    select: (state) => state.location.pathname,
+  })
+
+  // The public page carries the language control in its own bar; a second one
+  // floating over it would be two of the same control on one screen.
+  if (pathname === '/') return null
 
   return (
     <div className="flex justify-end p-4">

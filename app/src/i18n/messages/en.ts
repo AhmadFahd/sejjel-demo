@@ -16,6 +16,22 @@ export const en = {
   'shell.node': 'Node',
   'shell.startedAt': 'Server started',
 
+  'landing.eyebrow': 'The shop ledger, off paper',
+  'landing.title': 'The ledger between a shop and its customer, on the phone',
+  'landing.body':
+    'The shop records the purchase, the customer approves it on their phone, and on Tuesday it is paid. Both sides read the same figure, so there is nothing left to argue about.',
+  'landing.cta': 'Start with your mobile number',
+  'landing.mockShop': 'The corner shop',
+  'landing.mockLimit': '{percent}% of the limit used',
+  'landing.footer':
+    'Sejjel — a ledger between a shop and its customers. Amounts in SAR.',
+
+  'nav.shop': 'Shop',
+  'nav.record': 'Record',
+  'nav.scan': 'Scan',
+  'nav.ledger': 'Ledger',
+  'nav.card': 'My card',
+
   'auth.title': 'Sign in',
   'auth.phoneLabel': 'Mobile number',
   'auth.phonePlaceholder': '05X XXX XXXX',
