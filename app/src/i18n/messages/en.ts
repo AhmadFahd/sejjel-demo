@@ -18,11 +18,11 @@ export const en = {
 
   'landing.title': 'The ledger between a shop and its customer, on the phone',
   'landing.body':
-    'The shop records the purchase, the customer approves it on their phone, and on Tuesday it is paid. Both sides read the same figure, so there is nothing left to argue about.',
+    'The shop records the purchase, the customer approves it on their phone, and on Tuesday it is paid. Both sides read the same figure.',
   'landing.cta': 'Start with your mobile number',
   'landing.mockShop': 'The corner shop',
   'landing.footer':
-    'Sejjel — a ledger between a shop and its customers. Amounts in SAR.',
+    'Sejjel, a ledger between a shop and its customers. Amounts in SAR.',
 
   'nav.shop': 'Shop',
   'nav.record': 'Record',
@@ -34,7 +34,6 @@ export const en = {
   'auth.title': 'Sign in',
   'auth.phoneLabel': 'Mobile number',
   'auth.phonePlaceholder': '05X XXX XXXX',
-  'auth.phoneHint': 'The number your shop or your ledger is registered to',
   'auth.sendCode': 'Send the code',
   'auth.codeLabel': 'Verification code',
   'auth.verify': 'Sign in',
@@ -47,7 +46,6 @@ export const en = {
   'auth.reason.record': 'Every purchase recorded for both sides',
   'auth.codeWentTo': 'The code went to',
   'auth.codeDigit': 'Digit {position}',
-  'auth.codeAuto': 'The code is accepted as soon as it is complete',
   'auth.resendIn': 'Another code in {seconds}s',
   'auth.signOut': 'Sign out',
   'auth.signedInAs': 'Signed in as {name}',
@@ -72,8 +70,7 @@ export const en = {
   'shop.name': 'Shop name',
   'shop.defaultLimit': 'Default credit limit',
   'shop.defaultTerm': 'Default term, in days',
-  'shop.defaultsNote':
-    'What a new customer starts with. Either can be changed for one customer later.',
+  'shop.defaultsNote': 'What a new customer starts with.',
   'shop.open': 'Open the shop',
   'shop.error.name': 'A shop needs a name',
   'shop.error.limit': 'A limit between 1 and 100,000 ر.س',
@@ -86,7 +83,7 @@ export const en = {
   'shop.error.own': 'This is your own shop.',
   'shop.counter': 'The code for the counter',
   'shop.counterBody':
-    'Print it or leave it on the counter. A customer scanning it joins the shop and lands on their account with you.',
+    'Print it or leave it on the counter. Whoever scans it joins the shop.',
   'shop.counterOpen': 'Show it full screen',
 
   'merchant.noCustomers': 'No customers yet',
@@ -166,7 +163,6 @@ export const en = {
   'operation.cancel': 'Call it off',
   'operation.applied': 'Recorded on the ledger.',
   'operation.declined': 'The customer declined.',
-  'operation.settledBody': 'Nothing else is waiting on this one.',
   'operation.record': 'Record an operation',
   'operation.error.amount': 'Enter an amount in riyals.',
   'operation.error.ceiling': 'That is more than one operation can be.',
@@ -183,7 +179,7 @@ export const en = {
   'approval.decline': 'Decline',
   'approval.showThis': 'Show this to the shop',
   'approval.showThisBody':
-    'They scan it, and the purchase goes on your ledger. Until then nothing has.',
+    'The shop scans it, and the purchase goes on your ledger.',
   'approval.expiresIn': 'Good for {time}',
   'approval.expired': 'This code has run out.',
   'approval.regenerate': 'New code',
@@ -277,7 +273,7 @@ export const en = {
   'settings.overridden': 'Own terms',
 
   'limit.used': '{percent}% of the limit used',
-  'limit.nearlyFull': 'Close to the limit ({percent}%). Settling is advised',
+  'limit.nearlyFull': 'Close to the limit ({percent}%)',
   'limit.full': 'The limit is used up. No new purchase can be recorded',
 } as const
 

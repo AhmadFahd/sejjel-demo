@@ -183,10 +183,7 @@ function RecordOperation() {
                   : 'operation.declined',
               )}
             </h2>
-            <p className="mb-3 text-[13px] font-bold text-muted">
-              {t('operation.settledBody')}
-            </p>
-            <Button tone="primary" onClick={startOver}>
+            <Button tone="primary" className="mt-3" onClick={startOver}>
               {t('operation.new')}
             </Button>
           </Card>

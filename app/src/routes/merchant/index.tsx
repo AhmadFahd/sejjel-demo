@@ -188,11 +188,10 @@ function MerchantHome() {
                   {row.limitOverrideHalalas !== null ||
                   row.termOverrideDays !== null ? (
                     <span
-                      className="text-[12px] font-black text-brand"
-                      title={t('settings.overridden')}
+                      className="text-[10.5px] font-black whitespace-nowrap text-brand"
                       data-testid="overridden"
                     >
-                      ✦
+                      {t('settings.overridden')}
                     </span>
                   ) : null}
                   <StatusPill status={row.status} />

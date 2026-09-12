@@ -17,10 +17,10 @@ export const ar = {
 
   'landing.title': 'الدفتر بين المحل وعميله، على الجوال',
   'landing.body':
-    'المحل يكتب العملية، العميل يوافق عليها من جواله، ويوم الثلاثاء يسدد. رقم واحد يراه الطرفان، فلا خلاف عليه بعدها.',
+    'المحل يكتب العملية، العميل يوافق عليها من جواله، ويوم الثلاثاء يسدد. رقم واحد يراه الطرفان.',
   'landing.cta': 'ابدأ برقم جوالك',
   'landing.mockShop': 'بقالة الحي',
-  'landing.footer': 'سجّل — دفتر بين تاجر وعميل. المبالغ بالريال السعودي.',
+  'landing.footer': 'سجّل، دفتر بين تاجر وعميل. المبالغ بالريال السعودي.',
 
   'nav.shop': 'المحل',
   'nav.record': 'عملية',
@@ -32,7 +32,6 @@ export const ar = {
   'auth.title': 'تسجيل الدخول',
   'auth.phoneLabel': 'رقم الجوال',
   'auth.phonePlaceholder': '05X XXX XXXX',
-  'auth.phoneHint': 'الرقم المسجّل به متجرك أو دفترك',
   'auth.sendCode': 'أرسل الرمز',
   'auth.codeLabel': 'رمز التحقق',
   'auth.verify': 'دخول',
@@ -45,7 +44,6 @@ export const ar = {
   'auth.reason.record': 'كل عملية موثّقة للطرفين',
   'auth.codeWentTo': 'أُرسل الرمز إلى',
   'auth.codeDigit': 'الرقم {position}',
-  'auth.codeAuto': 'يُقبل الرمز تلقائيًا عند اكتماله',
   'auth.resendIn': 'رمز جديد بعد {seconds} ثانية',
   'auth.signOut': 'تسجيل الخروج',
   'auth.signedInAs': 'مسجّل الدخول: {name}',
@@ -70,8 +68,7 @@ export const ar = {
   'shop.name': 'اسم المتجر',
   'shop.defaultLimit': 'حد الائتمان الافتراضي',
   'shop.defaultTerm': 'مدة السداد الافتراضية بالأيام',
-  'shop.defaultsNote':
-    'ما يبدأ به العميل الجديد. يمكن تغيير أيٍّ منهما لعميل بعينه لاحقًا.',
+  'shop.defaultsNote': 'ما يبدأ به العميل الجديد.',
   'shop.open': 'افتح المتجر',
   'shop.error.name': 'المتجر يحتاج اسمًا',
   'shop.error.limit': 'حد بين 1 و100,000 ر.س',
@@ -83,8 +80,7 @@ export const ar = {
     'الشراء بالآجل هنا يعني أن ما تأخذه دين عليك لهذا المتجر، يُستحق في يوم السداد المبيّن.',
   'shop.error.own': 'هذا متجرك أنت.',
   'shop.counter': 'رمز الطاولة',
-  'shop.counterBody':
-    'اطبعه أو اتركه على الطاولة. من يمسحه ينضم إلى متجرك ويصل إلى حسابه لديك.',
+  'shop.counterBody': 'اطبعه أو اتركه على الطاولة. من يمسحه ينضم إلى متجرك.',
   'shop.counterOpen': 'عرضه ملء الشاشة',
 
   'merchant.noCustomers': 'لا عملاء بعد',
@@ -162,7 +158,6 @@ export const ar = {
   'operation.cancel': 'إلغاء العملية',
   'operation.applied': 'سُجّلت على الدفتر.',
   'operation.declined': 'رفض العميل العملية.',
-  'operation.settledBody': 'لم يعد هناك ما ينتظر في هذه العملية.',
   'operation.record': 'تسجيل عملية',
   'operation.error.amount': 'أدخل المبلغ بالريال.',
   'operation.error.ceiling': 'المبلغ أكبر من حد العملية الواحدة.',
@@ -178,8 +173,7 @@ export const ar = {
   'approval.approve': 'موافقة',
   'approval.decline': 'رفض',
   'approval.showThis': 'اعرض هذا للمتجر',
-  'approval.showThisBody':
-    'يمسحه المتجر فتُسجَّل العملية على دفترك. قبل ذلك لم يُسجَّل شيء.',
+  'approval.showThisBody': 'يمسحه المتجر فتُسجَّل العملية على دفترك.',
   'approval.expiresIn': 'صالح لمدة {time}',
   'approval.expired': 'انتهت صلاحية الرمز.',
   'approval.regenerate': 'رمز جديد',
@@ -237,7 +231,7 @@ export const ar = {
   'pay.open': 'سداد',
 
   'payday.title': 'تاريخ الاستحقاق الموحد: كل ثلاثاء',
-  'payday.note': 'يوم السداد الموحد — تجميع مرن لكل حساباتك لسهولة الدفع',
+  'payday.note': 'كل ما عليك يُستحق في يوم واحد، ليسهل السداد',
   'payday.next': 'يوم السداد القادم: {date}',
 
   'settings.title': 'إعدادات المتجر',
@@ -272,6 +266,6 @@ export const ar = {
   'settings.overridden': 'شروط خاصة',
 
   'limit.used': 'المستهلك {percent}% من الحد',
-  'limit.nearlyFull': 'اقتربت من استهلاك الحد ({percent}%) — يُنصح بالسداد',
-  'limit.full': 'بلغت الحد الائتماني بالكامل — لا يمكن تسجيل مشتريات جديدة',
+  'limit.nearlyFull': 'اقتربت من الحد ({percent}%)',
+  'limit.full': 'بلغت الحد الائتماني. لا يمكن تسجيل مشتريات جديدة',
 } as const satisfies Messages
