@@ -55,7 +55,7 @@ export function LandingField() {
           <h1 className="mt-6 text-[clamp(2.1rem,5.5vw,3.4rem)] leading-[1.25] font-black text-balance text-brand">
             {t('landing.title')}
           </h1>
-          <p className="mt-6 text-[1.05rem] leading-[1.95] font-normal text-word">
+          <p className="mt-6 text-[1.05rem] leading-[1.95] font-normal text-ink">
             {t('landing.body')}
           </p>
 
@@ -66,12 +66,12 @@ export function LandingField() {
             >
               {t('landing.cta')}
             </Link>
-            <p className="mt-4 text-[0.9rem] font-normal text-word/60">
+            <p className="mt-4 text-[0.9rem] font-normal text-ink/60">
               {t('auth.trust')}
             </p>
           </div>
 
-          <p className="mt-10 border-t border-hairline pt-5 text-[0.88rem] font-normal text-word/55">
+          <p className="mt-10 border-t border-hairline pt-5 text-[0.88rem] font-normal text-ink/55">
             {t('landing.footer')}
           </p>
         </div>

@@ -25,14 +25,14 @@ export function LandingPaper() {
   ]
 
   return (
-    <div className="min-h-dvh bg-bone pb-28 text-word sm:pb-0">
+    <div className="min-h-dvh bg-bone pb-28 text-ink sm:pb-0">
       <div className="mx-auto max-w-[68ch] px-6 sm:px-8">
         <header className="flex items-start justify-between gap-4 pt-10 pb-12 sm:pt-16">
           <Wordmark title={t('appName')} className="w-[220px] sm:w-[300px]" />
           <LocaleToggle className="-me-2 shrink-0 text-brand hover:bg-brand/10" />
         </header>
 
-        <p className="text-[0.95rem] font-bold text-word/60">
+        <p className="text-[0.95rem] font-bold text-ink/60">
           {t('landing.eyebrow')}
         </p>
         <h1 className="mt-3 text-[clamp(2rem,6vw,3.2rem)] leading-[1.3] font-black text-brand text-balance">
@@ -48,7 +48,7 @@ export function LandingPaper() {
               key={claim}
               className="flex items-baseline gap-4 border-b border-hairline py-5"
             >
-              <span className="w-6 shrink-0 text-[1rem] font-bold text-word/45 tabular-nums">
+              <span className="w-6 shrink-0 text-[1rem] font-bold text-ink/45 tabular-nums">
                 {number(index + 1)}
               </span>
               <span className="text-[1.05rem] leading-[1.8] font-bold text-brand">
@@ -68,12 +68,12 @@ export function LandingPaper() {
             <Mark className="h-6 self-center text-brand" />
             {t('landing.cta')}
           </Link>
-          <p className="mt-4 text-[0.9rem] font-normal text-word/55">
+          <p className="mt-4 text-[0.9rem] font-normal text-ink/55">
             {t('auth.trust')}
           </p>
         </div>
 
-        <footer className="mt-16 border-t border-hairline py-6 text-[0.88rem] font-normal text-word/55">
+        <footer className="mt-16 border-t border-hairline py-6 text-[0.88rem] font-normal text-ink/55">
           {t('landing.footer')}
         </footer>
       </div>

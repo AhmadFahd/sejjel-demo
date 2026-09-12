@@ -7,7 +7,7 @@ import type { TermsAnswer } from '#/auth/terms'
 
 const FIELD =
   'w-full rounded-(--radius-control) border border-neutral-bg px-3 py-3 text-base disabled:bg-neutral-bg disabled:text-muted'
-const LABEL = 'mb-1 block text-[12.5px] font-extrabold text-muted'
+const LABEL = 'mb-1 block text-[12.5px] font-bold text-muted'
 
 export function NumberField({
   id,
@@ -63,10 +63,7 @@ export function TermsProblems({
   return (
     <ul role="alert" className="mt-3 space-y-1">
       {problems.map((problem) => (
-        <li
-          key={problem}
-          className="text-[12.5px] font-extrabold text-bad-text"
-        >
+        <li key={problem} className="text-[12.5px] font-bold text-bad-text">
           {t(`settings.error.${problem}`)}
         </li>
       ))}

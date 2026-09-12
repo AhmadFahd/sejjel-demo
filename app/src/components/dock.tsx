@@ -48,7 +48,7 @@ export function Dock({
                 title={item.label}
                 className={cx(
                   'flex items-center gap-2 rounded-full px-3 py-2 transition lg:px-4',
-                  here ? 'bg-ink text-white' : 'text-muted',
+                  here ? 'bg-brand text-white' : 'text-muted',
                 )}
               >
                 <span className="text-base leading-none" aria-hidden>

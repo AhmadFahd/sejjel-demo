@@ -26,8 +26,8 @@ export function BottomNav({
           onClick={item.onSelect}
           aria-current={item.id === activeId ? 'page' : undefined}
           className={cx(
-            'relative flex flex-col items-center gap-0.5 pt-2.5 pb-2 text-[10.5px] font-extrabold',
-            item.id === activeId ? 'text-steel' : 'text-faint',
+            'relative flex flex-col items-center gap-0.5 pt-2.5 pb-2 text-[10.5px] font-bold',
+            item.id === activeId ? 'text-brand' : 'text-faint',
           )}
         >
           {item.icon}
@@ -66,7 +66,7 @@ export function Toast({
       role="status"
       aria-live="polite"
       className={cx(
-        'pointer-events-none fixed inset-x-3.5 top-4 z-90 rounded-(--radius-control) border-s-4 border-gold bg-ink px-4 py-3 text-[13px] font-extrabold text-white shadow-(--shadow-toast) transition',
+        'pointer-events-none fixed inset-x-3.5 top-4 z-90 rounded-(--radius-control) border-s-4 border-bone bg-brand px-4 py-3 text-[13px] font-bold text-white shadow-(--shadow-toast) transition',
         open ? 'translate-y-0 opacity-100' : '-translate-y-[160%] opacity-0',
       )}
     >
@@ -100,7 +100,7 @@ export function Sheet({
         role="dialog"
         aria-modal="true"
         aria-label={title}
-        className="w-full max-w-[430px] rounded-t-3xl bg-mist p-4 pb-6"
+        className="w-full max-w-[430px] rounded-t-3xl bg-bone p-4 pb-6"
       >
         <div className="mx-auto mb-3 h-1 w-10 rounded-full bg-neutral-bg" />
         <h2 className="mb-3 text-base font-black text-ink">{title}</h2>
@@ -111,15 +111,15 @@ export function Sheet({
 }
 
 export type ButtonTone =
-  'primary' | 'ink' | 'gold' | 'pay' | 'soft' | 'ghost' | 'danger'
+  'primary' | 'ink' | 'bone' | 'pay' | 'soft' | 'ghost' | 'danger'
 
 const BUTTON_TONES: Record<ButtonTone, string> = {
-  primary: 'bg-steel text-white',
-  ink: 'bg-ink text-white',
-  gold: 'bg-linear-135 from-gold-light to-gold text-ink',
+  primary: 'bg-brand text-white',
+  ink: 'bg-brand text-white',
+  bone: 'bg-bone text-brand',
   pay: 'bg-linear-135 from-good to-good-text text-white shadow-lg shadow-good/30',
   soft: 'bg-neutral-bg text-ink',
-  ghost: 'border-[1.5px] border-neutral-bg bg-card text-steel',
+  ghost: 'border-[1.5px] border-neutral-bg bg-card text-brand',
   danger: 'bg-bad text-white',
 }
 

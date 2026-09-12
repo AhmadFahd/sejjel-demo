@@ -92,7 +92,7 @@ function ApproveOperation() {
       <main className="p-3.5">
         <Link
           to="/customer"
-          className="mb-3 inline-block text-[13px] font-black text-steel"
+          className="mb-3 inline-block text-[13px] font-black text-brand"
         >
           {t('nav.back')}
         </Link>
@@ -126,7 +126,7 @@ function ApproveOperation() {
                   : 'approval.cancelled',
               )}
             </h2>
-            <Link to="/customer" className="text-[13px] font-black text-steel">
+            <Link to="/customer" className="text-[13px] font-black text-brand">
               {t('notFound.home')}
             </Link>
           </Card>
@@ -170,7 +170,7 @@ function ApproveOperation() {
         {problem ? (
           <p
             role="alert"
-            className="mt-3 text-[12.5px] font-extrabold text-bad-text"
+            className="mt-3 text-[12.5px] font-bold text-bad-text"
           >
             {t('approval.refused')}
           </p>

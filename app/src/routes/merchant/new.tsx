@@ -43,7 +43,7 @@ function NewShop() {
 
   const field =
     'mb-1 w-full rounded-(--radius-control) border border-neutral-bg px-3 py-3 text-base'
-  const label = 'mb-1 block text-[12.5px] font-extrabold text-muted'
+  const label = 'mb-1 block text-[12.5px] font-bold text-muted'
 
   return (
     <main className="mx-auto max-w-sm px-6 py-10">
@@ -99,7 +99,7 @@ function NewShop() {
             {problems.map((problem) => (
               <li
                 key={problem}
-                className="text-[12.5px] font-extrabold text-bad-text"
+                className="text-[12.5px] font-bold text-bad-text"
               >
                 {t(
                   `shop.error.${problem}` as

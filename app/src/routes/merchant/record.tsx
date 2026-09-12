@@ -159,14 +159,14 @@ function RecordOperation() {
 
   const field =
     'mb-1 w-full rounded-(--radius-control) border border-neutral-bg px-3 py-3 text-base'
-  const label = 'mb-1 block text-[12.5px] font-extrabold text-muted'
+  const label = 'mb-1 block text-[12.5px] font-bold text-muted'
 
   return (
     <>
       <main className="p-3.5">
         <Link
           to="/merchant"
-          className="mb-3 inline-block text-[13px] font-black text-steel"
+          className="mb-3 inline-block text-[13px] font-black text-brand"
         >
           {t('nav.back')}
         </Link>
@@ -299,7 +299,7 @@ function RecordOperation() {
                     <li
                       key={problem}
                       className={cx(
-                        'text-[12.5px] font-extrabold',
+                        'text-[12.5px] font-bold',
                         problem === 'overdue'
                           ? 'text-warn-text'
                           : 'text-bad-text',
@@ -325,7 +325,7 @@ function RecordOperation() {
                 {problems.includes('overdue') ? (
                   <div className="mt-3">
                     <Button
-                      tone="gold"
+                      tone="primary"
                       disabled={busy}
                       data-testid="record-anyway"
                       onClick={() => send(true)}

@@ -56,7 +56,7 @@ Keep, whichever variant wins:
   never separate, the logo goes single-colour bone on green, the textures hold
   their fixed low contrast). Paths come from `logo.svg` and `icon.svg`, which
   the guide names as the only permitted origin.
-- The four tokens added to `app/src/styles.css`.
+- The palette in `app/src/styles.css`, which is now the guide's.
 
 Throw away:
 
@@ -70,22 +70,54 @@ prototype rules — no tests, no error handling, no reuse.
 
 ## What the prototype turned up about the app as it stands
 
-Four things, none of them fixed here, all of them larger than this page:
+Four things. Three were conflicts with the guide and are fixed in code; the
+fourth was a gap in the guide, and is settled there.
 
-1. **`--color-ink` is the brand green.** The guide gives the letters their own
-   brown (`#5C4F4A`) and reserves the green for the check. Today every
-   heading, every amount and every avatar in the app is the check's colour.
-2. **The gold is not in the palette.** `--color-gold` and its two shades carry
-   the landing hero, the primary call to action, the payday strip and the
-   "outstanding" figure. The guide allows three colours and says outright that
-   no colour from outside them may be used — including colours from earlier
-   versions of the mark.
-3. **Weight 800 is everywhere.** The guide asks for three weights: 900, 700, 400. `font-extrabold` is 800 and appears throughout, and the font is loaded
-   with a 600 as well.
-4. **There is no Latin lockup.** The wordmark is Arabic-only, so the English
-   side of the app has no logo of its own and borrows the Arabic one. The
-   guide does not cover this; it needs a decision from whoever owns the brand.
+**Fixed — the letters have their own colour again.** `--color-ink` was the
+check's green, so every heading, every amount and every avatar in the app was
+the mark's colour. It is now the guide's brown, `#5C4F4A`, and the green
+belongs to the mark and to the reversed ground — `bg-brand`, which is what the
+dark surfaces (the landing hero, the sign-in backdrop, the balance card, the
+active pill in the dock) are built from. `--color-steel` and `--color-mist`
+were the same two colours under other names and are gone; the palette is the
+guide's three, `--color-ink`, `--color-brand`, `--color-bone`.
 
-The status palette (good/warn/bad/info) is a separate question. It is
-functional colour rather than brand colour, and only الدفتر tries doing
-without it.
+**Fixed — the gold is gone.** It was carrying the landing hero, the primary
+call to action, the payday strip and the "outstanding" figure, and the guide
+allows no colour from outside its three. What each use became:
+
+| was                                        | is                   | why                                                 |
+| ------------------------------------------ | -------------------- | --------------------------------------------------- |
+| the letter in a gold tile, three screens   | the icon itself      | it was standing in for a logo the project has       |
+| the gold gradient call to action           | bone on green        | the guide's reversed pairing                        |
+| the payday strip                           | a green-tinted panel | a due date is information, not an alarm             |
+| the "outstanding" tile                     | the brand green      | still apart from a plain figure, inside the palette |
+| the balance card's green-to-green gradient | one flat green       | the second green was nobody's colour                |
+| the limit bar's gold stretch               | the warn tone        | see below                                           |
+
+**Fixed — three weights, not five.** `font-extrabold` (800) was used
+throughout, and the stylesheet was loading a 600 nobody asked for. Every 800
+is now 700, the one 500 is 700, and the font loads 400, 700 and 900 — the
+three the guide names.
+
+**Fixed — the wordmark serves both languages, on purpose.** It is Arabic-only,
+so the English side of the app shows the Arabic one. Drawing a Latin companion
+would be new brand artwork, which the guide forbids and sends to whoever owns
+the brand; that decision has now been taken, and it is to keep the Arabic
+wordmark in both languages — a mark is a drawing, not a word to be carried
+from one tongue to another. The guide says so now, in section 2 and in the
+short version's rules, so the next reader meets it as a decision rather than
+as an omission. No code changed: the app already did this, and now it does it
+on purpose.
+
+## What was deliberately left alone
+
+The status palette — good, warn, bad, info. It is functional colour: what a
+figure is doing, not who it belongs to. The guide governs the brand's three
+colours and says nothing about telling an overdue account from a settled one,
+and an app that cannot go red when a payment is late has lost something real.
+So the limit bar still runs green to amber to red, overdue is still red, and
+only الدفتر among the variants tries doing without it.
+
+White, too. Cards are white on the bone ground, and text on the green is
+white. Those are neutrals rather than a fourth colour.

@@ -42,7 +42,7 @@ function Status() {
         {rows.map(([label, value]) => (
           <div key={label} className="contents">
             <dt className="text-slate-500">{label}</dt>
-            <dd className="font-medium">{value}</dd>
+            <dd className="font-bold">{value}</dd>
           </div>
         ))}
       </dl>

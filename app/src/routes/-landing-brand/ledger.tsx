@@ -43,7 +43,7 @@ export function LandingLedger() {
         <h1 className="text-[clamp(1.7rem,4.5vw,2.6rem)] leading-[1.3] font-black text-brand text-balance">
           {t('landing.title')}
         </h1>
-        <p className="mt-4 max-w-[56ch] text-[1rem] leading-[1.9] font-normal text-word">
+        <p className="mt-4 max-w-[56ch] text-[1rem] leading-[1.9] font-normal text-ink">
           {t('landing.body')}
         </p>
 
@@ -53,7 +53,7 @@ export function LandingLedger() {
             <span className="text-[0.95rem] font-black text-brand">
               {t('landing.mockShop')}
             </span>
-            <span className="text-[0.8rem] font-normal text-word/60">
+            <span className="text-[0.8rem] font-normal text-ink/60">
               {t('payday.title')}
             </span>
           </div>
@@ -79,7 +79,7 @@ export function LandingLedger() {
 
           {/* The closing line, the way a page of a ledger closes. */}
           <div className="flex items-baseline justify-between gap-3 border-t-2 border-brand/25 px-5 py-4">
-            <span className="text-[0.9rem] font-bold text-word/70">
+            <span className="text-[0.9rem] font-bold text-ink/70">
               {t('ledger.balance')}
             </span>
             <b className="tabular text-[1.5rem] font-black text-brand">
@@ -109,11 +109,11 @@ export function LandingLedger() {
           </div>
         </section>
 
-        <p className="mt-4 text-[0.88rem] font-normal text-word/60">
+        <p className="mt-4 text-[0.88rem] font-normal text-ink/60">
           {t('auth.trust')}
         </p>
 
-        <footer className="mt-12 border-t border-hairline py-6 text-[0.88rem] font-normal text-word/55">
+        <footer className="mt-12 border-t border-hairline py-6 text-[0.88rem] font-normal text-ink/55">
           {t('landing.footer')}
         </footer>
       </div>
@@ -148,10 +148,10 @@ function Row({
 }) {
   return (
     <div className="flex items-center gap-3 border-b border-hairline px-5 py-3.5 last:border-b-0">
-      <span className="w-[88px] shrink-0 text-[0.8rem] font-normal text-word/55 tabular-nums sm:w-[110px]">
+      <span className="w-[88px] shrink-0 text-[0.8rem] font-normal text-ink/55 tabular-nums sm:w-[110px]">
         {when}
       </span>
-      <span className="flex-1 text-[0.92rem] font-bold text-word">{what}</span>
+      <span className="flex-1 text-[0.92rem] font-bold text-ink">{what}</span>
       {pending ? (
         <span className="size-6 shrink-0 rounded-full border-[1.5px] border-dashed border-word/30" />
       ) : (

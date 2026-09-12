@@ -50,7 +50,7 @@ function Welcome() {
         </p>
         <Link
           to="/merchant/new"
-          className="inline-block rounded-(--radius-control) bg-steel px-4 py-2.5 text-[13px] font-black text-white"
+          className="inline-block rounded-(--radius-control) bg-brand px-4 py-2.5 text-[13px] font-black text-white"
         >
           {t('welcome.openShop')}
         </Link>
