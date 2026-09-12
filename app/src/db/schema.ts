@@ -65,6 +65,8 @@ export const users = sqliteTable(
   (table) => [
     uniqueIndex('users_phone_number_idx').on(table.phoneNumber),
     uniqueIndex('users_email_idx').on(table.email),
+    /** The shop's customer list is ordered by name, a page at a time. */
+    index('users_name_idx').on(table.name),
   ],
 )
 
@@ -113,6 +115,12 @@ export const connections = sqliteTable(
       table.customerUserId,
     ),
     index('connections_customer_idx').on(table.customerUserId),
+    /**
+     * Nearly every read of a ledger asks for one shop's active customers, so
+     * the two columns it filters on are indexed together, in the order the
+     * queries name them.
+     */
+    index('connections_merchant_status_idx').on(table.merchantId, table.status),
   ],
 )
 
@@ -194,6 +202,7 @@ export const transactions = sqliteTable(
       table.createdAt,
     ),
     index('transactions_status_idx').on(table.status),
+    index('transactions_invoice_idx').on(table.invoiceId),
   ],
 )
 
@@ -269,6 +278,8 @@ export const notifications = sqliteTable(
   },
   (table) => [
     index('notifications_user_idx').on(table.userId, table.createdAt),
+    /** The bell's count, which every screen behind the front door asks for. */
+    index('notifications_unread_idx').on(table.userId, table.readAt),
     uniqueIndex('notifications_dedupe_idx').on(table.dedupeKey),
   ],
 )

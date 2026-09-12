@@ -1,4 +1,4 @@
-import { and, desc, eq, sql } from 'drizzle-orm'
+import { and, desc, eq, inArray, sql } from 'drizzle-orm'
 import type { SQL } from 'drizzle-orm'
 import type { Database } from '../client'
 import { connections, merchants, transactions, users } from '../schema'
@@ -140,7 +140,18 @@ export async function listMerchantConnections(
   now: Date = new Date(),
   page: Page = {},
 ) {
-  const rows = await summaryQuery(db)
+  /**
+   * Which customers this page is, decided before anything is added up. A
+   * limit on the summary itself is applied after the grouping, so a page of
+   * twenty-five used to aggregate every customer of the shop and the whole
+   * of their transaction history first, and then throw all but a page away.
+   * This picks the page from the connections alone — the rows the shop's own
+   * index covers — and the sums are worked out for those.
+   */
+  const thisPage = db
+    .select({ id: connections.id })
+    .from(connections)
+    .innerJoin(users, eq(users.id, connections.customerUserId))
     .where(
       and(
         eq(connections.merchantId, merchantId),
@@ -150,6 +161,10 @@ export async function listMerchantConnections(
     .orderBy(users.name, connections.id)
     .limit(page.limit ?? DEFAULT_PAGE_SIZE)
     .offset(page.offset ?? 0)
+
+  const rows = await summaryQuery(db)
+    .where(inArray(connections.id, thisPage))
+    .orderBy(users.name, connections.id)
   return rows.map((row) => toSummary(now, row))
 }
 

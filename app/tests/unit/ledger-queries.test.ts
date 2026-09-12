@@ -423,4 +423,35 @@ describe('paging the customer list', () => {
     ).toBe(3)
     expect(second[0].customerName).toBe('خالد علي')
   })
+
+  it('adds up each row of the page, and only its own', async () => {
+    const merchant = await makeMerchant(db)
+    const amounts = [riyalsToHalalas(100), riyalsToHalalas(250)]
+    for (const [index, name] of ['أحمد محمد', 'خالد علي'].entries()) {
+      const customer = await makeUser(db, { name })
+      const connection = await makeConnection(db, {
+        merchantId: merchant.id,
+        customerUserId: customer.id,
+      })
+      await makeTransaction(db, {
+        connectionId: connection.id,
+        amountHalalas: amounts[index],
+      })
+    }
+
+    // A page at a time: the sums belong to the row they are on, whichever
+    // page that row is on.
+    const first = await listMerchantConnections(db, merchant.id, new Date(), {
+      limit: 1,
+    })
+    const second = await listMerchantConnections(db, merchant.id, new Date(), {
+      limit: 1,
+      offset: 1,
+    })
+
+    expect(first[0].customerName).toBe('أحمد محمد')
+    expect(first[0].balanceHalalas).toBe(amounts[0])
+    expect(second[0].customerName).toBe('خالد علي')
+    expect(second[0].balanceHalalas).toBe(amounts[1])
+  })
 })
