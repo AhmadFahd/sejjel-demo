@@ -22,9 +22,12 @@ export function Dock({ items }: { items: Array<DockItem> }) {
     <>
       <nav
         data-testid="dock"
-        className="fixed inset-x-0 bottom-0 z-40 flex justify-center px-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] lg:top-2 lg:bottom-auto lg:pb-0"
+        // The band this nav lays across the screen is empty either side of the
+        // dock, and an empty strip must not eat the presses meant for what is
+        // under it.
+        className="pointer-events-none fixed inset-x-0 bottom-0 z-40 flex justify-center px-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] lg:top-2 lg:bottom-auto lg:pb-0"
       >
-        <div className="flex items-center gap-1 rounded-full border border-line bg-card/90 p-1.5 shadow-(--shadow-card) backdrop-blur">
+        <div className="pointer-events-auto flex items-center gap-1 rounded-full border border-line bg-card/90 p-1.5 shadow-(--shadow-card) backdrop-blur">
           {items.map((item) => {
             const here = Boolean(matchRoute({ to: item.to }))
 
