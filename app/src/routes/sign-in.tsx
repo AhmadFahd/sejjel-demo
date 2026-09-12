@@ -173,7 +173,7 @@ function SignIn() {
               autoComplete="tel"
               inputMode="tel"
               placeholder={t('auth.phonePlaceholder')}
-              className="tabular mb-2 w-full rounded-(--radius-control) border border-neutral-bg bg-card px-3.5 py-3.5 text-[19px] font-bold text-ink placeholder:text-faint"
+              className="tabular mb-4 w-full rounded-(--radius-control) border border-neutral-bg bg-card px-3.5 py-3.5 text-[19px] font-bold text-ink placeholder:text-faint"
               value={groupLocalMobile(typed)}
               onChange={(event) =>
                 setTyped(
@@ -190,9 +190,6 @@ function SignIn() {
                 if (event.key === 'Enter') void onSendCode()
               }}
             />
-            <p className="mb-4 text-[11px] font-bold text-muted">
-              {t('auth.phoneHint')}
-            </p>
             <Button tone="primary" disabled={busy} onClick={onSendCode}>
               {t('auth.sendCode')}
             </Button>
@@ -233,10 +230,6 @@ function SignIn() {
               disabled={busy}
               takeFocus
             />
-
-            <p className="mt-3 mb-4 text-center text-[11px] font-bold text-faint">
-              {t('auth.codeAuto')}
-            </p>
 
             {/* A code that was refused, or a request that failed, needs a way
                 to be sent again: the completed code does not resubmit itself. */}

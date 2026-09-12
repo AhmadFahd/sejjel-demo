@@ -1217,7 +1217,7 @@ const CAL_SVG='<svg width="18" height="18" viewBox="0 0 24 24" fill="none" strok
 function paydayStrip(dark){
   return '<div class="payday'+(dark?' on-dark':'')+'"><span class="pd-ic">'+CAL_SVG+'</span>'
     +'<div><b>تاريخ الاستحقاق الموحد: '+PAYDAY+' من كل شهر</b>'
-    +'<span>يوم السداد الموحد — تجميع مرن لكل حساباتك لسهولة الدفع</span></div></div>';
+    +'<span>كل ما عليك يُستحق في يوم واحد، ليسهل السداد</span></div></div>';
 }
 
 /* ============ شريط حد الائتمان ============ */
@@ -1226,7 +1226,7 @@ function limitBar(used,lim,dark){
   const pct=Math.min(100,Math.round(used/lim*100)),rem=Math.max(0,lim-used);
   const k=pct>=100?'lb-full':pct>=85?'lb-hot':pct>=60?'lb-warm':'lb-ok';
   const note=pct>=100?'بلغت الحد الائتماني بالكامل — لا يمكن تسجيل مشتريات جديدة'
-    :pct>=85?'اقتربت من استهلاك الحد ('+pct+'%) — يُنصح بالسداد'
+    :pct>=85?'اقتربت من الحد ('+pct+'%)'
     :pct>=60?'استُهلك '+pct+'% من الحد'
     :'المستهلك '+pct+'% من الحد';
   /* في الكرت الداكن يظهر الحد والمتاح في الشبكة أعلاه، فلا يتكرران هنا */

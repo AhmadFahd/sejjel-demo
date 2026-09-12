@@ -106,12 +106,16 @@ function OperationsLog() {
 
       {data.entries.length === 0 ? (
         <Card data-testid={data.everHad ? 'log-no-results' : 'log-empty'}>
-          <h2 className="mb-1 text-base font-black text-ink">
+          <h2 className="text-base font-black text-ink">
             {t(data.everHad ? 'log.noResults' : 'log.empty')}
           </h2>
-          <p className="text-[13px] font-bold text-muted">
-            {t(data.everHad ? 'log.noResultsBody' : 'log.emptyBody')}
-          </p>
+          {/* A shop with nothing in it has been told that; a search that
+              found nothing has somewhere to go next. */}
+          {data.everHad ? (
+            <p className="mt-1 text-[13px] font-bold text-muted">
+              {t('log.noResultsBody')}
+            </p>
+          ) : null}
         </Card>
       ) : (
         <div data-testid="log">

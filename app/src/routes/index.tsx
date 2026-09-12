@@ -7,10 +7,8 @@ import { paydayOnOrAfter } from '#/lib/payday'
 import { useI18n } from '#/i18n/context'
 
 /**
- * A page of the ledger, made up: the product is a record, so the page that
- * sells one shows a record rather than a picture of a phone beside a promise.
- * The purchase less the payment is the balance, because a reader who adds it
- * up should find it adds up.
+ * A made-up page of the ledger, for the public page to show. The figures are
+ * kept consistent: the purchase less the payment is the balance.
  */
 const SHEET = {
   purchaseHalalas: 100_000,
@@ -76,7 +74,7 @@ function Landing() {
           {t('landing.body')}
         </p>
 
-        {/* The sheet. Its head names whose page this is; a ledger's does. */}
+        {/* The sheet. Its head names whose page this is. */}
         <section className="mt-10 overflow-hidden rounded-[14px] border border-hairline">
           <div className="flex items-baseline justify-between gap-3 border-b border-hairline bg-brand/[0.06] px-5 py-3.5">
             <span className="text-[0.95rem] font-black text-brand">
@@ -159,9 +157,8 @@ function Landing() {
 }
 
 /**
- * One line of the sheet. A line that is documented carries the icon; a line
- * still waiting for the other side does not — which is the whole difference
- * the product sells, said without a sentence.
+ * One line of the sheet. A line both sides have agreed carries the mark; one
+ * still waiting for the other side gets a dashed ring instead.
  */
 function Row({
   when,
