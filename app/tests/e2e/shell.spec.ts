@@ -1,9 +1,9 @@
-import { expect, test } from './fixtures'
+import { expect, go, test } from './fixtures'
 
 test('the shell renders right to left and reports its environment', async ({
   page,
 }) => {
-  await page.goto('/status')
+  await go(page, '/status')
 
   await expect(page.locator('html')).toHaveAttribute('dir', 'rtl')
   await expect(page.locator('html')).toHaveAttribute('lang', 'ar')
@@ -18,7 +18,7 @@ test('switching language turns the document around, and it stays turned', async 
   // Asked on the front door rather than on /status: a diagnostic page has no
   // chrome, and the language control now lives in the chrome of the screens
   // people actually arrive on.
-  await page.goto('/sign-in')
+  await go(page, '/sign-in')
   await page.getByTestId('locale-switch').click()
 
   await expect(page.locator('html')).toHaveAttribute('dir', 'ltr')
@@ -36,7 +36,7 @@ test('switching language turns the document around, and it stays turned', async 
 test('the gallery shows every component in both directions', async ({
   page,
 }) => {
-  await page.goto('/design')
+  await go(page, '/design')
 
   const arabic = page.getByTestId('gallery-ar')
   const english = page.getByTestId('gallery-en')

@@ -1,5 +1,5 @@
 import { readFileSync } from 'node:fs'
-import { expect, openPhone, test } from './fixtures'
+import { expect, go, hydrated, openPhone, test } from './fixtures'
 import type { Page } from '@playwright/test'
 import { OTP_LOG } from '../../playwright.config'
 
@@ -19,7 +19,7 @@ async function openProfile(page: Page) {
 }
 
 async function signIn(page: Page, typed: string, e164: string) {
-  await page.goto('/sign-in')
+  await go(page, '/sign-in')
   await signInHere(page, typed, e164)
 }
 
@@ -33,8 +33,11 @@ async function signInHere(page: Page, typed: string, e164: string) {
   await page.getByLabel('الرقم 1').click()
   await page.keyboard.type(codeSentTo(e164))
 
-  // The session lands with the navigation, so a goto before this races it.
+  // The session lands with the navigation, so a goto before this races it —
+  // and the screen it lands on is a new document to wait out before anybody
+  // touches it.
   await expect(page).not.toHaveURL(/\/sign-in$/)
+  await hydrated(page)
 }
 
 test('a shopkeeper lands on their shop', async ({ page }) => {
@@ -150,7 +153,7 @@ test('a shopkeeper is sent back from the customer side, which is not theirs', as
   await signIn(page, '0551000001', '+966551000001')
   await expect(page).toHaveURL(/\/merchant$/)
 
-  await page.goto('/customer')
+  await go(page, '/customer')
 
   await expect(page).toHaveURL(/\/merchant$/)
 })
@@ -159,7 +162,7 @@ test('a customer is sent back from the shop side', async ({ page }) => {
   await signIn(page, '0555987210', '+966555987210')
   await expect(page).toHaveURL(/\/customer$/)
 
-  await page.goto('/merchant')
+  await go(page, '/merchant')
 
   await expect(page).toHaveURL(/\/customer$/)
 })
@@ -201,7 +204,7 @@ test('a shopkeeper opens a customer account, and only their own', async ({
   const { context: nextDoor, page: theirPhone } = await openPhone(browser)
   await signIn(theirPhone, '0551000001', '+966551000001')
 
-  await theirPhone.goto(salemAtRiyan)
+  await go(theirPhone, salemAtRiyan)
 
   await expect(theirPhone.getByRole('heading', { level: 1 })).toHaveText(
     'غير موجود',
@@ -230,7 +233,7 @@ test('a shopkeeper records an operation, and can call it off', async ({
   await expect(page.getByTestId('waiting')).toBeVisible()
 
   // Nothing is owed until he agrees, so the shop's position is unchanged.
-  await page.goto('/merchant')
+  await go(page, '/merchant')
   await expect(page.locator('main')).toContainText('2,050')
 
   const khalid = page
@@ -296,7 +299,7 @@ test('an operation carries its invoice, and only to the two of them', async ({
   // A third phone is given nothing, neither the screen nor the bytes.
   const { context: other, page: otherPhone } = await openPhone(browser)
   await signIn(otherPhone, '0550123456', '+966550123456')
-  await otherPhone.goto(invoice)
+  await go(otherPhone, invoice)
   await expect(otherPhone.getByRole('heading', { level: 1 })).toHaveText(
     'غير موجود',
   )
@@ -644,13 +647,13 @@ test('a purchase is agreed on one phone and applied on the other', async ({
   await expect(page.getByTestId('applied')).toBeVisible()
 
   // A second scan of the same code applies nothing more.
-  await page.goto('/merchant/scan')
+  await go(page, '/merchant/scan')
   await page.getByLabel('أو أدخل الرمز').fill(code)
   await page.getByRole('button', { name: 'تسجيل' }).click()
   await expect(page.getByTestId('applied')).toBeVisible()
 
   // Both sides now read the same ledger: خالد owes 120 and nobody refreshed.
-  await page.goto('/merchant')
+  await go(page, '/merchant')
   const khalid = page
     .getByTestId('connection-row')
     .filter({ hasText: 'خالد علي' })
@@ -713,7 +716,7 @@ test('a customer settles part of what they owe', async ({ page, browser }) => {
   await expect(page.getByTestId('receipt')).toContainText('FAKE-')
 
   // What he owes that shop, and what the shop is owed, both moved.
-  await page.goto('/customer')
+  await go(page, '/customer')
   await expect(page.locator('main')).toContainText('920')
 
   const { context: shop, page: shopPhone } = await openPhone(browser)
@@ -732,7 +735,7 @@ test('a customer cannot open another customer’s account', async ({ page }) => 
   const href = await mine.getAttribute('href')
   const stranger = `${href?.replace(/[^/]+$/, '')}not-my-connection`
 
-  await page.goto(stranger)
+  await go(page, stranger)
 
   await expect(page.getByTestId('transactions')).toHaveCount(0)
   await expect(page.getByRole('heading', { level: 1 })).toHaveText('غير موجود')
@@ -756,7 +759,7 @@ test('a shop asks for a customer by scanning their card', async ({
   await signIn(shopPhone, '0550111222', '+966550111222')
   await expect(shopPhone.getByTestId('connection-row')).toHaveCount(3)
 
-  await shopPhone.goto('/merchant/scan')
+  await go(shopPhone, '/merchant/scan')
   await shopPhone.getByLabel('أو أدخل الرمز').fill(card)
   await shopPhone.getByRole('button', { name: 'تسجيل' }).click()
   await expect(shopPhone.getByTestId('connect-outcome')).toContainText(
@@ -764,7 +767,7 @@ test('a shop asks for a customer by scanning their card', async ({
   )
 
   // Still three customers: asking is not adding.
-  await shopPhone.goto('/merchant')
+  await go(shopPhone, '/merchant')
   await expect(shopPhone.getByTestId('connection-row')).toHaveCount(3)
 
   // The request reached the other phone without it being touched.
@@ -779,7 +782,7 @@ test('a shop asks for a customer by scanning their card', async ({
   await page.getByRole('button', { name: 'موافقة' }).click()
   await expect(page).toHaveURL(/\/customer$/)
 
-  await shopPhone.goto('/merchant')
+  await go(shopPhone, '/merchant')
   await expect(shopPhone.getByTestId('connection-row')).toHaveCount(4)
   await expect(
     shopPhone.getByTestId('connection-row').filter({ hasText: 'عبدالله' }),
@@ -812,7 +815,7 @@ test('a customer joins a shop by the code on its counter', async ({
   const printed = await shopPhone.locator('main span[dir="ltr"]').innerText()
   const shopPath = new URL(printed).pathname
 
-  await page.goto(shopPath)
+  await go(page, shopPath)
   await expect(page).toHaveURL(/\/sign-in/)
 
   await signInHere(page, '0500000003', '+966500000003')
@@ -825,7 +828,7 @@ test('a customer joins a shop by the code on its counter', async ({
 
   // Her account with that shop, and the shop has her.
   await expect(page.getByTestId('balance-hero')).toContainText('بقالة الريان')
-  await shopPhone.goto('/merchant')
+  await go(shopPhone, '/merchant')
   await expect(
     shopPhone.getByTestId('connection-row').filter({ hasText: 'فاطمة' }),
   ).toBeVisible()
@@ -843,7 +846,7 @@ test('signing out ends the session and the ledger is closed again', async ({
   await page.getByTestId('sign-out').click()
   await expect(page).toHaveURL(/\/sign-in$/)
 
-  await page.goto('/customer')
+  await go(page, '/customer')
   await expect(page).toHaveURL(/\/sign-in$/)
 })
 
@@ -871,7 +874,7 @@ test.describe.configure({ mode: 'serial' })
 test.describe('a person on neither side', () => {
   test('cannot open a shop without a name', async ({ page }) => {
     await signIn(page, '0500000001', '+966500000001')
-    await page.goto('/merchant/new')
+    await go(page, '/merchant/new')
 
     await page.getByRole('button', { name: 'افتح المتجر' }).click()
 

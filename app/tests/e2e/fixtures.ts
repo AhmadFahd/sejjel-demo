@@ -31,11 +31,31 @@ function codeSentTo(phoneNumber: string): string {
 }
 
 /**
+ * Waits for the client to take over the document, which `__root.tsx` says with
+ * `data-hydrated`.
+ *
+ * Every screen arrives as HTML before its handlers exist, and in that window a
+ * dock item is an ordinary anchor and a field is a field React has not adopted
+ * yet: a fill lands and is then thrown away by the hydrating render, a button
+ * press does nothing at all. Every unrepeatable failure this suite has had was
+ * that window, so nothing here touches a screen until it is over.
+ */
+export async function hydrated(page: Page) {
+  await page.locator('html[data-hydrated="true"]').waitFor()
+}
+
+/** A whole new document, waited out. */
+export async function go(page: Page, path: string) {
+  await page.goto(path)
+  await hydrated(page)
+}
+
+/**
  * Signed in and wherever their roles send them. The number is typed the way a
  * person types it and read back in the form the sender logs.
  */
 export async function signIn(page: Page, typed: string, e164: string) {
-  await page.goto('/sign-in')
+  await go(page, '/sign-in')
   await page.getByLabel('رقم الجوال').fill(typed)
   await page.getByRole('button', { name: 'أرسل الرمز' }).click()
 
@@ -43,8 +63,10 @@ export async function signIn(page: Page, typed: string, e164: string) {
   await page.getByLabel('الرقم 1').click()
   await page.keyboard.type(codeSentTo(e164))
 
-  // The session lands with the navigation, so a goto before this races it.
+  // The session lands with the navigation, so a goto before this races it —
+  // and the screen it lands on is a new document of its own to wait out.
   await check(page).not.toHaveURL(/\/sign-in$/)
+  await hydrated(page)
 }
 
 export const test = base.extend({

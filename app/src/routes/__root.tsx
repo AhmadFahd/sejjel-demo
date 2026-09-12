@@ -1,3 +1,4 @@
+import { useEffect } from 'react'
 import {
   HeadContent,
   Link,
@@ -77,6 +78,25 @@ function RootDocument({ children }: { children: ReactNode }) {
   // document has to render in some language even then.
   const loaded: Shell | undefined = Route.useLoaderData()
   const shell = loaded ?? DEFAULT_SHELL
+
+  /**
+   * Says on the document that the client has taken over, at the first moment
+   * a press does what a handler says rather than what the HTML says.
+   *
+   * There is a real window before this where every dock item is an ordinary
+   * anchor and a field is one React has not adopted yet — #73 has it as fog,
+   * because nothing measures how long it lasts. Nothing in the app behaves
+   * differently for it; the browser suite waits for it, because a test that
+   * touches a screen the moment its HTML arrives is testing that window
+   * rather than the app, and that is what every unrepeatable failure in it
+   * has turned out to be.
+   *
+   * Written by hand rather than rendered: React does not patch attributes on
+   * `<html>` after hydration, and an effect is the moment wanted anyway.
+   */
+  useEffect(() => {
+    document.documentElement.dataset.hydrated = 'true'
+  }, [])
 
   return (
     <html lang={shell.locale} dir={directionOf(shell.locale)}>

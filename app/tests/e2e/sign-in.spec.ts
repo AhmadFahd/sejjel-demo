@@ -1,5 +1,5 @@
 import { readFileSync } from 'node:fs'
-import { expect, test } from './fixtures'
+import { expect, go, test } from './fixtures'
 import { OTP_LOG } from '../../playwright.config'
 import type { Page } from '@playwright/test'
 
@@ -26,7 +26,7 @@ async function typeCode(page: Page, code: string) {
 test('a seeded customer signs in with a code, and stays signed in', async ({
   page,
 }) => {
-  await page.goto('/sign-in')
+  await go(page, '/sign-in')
 
   await page.getByLabel('رقم الجوال').fill('0550123456')
   await page.getByRole('button', { name: 'أرسل الرمز' }).click()
@@ -46,7 +46,7 @@ test('a seeded customer signs in with a code, and stays signed in', async ({
 // Each test signs in as a different seeded person: a new code replaces the
 // last one for that number, so two tests sharing a number race each other.
 test('a wrong code is refused', async ({ page }) => {
-  await page.goto('/sign-in')
+  await go(page, '/sign-in')
 
   await page.getByLabel('رقم الجوال').fill('0533456789')
   await page.getByRole('button', { name: 'أرسل الرمز' }).click()
@@ -58,7 +58,7 @@ test('a wrong code is refused', async ({ page }) => {
 })
 
 test('a number nobody has connected gets no account', async ({ page }) => {
-  await page.goto('/sign-in')
+  await go(page, '/sign-in')
 
   await page.getByLabel('رقم الجوال').fill('0500000000')
   await page.getByRole('button', { name: 'أرسل الرمز' }).click()
@@ -74,7 +74,7 @@ test('the language a signed-in person picks follows their account', async ({
   page,
   context,
 }) => {
-  await page.goto('/sign-in')
+  await go(page, '/sign-in')
   await page.getByLabel('رقم الجوال').fill('0555987210')
   await page.getByRole('button', { name: 'أرسل الرمز' }).click()
   await expect(page.getByTestId('code-boxes')).toBeVisible()

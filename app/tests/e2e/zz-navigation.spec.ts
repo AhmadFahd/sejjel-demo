@@ -1,4 +1,4 @@
-import { expect, signIn, test } from './fixtures'
+import { expect, go, signIn, test } from './fixtures'
 
 /** أحمد owes three shops and keeps none, so he lands on the customer side. */
 const CUSTOMER = { typed: '0550123456', e164: '+966550123456' }
@@ -14,16 +14,6 @@ async function holdTheServer(page: Parameters<typeof signIn>[0]) {
     await new Promise((resolve) => setTimeout(resolve, SLOW_MS))
     await route.continue()
   })
-}
-
-/**
- * A dock item is an anchor, so a tap before the client router exists is an
- * ordinary document navigation and nothing here is in play. That window is
- * real and worth its own measurement (#74); it is not what these tests are
- * about.
- */
-async function hydrated(page: Parameters<typeof signIn>[0]) {
-  await page.waitForFunction(() => '__TSR_ROUTER__' in window)
 }
 
 /**
@@ -69,7 +59,12 @@ test('a tap inside a side costs one round trip, and the way back costs none', as
 }) => {
   await signIn(page, CUSTOMER.typed, CUSTOMER.e164)
   await expect(page).toHaveURL(/\/customer$/)
-  await hydrated(page)
+
+  // Out of the way of everything first. `defaultPreload` is `intent`, so a
+  // mouse crossing a shop's row on its way to a button warms that shop's
+  // screen, and a read this tap did not ask for lands in the count. Parking
+  // the pointer in the corner is what keeps the number the tap's own.
+  await page.mouse.move(0, 0)
 
   const calls: Array<string> = []
   page.on('request', (request) => {
@@ -107,7 +102,6 @@ test('a tap inside a side costs one round trip, and the way back costs none', as
 test('a slow navigation says so, and takes nothing away', async ({ page }) => {
   await signIn(page, CUSTOMER.typed, CUSTOMER.e164)
   await expect(page).toHaveURL(/\/customer$/)
-  await hydrated(page)
 
   // One shop's history, which this screen does not hold and so has to wait
   // for. The card used to be the example here; since #81 it does not block at
@@ -133,7 +127,6 @@ test('a slow navigation says so, and takes nothing away', async ({ page }) => {
 test('the card paints before its code arrives', async ({ page }) => {
   await signIn(page, CUSTOMER.typed, CUSTOMER.e164)
   await expect(page).toHaveURL(/\/customer$/)
-  await hydrated(page)
 
   await holdTheServer(page)
   await page.getByTestId('my-card-link').click()
@@ -151,7 +144,7 @@ test('the card paints before its code arrives', async ({ page }) => {
 
   // The same on a direct hit, where the list of shops asking is streamed into
   // the document rather than fetched by the browser.
-  await page.goto('/customer/card')
+  await go(page, '/customer/card')
   await expect(page.getByTestId('my-card')).toBeVisible()
   await expect(page.getByTestId('approval-waiting')).toBeVisible()
   await expect(page.getByTestId('approval-qr')).toBeVisible()
@@ -166,7 +159,6 @@ test('recording a purchase keeps what was typed while the screen waits', async (
 }) => {
   await signIn(page, MERCHANT.typed, MERCHANT.e164)
   await page.getByTestId('record').click()
-  await hydrated(page)
 
   await page.getByLabel('العميل').selectOption({ label: 'أحمد محمد' })
   await page.getByLabel('المبلغ').fill('75')
@@ -197,8 +189,7 @@ test('the log keeps its rows and its keyboard while it searches', async ({
   page,
 }) => {
   await signIn(page, MERCHANT.typed, MERCHANT.e164)
-  await page.goto('/merchant/log')
-  await hydrated(page)
+  await go(page, '/merchant/log')
   await expect(page.getByTestId('log-search')).toBeVisible()
 
   await holdTheServer(page)
