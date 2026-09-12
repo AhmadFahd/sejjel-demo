@@ -455,3 +455,80 @@ describe('paging the customer list', () => {
     expect(second[0].balanceHalalas).toBe(amounts[1])
   })
 })
+
+/** #77: the same paging the shop's list of customers already had. */
+describe('paging the customer’s list of shops', () => {
+  it('keeps a name shared by two shops on one page each', async () => {
+    const customer = await makeUser(db, { name: 'أحمد محمد' })
+    for (const name of ['بقالة الريان', 'بقالة الريان', 'مخبز الضحى']) {
+      const merchant = await makeMerchant(db, { name })
+      await makeConnection(db, {
+        merchantId: merchant.id,
+        customerUserId: customer.id,
+      })
+    }
+
+    const first = await listCustomerConnections(db, customer.id, new Date(), {
+      limit: 2,
+    })
+    const second = await listCustomerConnections(db, customer.id, new Date(), {
+      limit: 2,
+      offset: 2,
+    })
+
+    expect(first).toHaveLength(2)
+    expect(second).toHaveLength(1)
+    expect(
+      new Set([...first, ...second].map((row) => row.connectionId)).size,
+    ).toBe(3)
+    expect(second[0].merchantName).toBe('مخبز الضحى')
+  })
+
+  it('adds up each row of the page, and only its own', async () => {
+    const customer = await makeUser(db)
+    const amounts = [riyalsToHalalas(100), riyalsToHalalas(250)]
+    for (const [index, name] of ['بقالة الريان', 'مخبز الضحى'].entries()) {
+      const merchant = await makeMerchant(db, { name })
+      const connection = await makeConnection(db, {
+        merchantId: merchant.id,
+        customerUserId: customer.id,
+      })
+      await makeTransaction(db, {
+        connectionId: connection.id,
+        amountHalalas: amounts[index],
+      })
+    }
+
+    const first = await listCustomerConnections(db, customer.id, new Date(), {
+      limit: 1,
+    })
+    const second = await listCustomerConnections(db, customer.id, new Date(), {
+      limit: 1,
+      offset: 1,
+    })
+
+    expect(first[0].merchantName).toBe('بقالة الريان')
+    expect(first[0].balanceHalalas).toBe(amounts[0])
+    expect(second[0].merchantName).toBe('مخبز الضحى')
+    expect(second[0].balanceHalalas).toBe(amounts[1])
+  })
+
+  it('reads the whole list in one page when it fits, ordered by shop name', async () => {
+    const customer = await makeUser(db)
+    for (const name of ['مخبز الضحى', 'بقالة الريان', 'سوق النور']) {
+      const merchant = await makeMerchant(db, { name })
+      await makeConnection(db, {
+        merchantId: merchant.id,
+        customerUserId: customer.id,
+      })
+    }
+
+    const rows = await listCustomerConnections(db, customer.id)
+
+    expect(rows.map((row) => row.merchantName)).toEqual([
+      'بقالة الريان',
+      'سوق النور',
+      'مخبز الضحى',
+    ])
+  })
+})

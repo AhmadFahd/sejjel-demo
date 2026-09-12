@@ -82,7 +82,12 @@ export const merchants = sqliteTable(
     defaultTermDays: integer('default_term_days').notNull(),
     createdAt: createdAt(),
   },
-  (table) => [index('merchants_owner_idx').on(table.ownerUserId)],
+  (table) => [
+    index('merchants_owner_idx').on(table.ownerUserId),
+    /** #77: the customer's list of shops is ordered by name, a page at a
+     * time — the same shape as the shop's list of customers. */
+    index('merchants_name_idx').on(table.name),
+  ],
 )
 
 /**
@@ -114,13 +119,22 @@ export const connections = sqliteTable(
       table.merchantId,
       table.customerUserId,
     ),
-    index('connections_customer_idx').on(table.customerUserId),
     /**
      * Nearly every read of a ledger asks for one shop's active customers, so
      * the two columns it filters on are indexed together, in the order the
      * queries name them.
      */
     index('connections_merchant_status_idx').on(table.merchantId, table.status),
+    /**
+     * #77: and the same question from the other end — one customer's active
+     * shops — which the customer's own dashboard asks twice on every load.
+     * This replaces the index on the customer alone, which was this one's
+     * first column and nothing more.
+     */
+    index('connections_customer_status_idx').on(
+      table.customerUserId,
+      table.status,
+    ),
   ],
 )
 
@@ -201,7 +215,17 @@ export const transactions = sqliteTable(
       table.connectionId,
       table.createdAt,
     ),
-    index('transactions_status_idx').on(table.status),
+    /**
+     * #77: one connection's operations of a given status, which is how the
+     * list of what a customer has to answer is read — their connections
+     * first, then what is pending on each. This replaces an index over
+     * `status` alone, which no query asked for on its own and which made
+     * every pending operation in the app look like the cheap way in.
+     */
+    index('transactions_connection_status_idx').on(
+      table.connectionId,
+      table.status,
+    ),
     index('transactions_invoice_idx').on(table.invoiceId),
   ],
 )

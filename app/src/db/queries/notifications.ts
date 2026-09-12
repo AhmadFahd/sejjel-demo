@@ -153,61 +153,102 @@ export async function markActed(
 
 /**
  * A due date approaching, and one gone past. Nothing happens to make these
- * true — time passes — so they are noticed by the screens that already have
- * the figures in hand rather than by a job that has to be running, and the
- * dedupe key is what keeps one look per date from becoming one row per look.
+ * true — time passes — so somebody has to look for them, and the dedupe key is
+ * what keeps one look per date from becoming one row per look.
  */
-export async function noticeDueDates(
-  db: Database,
-  input: {
-    userId: string
-    summaries: Array<{
-      connectionId: string
-      balanceHalalas: number
-      dueState: DueState
-      dueAt: Date | null
-    }>
-    now?: Date
-  },
-) {
-  const now = input.now ?? new Date()
-
-  const rows = input.summaries
+function dueDateRows(
+  userId: string,
+  summaries: Array<{
+    connectionId: string
+    balanceHalalas: number
+    dueState: DueState
+    dueAt: Date | null
+  }>,
+  now: Date,
+): Array<typeof notifications.$inferInsert> {
+  return summaries
     .filter(
       (summary) =>
         summary.balanceHalalas > 0 &&
         (summary.dueState === 'due_soon' || summary.dueState === 'overdue'),
     )
     .map((summary) => ({
-      userId: input.userId,
+      userId,
       kind:
         summary.dueState === 'overdue'
           ? ('overdue' as const)
           : ('due_soon' as const),
       connectionId: summary.connectionId,
       dedupeKey: [
-        input.userId,
+        userId,
         summary.connectionId,
         summary.dueState,
         summary.dueAt?.toISOString() ?? 'none',
       ].join(':'),
       createdAt: now,
     }))
+}
 
+/**
+ * #78: the clock's own round of the ledger. Every account with something owed
+ * on it and a date on that, and a line for each of the two people it concerns
+ * — the customer who owes it and the shop that is waiting.
+ *
+ * One statement for the whole ledger rather than one per person. Written the
+ * obvious way, a round asked the database once for every user in it; a quiet
+ * round — which is nearly all of them, because a date is news once — cost
+ * hundreds of inserts that wrote nothing. It is one insert that writes nothing
+ * now, and only the people who actually have news are announced to.
+ *
+ * Safe to run as often as anybody likes: the dedupe key means a date is one
+ * row per person whoever notices it and however many times.
+ */
+export async function sweepDueDates(db: Database, now: Date = new Date()) {
+  const { listOwedConnections } = await import('./ledger')
+  const owed = await listOwedConnections(db, now)
+
+  const rows = owed.flatMap((summary) =>
+    [summary.customerUserId, summary.ownerUserId].flatMap((userId) =>
+      dueDateRows(userId, [summary], now),
+    ),
+  )
   if (rows.length === 0) return 0
 
-  const written = await db
-    .insert(notifications)
-    .values(rows)
-    .onConflictDoNothing()
-    .returning()
+  const written: Array<typeof notifications.$inferSelect> = []
+  for (const part of inBatches(rows)) {
+    written.push(
+      ...(await db
+        .insert(notifications)
+        .values(part)
+        .onConflictDoNothing()
+        .returning()),
+    )
+  }
 
-  // The screen that noticed is not the one carrying the bell, so the bell is
-  // woken the way everything else in this app is woken.
+  // The bell is not on the screen that noticed — nothing was on a screen at
+  // all — so it is woken the way everything else in this app is woken.
   if (written.length > 0) {
     const { announce } = await import('./ledger-events')
-    await announce(db, [{ userId: input.userId, kind: 'notification.added' }])
+    const people = [...new Set(written.map((row) => row.userId))]
+    for (const part of inBatches(people)) {
+      await announce(
+        db,
+        part.map((userId) => ({ userId, kind: 'notification.added' as const })),
+      )
+    }
   }
 
   return written.length
+}
+
+/**
+ * A statement at a time. SQLite counts the values in one, and a ledger where
+ * every date came round at once is more than one statement's worth.
+ */
+function inBatches<T>(rows: Array<T>, size = 200): Array<Array<T>> {
+  const parts: Array<Array<T>> = []
+  for (let index = 0; index < rows.length; index += size) {
+    parts.push(rows.slice(index, index + size))
+  }
+  return parts
 }

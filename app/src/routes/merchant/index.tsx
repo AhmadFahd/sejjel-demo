@@ -12,13 +12,14 @@ import {
   MobileNumber,
   StatTile,
   StatusPill,
-  cx,
 } from '#/components/primitives'
 import { OperationsCounter, PaydayStrip } from '#/components/ledger'
+import { Pager, PagerPosition, pagerLinkClass } from '#/components/account'
 import { QrCanvas } from '#/components/qr-canvas'
 import { shopUrl } from './qr'
 import { useI18n } from '#/i18n/context'
 import { WATCHED } from '#/lib/freshness'
+import type { ReactNode } from 'react'
 
 /** How many customers one screen of the list holds. */
 const PAGE_SIZE = 25
@@ -49,13 +50,6 @@ const loadShop = createServerFn({ method: 'GET' })
         offset,
       }),
     ])
-
-    // UC-12: a date comes round without anybody doing anything, so the screen
-    // that has the figures is the one that notices it. The page in hand is
-    // enough: a shop with more customers than fit on it sees the rest as it
-    // pages through them.
-    const { noticeDueDates } = await import('#/db/queries/notifications')
-    await noticeDueDates(db, { userId: user.id, summaries: customers, now })
 
     return {
       shop,
@@ -218,7 +212,21 @@ function MerchantHome() {
           ))
         )}
 
-        <Pager page={data.page} pages={data.pages} />
+        {data.pages < 2 ? null : (
+          <Pager
+            previous={
+              <PagerLink to={data.page - 1} disabled={data.page <= 1}>
+                {t('page.previous')}
+              </PagerLink>
+            }
+            middle={<PagerPosition page={data.page} pages={data.pages} />}
+            next={
+              <PagerLink to={data.page + 1} disabled={data.page >= data.pages}>
+                {t('page.next')}
+              </PagerLink>
+            }
+          />
+        )}
       </main>
     </>
   )
@@ -226,30 +234,9 @@ function MerchantHome() {
 
 /**
  * The list is paged rather than loaded whole, so a shop with a few hundred
- * customers costs the same to open as a shop with three.
+ * customers costs the same to open as a shop with three. Only this screen
+ * knows the route the links point at.
  */
-function Pager({ page, pages }: { page: number; pages: number }) {
-  const { t, number } = useI18n()
-  if (pages < 2) return null
-
-  return (
-    <nav
-      className="flex items-center justify-between gap-2 py-2"
-      data-testid="pager"
-    >
-      <PagerLink to={page - 1} disabled={page <= 1}>
-        {t('page.previous')}
-      </PagerLink>
-      <span className="text-[12px] font-bold text-muted">
-        {t('page.position', { page: number(page), pages: number(pages) })}
-      </span>
-      <PagerLink to={page + 1} disabled={page >= pages}>
-        {t('page.next')}
-      </PagerLink>
-    </nav>
-  )
-}
-
 function PagerLink({
   to,
   disabled,
@@ -257,16 +244,11 @@ function PagerLink({
 }: {
   to: number
   disabled: boolean
-  children: React.ReactNode
+  children: ReactNode
 }) {
-  const className = cx(
-    'rounded-(--radius-control) px-3 py-2 text-[13px] font-black',
-    disabled ? 'text-muted opacity-50' : 'bg-neutral-bg text-ink',
-  )
-
   if (disabled) {
     return (
-      <span className={className} aria-disabled>
+      <span className={pagerLinkClass(true)} aria-disabled>
         {children}
       </span>
     )
@@ -276,7 +258,7 @@ function PagerLink({
     <Link
       to="/merchant"
       search={to > 1 ? { page: to } : {}}
-      className={className}
+      className={pagerLinkClass(false)}
     >
       {children}
     </Link>

@@ -1,6 +1,7 @@
 import { Link, createFileRoute } from '@tanstack/react-router'
 import { createServerFn } from '@tanstack/react-start'
 import { ConnectionRequests } from '#/components/connection-requests'
+import { Pager, PagerPosition, pagerLinkClass } from '#/components/account'
 import { getCustomerTotals, listCustomerConnections } from '#/db/queries/ledger'
 import { paydayOnOrAfter } from '#/lib/payday'
 import { buttonClass } from '#/components/chrome'
@@ -15,50 +16,68 @@ import { OperationsCounter, PaydayStrip } from '#/components/ledger'
 import { useI18n } from '#/i18n/context'
 import { requireSide } from '#/auth/enter'
 import { WATCHED } from '#/lib/freshness'
+import type { ReactNode } from 'react'
 
-const loadShops = createServerFn({ method: 'GET' }).handler(async () => {
-  const { requireSignedInUser } = await import('#/auth/session.server')
-  const { getDatabase } = await import('#/db/client')
-  const { listAwaitingCustomer } = await import('#/db/queries/approval')
-  const { listConnectionRequests } = await import('#/db/queries/connect')
-  const user = await requireSignedInUser()
+/** How many shops one screen of the list holds. */
+const PAGE_SIZE = 25
 
-  const db = getDatabase()
-  const now = new Date()
+const loadShops = createServerFn({ method: 'GET' })
+  .validator((input: unknown): { page: number } => {
+    const raw = input as { page?: unknown }
+    const page = Math.trunc(Number(raw.page))
+    return { page: Number.isFinite(page) && page > 1 ? page : 1 }
+  })
+  .handler(async ({ data }) => {
+    const { requireSignedInUser } = await import('#/auth/session.server')
+    const { getDatabase } = await import('#/db/client')
+    const { listAwaitingCustomer } = await import('#/db/queries/approval')
+    const { listConnectionRequests } = await import('#/db/queries/connect')
+    const user = await requireSignedInUser()
 
-  // One moment for both, so the total and the pills under it cannot describe
-  // two different days.
-  const [totals, shops] = await Promise.all([
-    getCustomerTotals(db, user.id, now),
-    listCustomerConnections(db, user.id, now),
-  ])
+    const db = getDatabase()
+    const now = new Date()
 
-  // UC-12: a date comes round without anybody doing anything, so the screen
-  // that has the figures is the one that notices it.
-  const { noticeDueDates } = await import('#/db/queries/notifications')
-  await noticeDueDates(db, { userId: user.id, summaries: shops, now })
+    // One moment for both, so the total and the pills under it cannot describe
+    // two different days.
+    const [totals, shops] = await Promise.all([
+      getCustomerTotals(db, user.id, now),
+      listCustomerConnections(db, user.id, now, {
+        limit: PAGE_SIZE,
+        offset: (data.page - 1) * PAGE_SIZE,
+      }),
+    ])
 
-  return {
-    totals,
-    shops,
-    awaiting: await listAwaitingCustomer(db, user.id, now),
-    requests: await listConnectionRequests(db, user.id),
-    nextPaydayAt: paydayOnOrAfter(now),
-  }
-})
+    return {
+      totals,
+      shops,
+      awaiting: await listAwaitingCustomer(db, user.id, now),
+      requests: await listConnectionRequests(db, user.id),
+      nextPaydayAt: paydayOnOrAfter(now),
+      page: data.page,
+      pages: Math.max(1, Math.ceil(totals.connections / PAGE_SIZE)),
+    }
+  })
 
 /** UC-09: every shop one customer owes, and what they owe in total. */
 export const Route = createFileRoute('/customer/')({
   ...WATCHED,
-  loader: async ({ parentMatchPromise }) => {
+  // Page one carries no search parameter, so every other link to this screen
+  // — a guard sending somebody back, the side switch — stays a bare
+  // `/customer`.
+  validateSearch: (search: Record<string, unknown>): { page?: number } => {
+    const page = Math.trunc(Number(search.page))
+    return Number.isFinite(page) && page > 1 ? { page } : {}
+  },
+  loaderDeps: ({ search }) => ({ page: search.page ?? 1 }),
+  loader: async ({ deps, parentMatchPromise }) => {
     await requireSide(parentMatchPromise, 'customer')
-    return loadShops()
+    return loadShops({ data: { page: deps.page } })
   },
   component: CustomerHome,
 })
 
 function CustomerHome() {
-  const { totals, shops, awaiting, requests, nextPaydayAt } =
+  const { totals, shops, awaiting, requests, nextPaydayAt, page, pages } =
     Route.useLoaderData()
   const { t, money, number, date } = useI18n()
 
@@ -170,7 +189,51 @@ function CustomerHome() {
             </Link>
           ))
         )}
+
+        {pages < 2 ? null : (
+          <Pager
+            previous={
+              <PagerLink to={page - 1} disabled={page <= 1}>
+                {t('page.previous')}
+              </PagerLink>
+            }
+            middle={<PagerPosition page={page} pages={pages} />}
+            next={
+              <PagerLink to={page + 1} disabled={page >= pages}>
+                {t('page.next')}
+              </PagerLink>
+            }
+          />
+        )}
       </main>
     </>
+  )
+}
+
+function PagerLink({
+  to,
+  disabled,
+  children,
+}: {
+  to: number
+  disabled: boolean
+  children: ReactNode
+}) {
+  if (disabled) {
+    return (
+      <span className={pagerLinkClass(true)} aria-disabled>
+        {children}
+      </span>
+    )
+  }
+
+  return (
+    <Link
+      to="/customer"
+      search={to > 1 ? { page: to } : {}}
+      className={pagerLinkClass(false)}
+    >
+      {children}
+    </Link>
   )
 }

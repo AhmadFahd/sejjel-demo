@@ -190,6 +190,30 @@ export async function listAllMerchantConnections(
 }
 
 /**
+ * #78: every active connection with something still owed on it, on both sides
+ * of the ledger, for the clock that notices a date coming round. Whittled down
+ * in SQL rather than in a filter over rows already paid for: a settled account
+ * and one with no date on it have nothing anybody needs telling about.
+ *
+ * Each row carries the shop's owner beside the customer, because a date coming
+ * round is news to both of them.
+ */
+export async function listOwedConnections(
+  db: Database,
+  now: Date = new Date(),
+): Promise<Array<ConnectionSummary & { ownerUserId: string }>> {
+  const rows = await summaryQuery(db)
+    .where(eq(connections.status, 'active'))
+    .having(
+      and(sql`${balanceExpression} > 0`, sql`${dueExpression} is not null`),
+    )
+  return rows.map((row) => ({
+    ...toSummary(now, row),
+    ownerUserId: row.merchant.ownerUserId,
+  }))
+}
+
+/**
  * The figures at the top of a dashboard, summed in SQL over every connection
  * on that side of the ledger — not over the page the screen happens to be
  * showing, so paging cannot change what is owed.
@@ -280,20 +304,39 @@ export function getCustomerTotals(
   )
 }
 
-/** UC-09: every shop one customer owes. */
+/**
+ * UC-09: every shop one customer owes, a page at a time. Ordered by the
+ * shop's name and then by the connection's id, so two shops sharing a name
+ * cannot make a row appear on two pages or on none.
+ *
+ * #77: the page is picked from the connections before anything is added up,
+ * the way the shop's list of customers already did it. Read whole, this
+ * aggregated the customer's entire history on every load and sorted the
+ * result in memory.
+ */
 export async function listCustomerConnections(
   db: Database,
   userId: string,
   now: Date = new Date(),
+  page: Page = {},
 ) {
-  const rows = await summaryQuery(db)
+  const thisPage = db
+    .select({ id: connections.id })
+    .from(connections)
+    .innerJoin(merchants, eq(merchants.id, connections.merchantId))
     .where(
       and(
         eq(connections.customerUserId, userId),
         eq(connections.status, 'active'),
       ),
     )
-    .orderBy(merchants.name)
+    .orderBy(merchants.name, connections.id)
+    .limit(page.limit ?? DEFAULT_PAGE_SIZE)
+    .offset(page.offset ?? 0)
+
+  const rows = await summaryQuery(db)
+    .where(inArray(connections.id, thisPage))
+    .orderBy(merchants.name, connections.id)
   return rows.map((row) => toSummary(now, row))
 }
 
