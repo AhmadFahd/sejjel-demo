@@ -1,5 +1,5 @@
 import { readFileSync } from 'node:fs'
-import { expect, go, test } from './fixtures'
+import { expect, go, hydrated, reload, test } from './fixtures'
 import { OTP_LOG } from '../../playwright.config'
 import type { Page } from '@playwright/test'
 
@@ -36,10 +36,12 @@ test('a seeded customer signs in with a code, and stays signed in', async ({
 
   // أحمد owes three shops and keeps none, so he lands on the customer side.
   await expect(page).toHaveURL(/\/customer$/)
+  // Signing in lands on a document of its own, with a window of its own.
+  await hydrated(page)
   await expect(page.getByText('بقالة الريان')).toBeVisible()
 
   // A session is a row, not a page's memory.
-  await page.reload()
+  await reload(page)
   await expect(page.getByText('بقالة الريان')).toBeVisible()
 })
 
@@ -80,6 +82,8 @@ test('the language a signed-in person picks follows their account', async ({
   await expect(page.getByTestId('code-boxes')).toBeVisible()
   await typeCode(page, codeSentTo('+966555987210'))
   await expect(page).toHaveURL(/\/customer$/)
+  // Signing in lands on a document of its own, with a window of its own.
+  await hydrated(page)
 
   // PROTOTYPE (no-app-bar): the language lives in the profile now.
   await page.getByTestId('profile').click()
@@ -88,7 +92,7 @@ test('the language a signed-in person picks follows their account', async ({
 
   // Throw the cookie away: the choice has to come back from the row.
   await context.clearCookies({ name: 'sejjel_locale' })
-  await page.reload()
+  await reload(page)
 
   await expect(page.locator('html')).toHaveAttribute('lang', 'en')
 

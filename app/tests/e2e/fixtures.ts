@@ -50,6 +50,12 @@ export async function go(page: Page, path: string) {
   await hydrated(page)
 }
 
+/** The same document again, which is as new as any other. */
+export async function reload(page: Page) {
+  await page.reload()
+  await hydrated(page)
+}
+
 /**
  * Signed in and wherever their roles send them. The number is typed the way a
  * person types it and read back in the form the sender logs.

@@ -1,4 +1,4 @@
-import { expect, go, test } from './fixtures'
+import { expect, go, reload, test } from './fixtures'
 
 test('the shell renders right to left and reports its environment', async ({
   page,
@@ -27,7 +27,7 @@ test('switching language turns the document around, and it stays turned', async 
     'Your ledger with the shop, on your phone',
   )
 
-  await page.reload()
+  await reload(page)
 
   await expect(page.locator('html')).toHaveAttribute('lang', 'en')
   await expect(page).toHaveTitle('Sejjel')
