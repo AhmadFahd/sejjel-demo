@@ -1,9 +1,9 @@
 import { useState } from 'react'
 import { Link, createFileRoute, useRouter } from '@tanstack/react-router'
 import { createServerFn } from '@tanstack/react-start'
-import { requireSideOf } from '#/auth/enter'
 import { localSaudiMobile } from '#/auth/phone'
 import { cancelOperation, recordOperation } from '#/auth/operation'
+import { requireSide } from '#/auth/enter'
 import { Button, buttonClass } from '#/components/chrome'
 import { Card, KeyValueRow, MobileNumber, cx } from '#/components/primitives'
 import { LimitBar } from '#/components/ledger'
@@ -51,7 +51,6 @@ const loadCustomers = createServerFn({ method: 'GET' })
 
 /** UC-04: عملية جديدة — what the customer just bought, on credit. */
 export const Route = createFileRoute('/merchant/record')({
-  beforeLoad: ({ context }) => requireSideOf(context.person, 'merchant'),
   validateSearch: (
     search: Record<string, unknown>,
   ): { customer?: string; pending?: string } => {
@@ -63,7 +62,15 @@ export const Route = createFileRoute('/merchant/record')({
     }
   },
   loaderDeps: ({ search }) => ({ pending: search.pending ?? '' }),
-  loader: ({ deps }) => loadCustomers({ data: { pending: deps.pending } }),
+  loader: async ({ deps, parentMatchPromise }) => {
+    await requireSide(parentMatchPromise, 'merchant')
+    return loadCustomers({ data: { pending: deps.pending } })
+  },
+  // #75: no `pendingComponent` here either. The operation being recorded
+  // lives in this component's state, and recording it puts its id in the URL,
+  // which is a new set of loader deps and so a new match. A loader standing
+  // in front of the screen would unmount it and throw the operation away
+  // mid-flow; the bar across the top says it is working instead.
   component: RecordOperation,
 })
 

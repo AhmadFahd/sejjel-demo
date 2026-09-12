@@ -13,17 +13,21 @@ import { useI18n } from '#/i18n/context'
  * without anybody pulling to refresh.
  */
 export const Route = createFileRoute('/merchant')({
-  // Who is signed in for the profile, what is unread for the bell, and
-  // whether this person is signed in at all: one question, before any screen
-  // under here runs. Its answer is the context those screens read, so none of
-  // them asks the server who is asking a second time.
-  beforeLoad: () => enterApp(),
+  // #79: who is signed in for the profile and what is unread for the bell,
+  // asked in the one hook that keeps its answer. A tap inside the side does
+  // not ask again, and the screen's own loader is the only round trip left.
+  // The side itself is each screen's own business: `requireSide` reads this
+  // answer, because the card under here is open to anybody signed in.
+  loader: () => enterApp(),
+  // The answer is good until the stream says otherwise, which it does on
+  // every notification, and the fallback poll behind it says so anyway.
+  staleTime: Infinity,
   component: MerchantSide,
 })
 
 function MerchantSide() {
   const { t } = useI18n()
-  const { person, unread } = Route.useRouteContext()
+  const { person, unread } = Route.useLoaderData()
   const pathname = useRouterState({
     select: (state) => state.location.pathname,
   })

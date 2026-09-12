@@ -1,8 +1,8 @@
 import { useState } from 'react'
 import { Link, createFileRoute, notFound } from '@tanstack/react-router'
 import { createServerFn } from '@tanstack/react-start'
-import { requireSideOf } from '#/auth/enter'
 import { confirmPayment, startPayment } from '#/auth/settle'
+import { requireSide } from '#/auth/enter'
 import { Button } from '#/components/chrome'
 import { Card, KeyValueRow } from '#/components/primitives'
 import { parseAmount } from '#/lib/money'
@@ -31,8 +31,8 @@ const METHODS: Array<PaymentMethod> = ['apple_pay', 'mada', 'card']
 
 /** UC-10: paying a shop back, in full or in part. */
 export const Route = createFileRoute('/customer/pay/$connectionId')({
-  beforeLoad: ({ context }) => requireSideOf(context.person, 'customer'),
-  loader: async ({ params }) => {
+  loader: async ({ params, parentMatchPromise }) => {
+    await requireSide(parentMatchPromise, 'customer')
     const summary = await loadAccount({
       data: { connectionId: params.connectionId },
     })

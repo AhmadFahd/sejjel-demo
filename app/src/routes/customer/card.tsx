@@ -4,7 +4,6 @@ import { issueMyCode } from '#/auth/connect'
 import { Card } from '#/components/primitives'
 import { ApprovalCode } from '#/components/approval-code'
 import { ConnectionRequests } from '#/components/connection-requests'
-import { LedgerStream } from '#/components/ledger-stream'
 import { useI18n } from '#/i18n/context'
 
 /**
@@ -36,28 +35,28 @@ function MyCard() {
     setIssuedAt(Date.now())
   }
 
+  // #76: the shop scans this screen, so the answer has to arrive on it, and
+  // the stream that brings it is the one the side's layout holds open above
+  // here. Mounting a second one meant two connections and every event
+  // delivered twice.
   return (
-    <>
-      {/* The shop scans this screen, so the answer has to arrive on it. */}
-      <LedgerStream enabled />
-      <main className="p-3.5">
-        <Link
-          to="/"
-          className="mb-3 inline-block text-[13px] font-black text-brand"
-        >
-          {t('nav.back')}
-        </Link>
-        <h1 className="mb-3 text-xl font-black text-ink">{t('card.title')}</h1>
+    <main className="p-3.5">
+      <Link
+        to="/"
+        className="mb-3 inline-block text-[13px] font-black text-brand"
+      >
+        {t('nav.back')}
+      </Link>
+      <h1 className="mb-3 text-xl font-black text-ink">{t('card.title')}</h1>
 
-        <ConnectionRequests requests={first.requests} />
+      <ConnectionRequests requests={first.requests} />
 
-        <Card data-testid="my-card">
-          <p className="mb-3 text-[13px] font-bold text-muted">
-            {t('card.body')}
-          </p>
-          <ApprovalCode code={code} issuedAt={issuedAt} onRegenerate={fresh} />
-        </Card>
-      </main>
-    </>
+      <Card data-testid="my-card">
+        <p className="mb-3 text-[13px] font-bold text-muted">
+          {t('card.body')}
+        </p>
+        <ApprovalCode code={code} issuedAt={issuedAt} onRegenerate={fresh} />
+      </Card>
+    </main>
   )
 }

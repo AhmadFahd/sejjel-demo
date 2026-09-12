@@ -6,7 +6,6 @@ import {
   useRouter,
 } from '@tanstack/react-router'
 import { createServerFn } from '@tanstack/react-start'
-import { requireSideOf } from '#/auth/enter'
 import {
   acceptShopTerms,
   approveOperationFn,
@@ -16,6 +15,7 @@ import { Button } from '#/components/chrome'
 import { Card, KeyValueRow } from '#/components/primitives'
 import { ApprovalCode } from '#/components/approval-code'
 import { useI18n } from '#/i18n/context'
+import { requireSide } from '#/auth/enter'
 
 const loadOperation = createServerFn({ method: 'GET' })
   .validator((input: unknown): { transactionId: string } => ({
@@ -37,8 +37,8 @@ const loadOperation = createServerFn({ method: 'GET' })
 
 /** UC-07: nothing lands on a ledger without the person standing there agreeing. */
 export const Route = createFileRoute('/customer/approve/$transactionId')({
-  beforeLoad: ({ context }) => requireSideOf(context.person, 'customer'),
-  loader: async ({ params }) => {
+  loader: async ({ params, parentMatchPromise }) => {
+    await requireSide(parentMatchPromise, 'customer')
     const operation = await loadOperation({
       data: { transactionId: params.transactionId },
     })

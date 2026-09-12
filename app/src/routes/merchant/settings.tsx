@@ -1,7 +1,6 @@
 import { useState } from 'react'
 import { Link, createFileRoute, useRouter } from '@tanstack/react-router'
 import { createServerFn } from '@tanstack/react-start'
-import { requireSideOf } from '#/auth/enter'
 import { saveShopDefaults } from '#/auth/terms'
 import { halalasToRiyals } from '#/lib/money'
 import { Button } from '#/components/chrome'
@@ -9,6 +8,7 @@ import { Card } from '#/components/primitives'
 import { NumberField, TermChangeList, TermsProblems } from '#/components/terms'
 import { useI18n } from '#/i18n/context'
 import type { TermsAnswer } from '#/auth/terms'
+import { requireSide } from '#/auth/enter'
 
 const loadDefaults = createServerFn({ method: 'GET' }).handler(async () => {
   const { requireSignedInUser } = await import('#/auth/session.server')
@@ -28,8 +28,10 @@ const loadDefaults = createServerFn({ method: 'GET' }).handler(async () => {
 
 /** UC-13: the figures every customer of this shop stands on. */
 export const Route = createFileRoute('/merchant/settings')({
-  beforeLoad: ({ context }) => requireSideOf(context.person, 'merchant'),
-  loader: () => loadDefaults(),
+  loader: async ({ parentMatchPromise }) => {
+    await requireSide(parentMatchPromise, 'merchant')
+    return loadDefaults()
+  },
   component: ShopSettings,
 })
 

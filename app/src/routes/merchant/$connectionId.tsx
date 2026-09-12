@@ -5,9 +5,9 @@ import {
   useRouter,
 } from '@tanstack/react-router'
 import { createServerFn } from '@tanstack/react-start'
-import { requireSideOf } from '#/auth/enter'
 import { localSaudiMobile } from '#/auth/phone'
 import { cancelOperation } from '#/auth/operation'
+import { requireSide } from '#/auth/enter'
 import { buttonClass } from '#/components/chrome'
 import { MobileNumber } from '#/components/primitives'
 import { Pager, TransactionHistory, pagerLinkClass } from '#/components/account'
@@ -47,13 +47,13 @@ const loadAccount = createServerFn({ method: 'GET' })
 
 /** UC-03: one customer's whole account, as the shop sees it. */
 export const Route = createFileRoute('/merchant/$connectionId')({
-  beforeLoad: ({ context }) => requireSideOf(context.person, 'merchant'),
   validateSearch: (search: Record<string, unknown>): { page?: number } => {
     const page = Math.trunc(Number(search.page))
     return Number.isFinite(page) && page > 1 ? { page } : {}
   },
   loaderDeps: ({ search }) => ({ page: search.page ?? 1 }),
-  loader: async ({ params, deps }) => {
+  loader: async ({ params, deps, parentMatchPromise }) => {
+    await requireSide(parentMatchPromise, 'merchant')
     const account = await loadAccount({
       data: { connectionId: params.connectionId, page: deps.page },
     })

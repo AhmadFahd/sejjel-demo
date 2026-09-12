@@ -1,9 +1,15 @@
 import { useEffect, useState } from 'react'
-import { Link, createFileRoute, useRouter } from '@tanstack/react-router'
+import {
+  Link,
+  createFileRoute,
+  useRouter,
+  useRouterState,
+} from '@tanstack/react-router'
 import { createServerFn } from '@tanstack/react-start'
-import { requireSideOf } from '#/auth/enter'
 import { localSaudiMobile } from '#/auth/phone'
+import { requireSide } from '#/auth/enter'
 import { Pager, pagerLinkClass } from '#/components/account'
+import { LoadingDots } from '#/components/loading'
 import { Card, KeyValueRow, MobileNumber, cx } from '#/components/primitives'
 import { useI18n } from '#/i18n/context'
 import type { LogEntry } from '#/db/queries/log'
@@ -68,7 +74,6 @@ const loadLog = createServerFn({ method: 'GET' })
 
 /** Every operation in the shop, searchable, a page at a time. */
 export const Route = createFileRoute('/merchant/log')({
-  beforeLoad: ({ context }) => requireSideOf(context.person, 'merchant'),
   validateSearch: (search: Record<string, unknown>): Search => {
     const page = Math.trunc(Number(search.page))
     return {
@@ -80,7 +85,15 @@ export const Route = createFileRoute('/merchant/log')({
     }
   },
   loaderDeps: ({ search }) => search,
-  loader: ({ deps }) => loadLog({ data: deps }),
+  loader: async ({ deps, parentMatchPromise }) => {
+    await requireSide(parentMatchPromise, 'merchant')
+    return loadLog({ data: deps })
+  },
+  // #75: no `pendingComponent` here, deliberately. The search is typed into
+  // this screen, and a new search is a new set of loader deps, so it is a new
+  // match: a loader standing in front of it would unmount the field mid-word
+  // and take the keyboard with it. The rows a person is reading stay where
+  // they are, and the dots beside the field say a newer answer is coming.
   component: OperationsLog,
 })
 
@@ -158,6 +171,7 @@ function OperationsLog() {
 function Filters({ search }: { search: Search }) {
   const { t } = useI18n()
   const router = useRouter()
+  const working = useRouterState({ select: (state) => state.isLoading })
   const [typed, setTyped] = useState(search.q ?? '')
 
   useEffect(() => setTyped(search.q ?? ''), [search.q])
@@ -189,15 +203,22 @@ function Filters({ search }: { search: Search }) {
 
   return (
     <Card>
-      <input
-        type="search"
-        aria-label={t('log.search')}
-        placeholder={t('log.search')}
-        className={field}
-        data-testid="log-search"
-        value={typed}
-        onChange={(event) => setTyped(event.target.value)}
-      />
+      <div className="relative">
+        <input
+          type="search"
+          aria-label={t('log.search')}
+          placeholder={t('log.search')}
+          className={field}
+          data-testid="log-search"
+          value={typed}
+          onChange={(event) => setTyped(event.target.value)}
+        />
+        {working ? (
+          <span className="absolute inset-y-0 end-3 flex items-center">
+            <LoadingDots />
+          </span>
+        ) : null}
+      </div>
 
       <div className="mt-2 flex gap-2">
         {(['purchase', 'payment'] as const).map((kind) => (

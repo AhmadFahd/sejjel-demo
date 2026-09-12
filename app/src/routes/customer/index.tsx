@@ -1,6 +1,5 @@
 import { Link, createFileRoute } from '@tanstack/react-router'
 import { createServerFn } from '@tanstack/react-start'
-import { requireSideOf } from '#/auth/enter'
 import { ConnectionRequests } from '#/components/connection-requests'
 import { getCustomerTotals, listCustomerConnections } from '#/db/queries/ledger'
 import { paydayOnOrAfter } from '#/lib/payday'
@@ -14,6 +13,7 @@ import {
 } from '#/components/primitives'
 import { OperationsCounter, PaydayStrip } from '#/components/ledger'
 import { useI18n } from '#/i18n/context'
+import { requireSide } from '#/auth/enter'
 
 const loadShops = createServerFn({ method: 'GET' }).handler(async () => {
   const { requireSignedInUser } = await import('#/auth/session.server')
@@ -48,8 +48,10 @@ const loadShops = createServerFn({ method: 'GET' }).handler(async () => {
 
 /** UC-09: every shop one customer owes, and what they owe in total. */
 export const Route = createFileRoute('/customer/')({
-  beforeLoad: ({ context }) => requireSideOf(context.person, 'customer'),
-  loader: () => loadShops(),
+  loader: async ({ parentMatchPromise }) => {
+    await requireSide(parentMatchPromise, 'customer')
+    return loadShops()
+  },
   component: CustomerHome,
 })
 

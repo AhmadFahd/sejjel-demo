@@ -1,6 +1,5 @@
 import { Link, createFileRoute, notFound } from '@tanstack/react-router'
 import { createServerFn } from '@tanstack/react-start'
-import { requireSideOf } from '#/auth/enter'
 import { buttonClass } from '#/components/chrome'
 import { Pager, TransactionHistory, pagerLinkClass } from '#/components/account'
 import {
@@ -11,6 +10,7 @@ import {
 } from '#/components/ledger'
 import { paydayOnOrAfter } from '#/lib/payday'
 import { useI18n } from '#/i18n/context'
+import { requireSide } from '#/auth/enter'
 
 const loadAccount = createServerFn({ method: 'GET' })
   .validator((input: unknown): { connectionId: string; page: number } => {
@@ -48,13 +48,13 @@ const loadAccount = createServerFn({ method: 'GET' })
 
 /** UC-09: one shop's history, as the customer who owes it sees it. */
 export const Route = createFileRoute('/customer/$connectionId')({
-  beforeLoad: ({ context }) => requireSideOf(context.person, 'customer'),
   validateSearch: (search: Record<string, unknown>): { page?: number } => {
     const page = Math.trunc(Number(search.page))
     return Number.isFinite(page) && page > 1 ? { page } : {}
   },
   loaderDeps: ({ search }) => ({ page: search.page ?? 1 }),
-  loader: async ({ params, deps }) => {
+  loader: async ({ params, deps, parentMatchPromise }) => {
+    await requireSide(parentMatchPromise, 'customer')
     const account = await loadAccount({
       data: { connectionId: params.connectionId, page: deps.page },
     })

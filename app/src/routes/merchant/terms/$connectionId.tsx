@@ -6,7 +6,6 @@ import {
   useRouter,
 } from '@tanstack/react-router'
 import { createServerFn } from '@tanstack/react-start'
-import { requireSideOf } from '#/auth/enter'
 import { saveCustomerOverrides } from '#/auth/terms'
 import { halalasToRiyals, riyalsToHalalas } from '#/lib/money'
 import { isBelowBalance } from '#/lib/terms'
@@ -15,6 +14,7 @@ import { Card, KeyValueRow } from '#/components/primitives'
 import { NumberField, TermChangeList, TermsProblems } from '#/components/terms'
 import { useI18n } from '#/i18n/context'
 import type { TermsAnswer } from '#/auth/terms'
+import { requireSide } from '#/auth/enter'
 
 const loadTerms = createServerFn({ method: 'GET' })
   .validator((input: unknown): { connectionId: string } => {
@@ -45,8 +45,8 @@ const loadTerms = createServerFn({ method: 'GET' })
 
 /** UC-13: what this one customer stands on, where it differs from the shop. */
 export const Route = createFileRoute('/merchant/terms/$connectionId')({
-  beforeLoad: ({ context }) => requireSideOf(context.person, 'merchant'),
-  loader: async ({ params }) => {
+  loader: async ({ params, parentMatchPromise }) => {
+    await requireSide(parentMatchPromise, 'merchant')
     const terms = await loadTerms({
       data: { connectionId: params.connectionId },
     })
