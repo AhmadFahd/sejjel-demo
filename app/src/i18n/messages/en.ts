@@ -265,6 +265,37 @@ export const en = {
   'payday.note': 'Everything you owe falls due together, to make paying simple',
   'payday.next': 'Next pay-day: {date}',
 
+  'link.share': 'Send a payment link on WhatsApp',
+  'link.title': 'The payment link',
+  'link.to': 'To',
+  'link.message':
+    'Hello {name} \u{1F44B}\nA reminder of what you owe {shop}: {amount}.\nIt falls due on {payday}, the one pay-day.\nPay straight from this link:\n{url}',
+  'link.open': 'Open WhatsApp with the message ready',
+  'link.preview': 'See the page your customer opens',
+  'link.close': 'Close',
+  'link.expires': 'It works once, until {date}.',
+  'link.error.nothing': 'This customer owes nothing.',
+  'link.error.connection': 'This customer is not one of yours.',
+
+  'web.tagline': 'A quick payment page. Nothing to install.',
+  'web.claim': 'Owed to {shop}',
+  'web.due': 'Due {date}',
+  'web.gateway': 'Through the payment gateway (simulated here)',
+  'web.note':
+    'You opened this from WhatsApp. There is no account to make and nothing to install: pay, and close the page.',
+  'web.paidTitle': 'Paid.',
+  'web.paidBody': 'The gateway confirmed it and the shop has been told.',
+  'web.amountPaid': 'Amount paid',
+  'web.expiredTitle': 'This link has run out.',
+  'web.expiredBody': 'Ask the shop to send a new one.',
+  'web.alreadyTitle': 'This has been paid.',
+  'web.alreadyBody': 'Nothing was charged a second time.',
+  'web.changedTitle': 'The amount has changed.',
+  'web.changedBody':
+    'Less is owed now than this link asks for. Ask the shop for a new one.',
+  'web.failed':
+    'The payment did not go through. Nothing was taken; try again or use another method.',
+
   'settings.title': 'Shop settings',
   'settings.open': 'Settings',
   'settings.defaultsNote':

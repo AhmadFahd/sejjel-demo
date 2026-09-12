@@ -11,6 +11,7 @@ import { requireSide } from '#/auth/enter'
 import { buttonClass } from '#/components/chrome'
 import { MobileNumber } from '#/components/primitives'
 import { Pager, TransactionHistory, pagerLinkClass } from '#/components/account'
+import { PaymentLinkShare } from '#/components/payment-link'
 import { BalanceHero, LimitBar, OperationsCounter } from '#/components/ledger'
 import { useI18n } from '#/i18n/context'
 import { WATCHED } from '#/lib/freshness'
@@ -135,6 +136,19 @@ function MerchantAccount() {
         >
           {t('settings.open')}
         </Link>
+
+        {/* UC-17: a customer who owes something can be sent a link that pays
+            it, whether or not they have the app. */}
+        {summary.balanceHalalas > 0 ? (
+          <PaymentLinkShare
+            connectionId={summary.connectionId}
+            shopName={summary.merchantName}
+            customerName={summary.customerName}
+            customerMobile={summary.customerMobile}
+            dueAt={summary.dueAt}
+            now={now}
+          />
+        ) : null}
 
         <TransactionHistory
           entries={transactions}

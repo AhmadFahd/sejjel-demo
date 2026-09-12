@@ -749,6 +749,72 @@ test('a customer settles part of what they owe', async ({ page, browser }) => {
   await shop.close()
 })
 
+/**
+ * UC-17: سالم owes بقالة الريان 1,250 and is past his date. The shop sends him
+ * a link over its own WhatsApp; he opens it in a browser nobody is signed in
+ * on, pays, and the shop's side moves — with no app anywhere in it.
+ */
+test('a customer pays from a web link, without the app', async ({
+  page,
+  browser,
+}) => {
+  test.slow()
+  await signIn(page, '0550111222', '+966550111222')
+  await page
+    .getByTestId('connection-row')
+    .filter({ hasText: 'سالم العتيبي' })
+    .click()
+
+  await page.getByTestId('share-link').click()
+  const sheet = page.getByTestId('link-sheet')
+  await expect(sheet).toContainText('1,250')
+
+  // The draft goes to سالم's own number, with the message already written.
+  const whatsapp = await page.getByTestId('open-whatsapp').getAttribute('href')
+  expect(whatsapp).toContain('wa.me/966533456789')
+  expect(decodeURIComponent(whatsapp ?? '')).toContain('/r/')
+
+  const link = await page.getByTestId('preview-link').getAttribute('href')
+
+  // A second browser, signed in as nobody: the page asks for no account.
+  const { context: web, page: browserTab } = await openPhone(browser)
+  await go(browserTab, link ?? '')
+
+  await expect(browserTab).toHaveURL(new RegExp(`${link}$`))
+  const claim = browserTab.getByTestId('web-claim')
+  await expect(claim).toContainText('بقالة الريان')
+  await expect(claim).toContainText('1,250')
+  // Outside the app in the way that shows: none of its chrome is on it.
+  await expect(browserTab.getByTestId('dock')).toHaveCount(0)
+
+  await browserTab.getByTestId('web-mada').click()
+  await expect(browserTab.getByTestId('web-paid')).toContainText('FAKE-')
+
+  // The ruling in MVP.md: opening it again says paid rather than charging.
+  await reload(browserTab)
+  await expect(browserTab.getByTestId('web-paid')).toBeVisible()
+  await expect(browserTab.getByTestId('web-mada')).toHaveCount(0)
+
+  // The shop was told, in the list the bell opens.
+  await go(page, '/merchant/notifications')
+  await expect(
+    page
+      .getByTestId('notification')
+      .filter({ hasText: 'تم سداد مبلغ' })
+      .first(),
+  ).toContainText('1,250')
+
+  // And its own ledger moved with the payment.
+  await go(page, '/merchant')
+  const row = page
+    .getByTestId('connection-row')
+    .filter({ hasText: 'سالم العتيبي' })
+  await expect(row).toContainText('مسدد')
+  await expect(row).not.toContainText('1,250')
+
+  await web.close()
+})
+
 test('a customer cannot open another customer’s account', async ({ page }) => {
   await signIn(page, '0533456789', '+966533456789')
   await expect(page).toHaveURL(/\/customer$/)
