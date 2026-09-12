@@ -6,10 +6,8 @@ import {
   countUnread,
   listNotifications,
   markAllRead,
-  noticeDueDates,
   sweepDueDates,
 } from '#/db/queries/notifications'
-import { listCustomerConnections } from '#/db/queries/ledger'
 import { announce } from '#/db/queries/ledger-events'
 import { recordPendingPurchase } from '#/db/queries/purchases'
 import { declineOperation } from '#/db/queries/approval'
@@ -190,7 +188,7 @@ describe('an operation answered from the list', () => {
 })
 
 describe('a date that comes round on its own', () => {
-  it('is noticed once per date, however often the screen looks', async () => {
+  it('is noticed once per date, however often anybody looks', async () => {
     const merchant = await makeMerchant(db)
     const customer = await makeUser(db)
     const connection = await makeConnection(db, {
@@ -207,13 +205,9 @@ describe('a date that comes round on its own', () => {
 
     // Long past the due date by now.
     const now = new Date('2026-09-01T09:00:00Z')
-    const summaries = await listCustomerConnections(db, customer.id, now)
-    expect(
-      await noticeDueDates(db, { userId: customer.id, summaries, now }),
-    ).toBe(1)
-    expect(
-      await noticeDueDates(db, { userId: customer.id, summaries, now }),
-    ).toBe(0)
+    // Two rows for one date: the customer who owes it and the shop waiting.
+    expect(await sweepDueDates(db, now)).toBe(2)
+    expect(await sweepDueDates(db, now)).toBe(0)
 
     const rows = await db
       .select()
@@ -246,11 +240,7 @@ describe('a date that comes round on its own', () => {
       .set({ status: 'applied' })
       .where(eq(transactions.id, purchase.id))
 
-    const now = new Date('2026-09-01T09:00:00Z')
-    const summaries = await listCustomerConnections(db, customer.id, now)
-    expect(
-      await noticeDueDates(db, { userId: customer.id, summaries, now }),
-    ).toBe(0)
+    expect(await sweepDueDates(db, new Date('2026-09-01T09:00:00Z'))).toBe(0)
   })
 })
 
