@@ -1,26 +1,88 @@
-import { Link, createFileRoute, redirect } from '@tanstack/react-router'
+import {
+  Link,
+  createFileRoute,
+  redirect,
+  useNavigate,
+} from '@tanstack/react-router'
 import { loadSignedInUser } from '#/auth/session'
 import { homeFor } from '#/auth/roles'
 import { LocaleToggle } from '#/components/locale-toggle'
 import { useI18n } from '#/i18n/context'
+import { PrototypeSwitcher } from '#/components/prototype-switcher'
+import { LandingPaper } from './-landing-brand/paper'
+import { LandingField } from './-landing-brand/field'
+import { LandingLedger } from './-landing-brand/ledger'
 
 /** What the phone in the hero is showing. A picture of the thing, not data. */
 const MOCK_BALANCE_HALALAS = 80_000
 const MOCK_LIMIT_PERCENT = 68
 
 /**
- * The public page, and the front door for everybody else: a person already on
- * a side of the ledger is sent to it rather than shown the pitch for the thing
- * they are already using.
+ * PROTOTYPE, and throwaway — everything under `-landing-brand/`, the switcher,
+ * and the `variant` parameter go once one of them wins.
+ *
+ * The question: what does this page look like when it is built from
+ * `brand/identity-ar.html` rather than from the tokens the prototype inherited?
+ * Three variants of the public page, switchable via `?variant=`, on the
+ * existing `/` route. `current` is the page as it stands today, so the brand
+ * ones are judged against it and not against a memory of it.
  */
+const VARIANTS = [
+  { key: 'current', name: 'As it stands today' },
+  // The names read in English: this bar is scaffolding for whoever is
+  // choosing, not copy, and it is never translated or shipped.
+  { key: 'paper', name: 'Paper — a document, rules not cards' },
+  { key: 'field', name: 'Field — green ground, mark at poster size' },
+  { key: 'ledger', name: 'Ledger — the sheet is the pitch' },
+]
+
 export const Route = createFileRoute('/')({
   beforeLoad: async () => {
     const user = await loadSignedInUser()
     if (user) throw redirect({ to: homeFor(user.roles) })
   },
-  component: Landing,
+  validateSearch: (search: Record<string, unknown>): { variant?: string } => {
+    const variant = search.variant
+    return typeof variant === 'string' &&
+      VARIANTS.some((candidate) => candidate.key === variant)
+      ? { variant }
+      : {}
+  },
+  component: LandingRoute,
 })
 
+function LandingRoute() {
+  const search = Route.useSearch()
+  const variant = search.variant ?? 'current'
+  const navigate = useNavigate({ from: '/' })
+
+  return (
+    <>
+      {variant === 'paper' ? <LandingPaper /> : null}
+      {variant === 'field' ? <LandingField /> : null}
+      {variant === 'ledger' ? <LandingLedger /> : null}
+      {variant === 'current' ? <Landing /> : null}
+
+      <PrototypeSwitcher
+        variants={VARIANTS}
+        current={variant}
+        chosen={search.variant !== undefined}
+        onPick={(key) =>
+          void navigate({
+            search: key === 'current' ? {} : { variant: key },
+            replace: true,
+          })
+        }
+      />
+    </>
+  )
+}
+
+/**
+ * The public page, and the front door for everybody else: a person already on
+ * a side of the ledger is sent to it rather than shown the pitch for the thing
+ * they are already using.
+ */
 function Landing() {
   const { t } = useI18n()
 

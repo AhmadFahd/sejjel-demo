@@ -45,6 +45,17 @@
   --shadow-toast: 0 14px 34px rgba(0, 0, 0, 0.3);
 
   --font-sans: 'Cairo', 'Segoe UI', Tahoma, Arial, sans-serif;
+
+  /**
+   * The identity's own three colours and its hairline, under the names
+   * brand/identity-ar.html gives them. The tokens above predate the identity
+   * guide and name the same greens differently; these are what a screen built
+   * from the guide asks for.
+   */
+  --color-bone: #ede9e6;
+  --color-word: #5c4f4a;
+  --color-brand: #5c766d;
+  --color-hairline: #d9d1ca;
 }
 
 * {
