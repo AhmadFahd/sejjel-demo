@@ -19,6 +19,16 @@ export function formatNumber(value: number, locale: Locale) {
 }
 
 /**
+ * UC-14: what an amount reads as while the amounts are hidden. Only the
+ * figure goes; the currency stays, so a masked amount is still recognisably
+ * an amount and the row does not change shape when it comes back.
+ */
+export function maskedAmount(dots: string, locale: Locale, currency?: string) {
+  if (currency === undefined) return dots
+  return locale === 'ar' ? `${dots} ${currency}` : `${currency} ${dots}`
+}
+
+/**
  * Whole riyals unless there are halalas, which is how every amount in the
  * prototype reads. The currency word comes from the catalogue, so it is ر.س
  * beside Arabic and SAR beside English.

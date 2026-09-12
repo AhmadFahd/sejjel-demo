@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Link, useRouter } from '@tanstack/react-router'
+import { Link } from '@tanstack/react-router'
 import { signOut } from '#/auth/session'
 import { cx } from './primitives'
 import { useI18n } from '#/i18n/context'
@@ -73,7 +73,6 @@ function ProfileRows({
 }) {
   const { t } = useI18n()
   const locale = useLocaleSwitch()
-  const router = useRouter()
 
   const other = side === 'merchant' ? 'customer' : 'merchant'
   const bothSides = Boolean(person?.roles.merchant && person.roles.customer)
@@ -124,8 +123,10 @@ function ProfileRows({
         tone="danger"
         onPress={async () => {
           await signOut()
-          await router.invalidate()
-          await router.navigate({ to: '/sign-in' })
+          // A document load, not a navigation inside one: who is signed in
+          // decides what the whole document is, and the shell around the
+          // screens is rendered when the document is.
+          window.location.assign('/sign-in')
         }}
       />
     </div>

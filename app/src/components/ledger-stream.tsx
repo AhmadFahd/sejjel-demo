@@ -19,28 +19,45 @@ export function LedgerStream({ enabled }: { enabled: boolean }) {
     if (!enabled || typeof EventSource === 'undefined') return
 
     const refresh = () => void router.invalidate()
-    const source = new EventSource('/api/events')
 
-    // Every kind matters to some screen, and re-fetching is cheap, so one
-    // listener for all of them rather than a list to keep in step.
-    source.addEventListener('message', refresh)
-    for (const kind of [
-      'purchase.recorded',
-      'purchase.applied',
-      'purchase.cancelled',
-      'payment.received',
-      'connection.requested',
-      'connection.accepted',
-      'terms.changed',
-    ]) {
-      source.addEventListener(kind, refresh)
+    // A stream opened while the document is still loading counts as a
+    // subresource that never finishes, so the tab spins forever and anything
+    // waiting on `load` waits with it. It costs nothing to open a moment
+    // later, once the document is done.
+    let source: EventSource | null = null
+    let poll: ReturnType<typeof setInterval> | null = null
+    let stopped = false
+
+    const open = () => {
+      if (stopped) return
+      source = new EventSource('/api/events')
+
+      // Every kind matters to some screen, and re-fetching is cheap, so one
+      // listener for all of them rather than a list to keep in step.
+      source.addEventListener('message', refresh)
+      for (const kind of [
+        'purchase.recorded',
+        'purchase.applied',
+        'purchase.cancelled',
+        'payment.received',
+        'connection.requested',
+        'connection.accepted',
+        'terms.changed',
+      ]) {
+        source.addEventListener(kind, refresh)
+      }
+
+      poll = setInterval(refresh, FALLBACK_POLL_MS)
     }
 
-    const poll = setInterval(refresh, FALLBACK_POLL_MS)
+    if (document.readyState === 'complete') open()
+    else window.addEventListener('load', open, { once: true })
 
     return () => {
-      clearInterval(poll)
-      source.close()
+      stopped = true
+      window.removeEventListener('load', open)
+      if (poll) clearInterval(poll)
+      source?.close()
     }
   }, [enabled, router])
 

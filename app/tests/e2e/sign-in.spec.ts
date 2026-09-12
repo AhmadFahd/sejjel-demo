@@ -1,5 +1,5 @@
 import { readFileSync } from 'node:fs'
-import { expect, test } from '@playwright/test'
+import { expect, test } from './fixtures'
 import { OTP_LOG } from '../../playwright.config'
 import type { Page } from '@playwright/test'
 
@@ -91,4 +91,10 @@ test('the language a signed-in person picks follows their account', async ({
   await page.reload()
 
   await expect(page.locator('html')).toHaveAttribute('lang', 'en')
+
+  // Leave the fixture as it was found. His language is on his row now, and
+  // the rest of the suite reads his screens in Arabic.
+  await page.getByTestId('profile').click()
+  await page.getByTestId('locale-switch').click()
+  await expect(page.locator('html')).toHaveAttribute('lang', 'ar')
 })

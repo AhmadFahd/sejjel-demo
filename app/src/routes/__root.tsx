@@ -8,20 +8,23 @@ import { TanStackRouterDevtoolsPanel } from '@tanstack/react-router-devtools'
 import { TanStackDevtools } from '@tanstack/react-devtools'
 import { Card } from '#/components/primitives'
 import { I18nProvider, useI18n } from '#/i18n/context'
-import { loadLocale } from '#/i18n/server'
-import { DEFAULT_LOCALE, directionOf } from '#/i18n/locales'
+import { DEFAULT_SHELL, loadShell } from '#/auth/shell'
+import { ViewerProvider } from '#/auth/viewer'
+import { directionOf } from '#/i18n/locales'
 import { createTranslate } from '#/i18n/translate'
 import type { ReactNode } from 'react'
-import type { Locale } from '#/i18n/locales'
+import type { Shell } from '#/auth/shell'
 import appCss from '../styles.css?url'
 
 export const Route = createRootRoute({
-  loader: () => loadLocale(),
+  loader: () => loadShell(),
   head: ({ loaderData }) => ({
     meta: [
       { charSet: 'utf-8' },
       { name: 'viewport', content: 'width=device-width, initial-scale=1' },
-      { title: createTranslate(loaderData ?? DEFAULT_LOCALE)('appName') },
+      {
+        title: createTranslate((loaderData ?? DEFAULT_SHELL).locale)('appName'),
+      },
     ],
     links: [
       { rel: 'stylesheet', href: appCss },
@@ -69,17 +72,17 @@ function NotFound() {
 function RootDocument({ children }: { children: ReactNode }) {
   // A loader that failed leaves this undefined, whatever the type says, and a
   // document has to render in some language even then.
-  const locale: Locale | undefined = Route.useLoaderData()
-  const dir = directionOf(locale ?? DEFAULT_LOCALE)
+  const loaded: Shell | undefined = Route.useLoaderData()
+  const shell = loaded ?? DEFAULT_SHELL
 
   return (
-    <html lang={locale ?? DEFAULT_LOCALE} dir={dir}>
+    <html lang={shell.locale} dir={directionOf(shell.locale)}>
       <head>
         <HeadContent />
       </head>
       <body>
-        <I18nProvider locale={locale ?? DEFAULT_LOCALE}>
-          {children}
+        <I18nProvider locale={shell.locale} amountsHidden={shell.hideAmounts}>
+          <ViewerProvider signedIn={shell.signedIn}>{children}</ViewerProvider>
         </I18nProvider>
         <TanStackDevtools
           // The bottom of the screen belongs to the dock now, so the

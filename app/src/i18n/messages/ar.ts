@@ -86,6 +86,9 @@ export const ar = {
   'customer.noMerchantsBody':
     'يظهر المتجر هنا أول مرة يسجّل لك فيها عملية بالآجل.',
 
+  'amounts.hide': 'إخفاء المبالغ',
+  'amounts.show': 'إظهار المبالغ',
+
   'money.currency': 'ر.س',
   'money.hidden': '••••',
 

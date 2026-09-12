@@ -1,5 +1,6 @@
 import { Outlet, createFileRoute } from '@tanstack/react-router'
 import { loadSignedInUser } from '#/auth/session'
+import { AmountsEye } from '#/components/amounts-eye'
 import { Dock } from '#/components/dock'
 import { ProfileMenu } from '#/components/profile'
 import { LedgerStream } from '#/components/ledger-stream'
@@ -31,6 +32,7 @@ function CustomerSide() {
           { to: '/customer/card', label: t('nav.card'), glyph: '◧' },
         ]}
       >
+        <AmountsEye />
         <ProfileMenu person={person} side="customer" />
       </Dock>
     </>

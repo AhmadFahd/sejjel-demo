@@ -89,6 +89,9 @@ export const en = {
   'customer.noMerchantsBody':
     'A shop appears here the first time it records something on credit for you.',
 
+  'amounts.hide': 'Hide the amounts',
+  'amounts.show': 'Show the amounts',
+
   'money.currency': 'SAR',
   'money.hidden': '••••',
 

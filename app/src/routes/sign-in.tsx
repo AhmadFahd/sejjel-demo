@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { createFileRoute, useRouter } from '@tanstack/react-router'
+import { createFileRoute } from '@tanstack/react-router'
 import { authClient } from '#/auth/client'
 import { OTP_LENGTH } from '#/auth/otp'
 import {
@@ -44,7 +44,6 @@ function digitsOf(value: string) {
  */
 function SignIn() {
   const { t } = useI18n()
-  const router = useRouter()
 
   const [step, setStep] = useState<Step>({ name: 'phone' })
   const [typed, setTyped] = useState('')
@@ -115,8 +114,11 @@ function SignIn() {
       return
     }
 
-    await router.invalidate()
-    await router.navigate({ to: '/' })
+    // A document load rather than a client navigation: who is signed in
+    // decides what the whole document is — the language comes off their row,
+    // and so does whether the amounts are hidden — and the shell around the
+    // screens is rendered once, when the document is.
+    window.location.assign('/')
   }
 
   return (
