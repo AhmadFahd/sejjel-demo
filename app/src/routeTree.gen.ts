@@ -24,6 +24,7 @@ import { Route as CustomerNotificationsRouteImport } from './routes/customer/not
 import { Route as InvoiceInvoiceIdRouteImport } from './routes/invoice/$invoiceId'
 import { Route as MerchantIndexRouteImport } from './routes/merchant/index'
 import { Route as MerchantConnectionIdRouteImport } from './routes/merchant/$connectionId'
+import { Route as MerchantLogRouteImport } from './routes/merchant/log'
 import { Route as MerchantNewRouteImport } from './routes/merchant/new'
 import { Route as MerchantNotificationsRouteImport } from './routes/merchant/notifications'
 import { Route as MerchantQrRouteImport } from './routes/merchant/qr'
@@ -113,6 +114,11 @@ const MerchantConnectionIdRoute = MerchantConnectionIdRouteImport.update({
   path: '/$connectionId',
   getParentRoute: () => MerchantRouteRoute,
 } as any)
+const MerchantLogRoute = MerchantLogRouteImport.update({
+  id: '/log',
+  path: '/log',
+  getParentRoute: () => MerchantRouteRoute,
+} as any)
 const MerchantNewRoute = MerchantNewRouteImport.update({
   id: '/new',
   path: '/new',
@@ -195,6 +201,7 @@ export interface FileRoutesByFullPath {
   '/customer/notifications': typeof CustomerNotificationsRoute
   '/invoice/$invoiceId': typeof InvoiceInvoiceIdRoute
   '/merchant/$connectionId': typeof MerchantConnectionIdRoute
+  '/merchant/log': typeof MerchantLogRoute
   '/merchant/new': typeof MerchantNewRoute
   '/merchant/notifications': typeof MerchantNotificationsRoute
   '/merchant/qr': typeof MerchantQrRoute
@@ -223,6 +230,7 @@ export interface FileRoutesByTo {
   '/customer/notifications': typeof CustomerNotificationsRoute
   '/invoice/$invoiceId': typeof InvoiceInvoiceIdRoute
   '/merchant/$connectionId': typeof MerchantConnectionIdRoute
+  '/merchant/log': typeof MerchantLogRoute
   '/merchant/new': typeof MerchantNewRoute
   '/merchant/notifications': typeof MerchantNotificationsRoute
   '/merchant/qr': typeof MerchantQrRoute
@@ -254,6 +262,7 @@ export interface FileRoutesById {
   '/customer/notifications': typeof CustomerNotificationsRoute
   '/invoice/$invoiceId': typeof InvoiceInvoiceIdRoute
   '/merchant/$connectionId': typeof MerchantConnectionIdRoute
+  '/merchant/log': typeof MerchantLogRoute
   '/merchant/new': typeof MerchantNewRoute
   '/merchant/notifications': typeof MerchantNotificationsRoute
   '/merchant/qr': typeof MerchantQrRoute
@@ -286,6 +295,7 @@ export interface FileRouteTypes {
     | '/customer/notifications'
     | '/invoice/$invoiceId'
     | '/merchant/$connectionId'
+    | '/merchant/log'
     | '/merchant/new'
     | '/merchant/notifications'
     | '/merchant/qr'
@@ -314,6 +324,7 @@ export interface FileRouteTypes {
     | '/customer/notifications'
     | '/invoice/$invoiceId'
     | '/merchant/$connectionId'
+    | '/merchant/log'
     | '/merchant/new'
     | '/merchant/notifications'
     | '/merchant/qr'
@@ -344,6 +355,7 @@ export interface FileRouteTypes {
     | '/customer/notifications'
     | '/invoice/$invoiceId'
     | '/merchant/$connectionId'
+    | '/merchant/log'
     | '/merchant/new'
     | '/merchant/notifications'
     | '/merchant/qr'
@@ -484,6 +496,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof MerchantConnectionIdRouteImport
       parentRoute: typeof MerchantRouteRoute
     }
+    '/merchant/log': {
+      id: '/merchant/log'
+      path: '/log'
+      fullPath: '/merchant/log'
+      preLoaderRoute: typeof MerchantLogRouteImport
+      parentRoute: typeof MerchantRouteRoute
+    }
     '/merchant/new': {
       id: '/merchant/new'
       path: '/new'
@@ -602,6 +621,7 @@ const CustomerRouteRouteWithChildren = CustomerRouteRoute._addFileChildren(
 
 interface MerchantRouteRouteChildren {
   MerchantConnectionIdRoute: typeof MerchantConnectionIdRoute
+  MerchantLogRoute: typeof MerchantLogRoute
   MerchantNewRoute: typeof MerchantNewRoute
   MerchantNotificationsRoute: typeof MerchantNotificationsRoute
   MerchantQrRoute: typeof MerchantQrRoute
@@ -614,6 +634,7 @@ interface MerchantRouteRouteChildren {
 
 const MerchantRouteRouteChildren: MerchantRouteRouteChildren = {
   MerchantConnectionIdRoute: MerchantConnectionIdRoute,
+  MerchantLogRoute: MerchantLogRoute,
   MerchantNewRoute: MerchantNewRoute,
   MerchantNotificationsRoute: MerchantNotificationsRoute,
   MerchantQrRoute: MerchantQrRoute,
@@ -646,12 +667,3 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { createStart } from '@tanstack/react-start'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-  }
-}
