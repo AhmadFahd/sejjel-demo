@@ -31,6 +31,7 @@ import { Route as MerchantQrRouteImport } from './routes/merchant/qr'
 import { Route as MerchantRecordRouteImport } from './routes/merchant/record'
 import { Route as MerchantScanRouteImport } from './routes/merchant/scan'
 import { Route as MerchantSettingsRouteImport } from './routes/merchant/settings'
+import { Route as RTokenRouteImport } from './routes/r/$token'
 import { Route as ShopMerchantIdRouteImport } from './routes/shop/$merchantId'
 import { Route as ApiAuthSplatRouteImport } from './routes/api/auth/$'
 import { Route as ApiInvoicesIndexRouteImport } from './routes/api/invoices/index'
@@ -149,6 +150,11 @@ const MerchantSettingsRoute = MerchantSettingsRouteImport.update({
   path: '/settings',
   getParentRoute: () => MerchantRouteRoute,
 } as any)
+const RTokenRoute = RTokenRouteImport.update({
+  id: '/r/$token',
+  path: '/r/$token',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ShopMerchantIdRoute = ShopMerchantIdRouteImport.update({
   id: '/shop/$merchantId',
   path: '/shop/$merchantId',
@@ -208,6 +214,7 @@ export interface FileRoutesByFullPath {
   '/merchant/record': typeof MerchantRecordRoute
   '/merchant/scan': typeof MerchantScanRoute
   '/merchant/settings': typeof MerchantSettingsRoute
+  '/r/$token': typeof RTokenRoute
   '/shop/$merchantId': typeof ShopMerchantIdRoute
   '/customer/': typeof CustomerIndexRoute
   '/merchant/': typeof MerchantIndexRoute
@@ -237,6 +244,7 @@ export interface FileRoutesByTo {
   '/merchant/record': typeof MerchantRecordRoute
   '/merchant/scan': typeof MerchantScanRoute
   '/merchant/settings': typeof MerchantSettingsRoute
+  '/r/$token': typeof RTokenRoute
   '/shop/$merchantId': typeof ShopMerchantIdRoute
   '/customer': typeof CustomerIndexRoute
   '/merchant': typeof MerchantIndexRoute
@@ -269,6 +277,7 @@ export interface FileRoutesById {
   '/merchant/record': typeof MerchantRecordRoute
   '/merchant/scan': typeof MerchantScanRoute
   '/merchant/settings': typeof MerchantSettingsRoute
+  '/r/$token': typeof RTokenRoute
   '/shop/$merchantId': typeof ShopMerchantIdRoute
   '/customer/': typeof CustomerIndexRoute
   '/merchant/': typeof MerchantIndexRoute
@@ -302,6 +311,7 @@ export interface FileRouteTypes {
     | '/merchant/record'
     | '/merchant/scan'
     | '/merchant/settings'
+    | '/r/$token'
     | '/shop/$merchantId'
     | '/customer/'
     | '/merchant/'
@@ -331,6 +341,7 @@ export interface FileRouteTypes {
     | '/merchant/record'
     | '/merchant/scan'
     | '/merchant/settings'
+    | '/r/$token'
     | '/shop/$merchantId'
     | '/customer'
     | '/merchant'
@@ -362,6 +373,7 @@ export interface FileRouteTypes {
     | '/merchant/record'
     | '/merchant/scan'
     | '/merchant/settings'
+    | '/r/$token'
     | '/shop/$merchantId'
     | '/customer/'
     | '/merchant/'
@@ -383,6 +395,7 @@ export interface RootRouteChildren {
   WelcomeRoute: typeof WelcomeRoute
   ApiEventsRoute: typeof ApiEventsRoute
   InvoiceInvoiceIdRoute: typeof InvoiceInvoiceIdRoute
+  RTokenRoute: typeof RTokenRoute
   ShopMerchantIdRoute: typeof ShopMerchantIdRoute
   ApiAuthSplatRoute: typeof ApiAuthSplatRoute
   ApiInvoicesInvoiceIdRoute: typeof ApiInvoicesInvoiceIdRoute
@@ -545,6 +558,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof MerchantSettingsRouteImport
       parentRoute: typeof MerchantRouteRoute
     }
+    '/r/$token': {
+      id: '/r/$token'
+      path: '/r/$token'
+      fullPath: '/r/$token'
+      preLoaderRoute: typeof RTokenRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/shop/$merchantId': {
       id: '/shop/$merchantId'
       path: '/shop/$merchantId'
@@ -659,6 +679,7 @@ const rootRouteChildren: RootRouteChildren = {
   WelcomeRoute: WelcomeRoute,
   ApiEventsRoute: ApiEventsRoute,
   InvoiceInvoiceIdRoute: InvoiceInvoiceIdRoute,
+  RTokenRoute: RTokenRoute,
   ShopMerchantIdRoute: ShopMerchantIdRoute,
   ApiAuthSplatRoute: ApiAuthSplatRoute,
   ApiInvoicesInvoiceIdRoute: ApiInvoicesInvoiceIdRoute,
