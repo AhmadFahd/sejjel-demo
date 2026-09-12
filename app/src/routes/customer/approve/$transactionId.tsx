@@ -115,6 +115,18 @@ function ApproveOperation() {
           <KeyValueRow label={t('ledger.dueDate')}>
             {operation.dueAt ? date(operation.dueAt) : t('ledger.noDueDate')}
           </KeyValueRow>
+
+          {/* UC-11: what is being agreed to, before agreeing to it. */}
+          {operation.invoiceId ? (
+            <Link
+              to="/invoice/$invoiceId"
+              params={{ invoiceId: operation.invoiceId }}
+              className="mt-3 inline-block text-[12.5px] font-black text-steel underline"
+              data-testid="invoice-link"
+            >
+              {t('invoice.open')}
+            </Link>
+          ) : null}
         </Card>
 
         {operation.status !== 'pending' ? (

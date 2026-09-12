@@ -184,6 +184,61 @@ test('a shopkeeper records an operation, and can call it off', async ({
 })
 
 /**
+ * UC-11: the invoice behind an operation. The shop attaches it, the customer
+ * sees it before agreeing to pay it, and a third phone gets nothing.
+ */
+test('an operation carries its invoice, and only to the two of them', async ({
+  page,
+  browser,
+}) => {
+  test.slow()
+  await signIn(page, '0550111222', '+966550111222')
+  await page.getByTestId('record').click()
+  await page.getByLabel('العميل').selectOption({ label: 'خالد علي' })
+  await page.getByLabel('المبلغ').fill('60')
+  await page.getByLabel('الوصف (اختياري)').fill('فاتورة اليوم')
+
+  // A one-pixel PNG, which is a real picture and small enough to be one.
+  await page.getByTestId('invoice-file').setInputFiles({
+    name: 'receipt.png',
+    mimeType: 'image/png',
+    buffer: Buffer.from(
+      'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg==',
+      'base64',
+    ),
+  })
+  await expect(page.getByTestId('invoice-picked')).toContainText('receipt.png')
+
+  await page.getByRole('button', { name: 'أرسل للعميل' }).click()
+  await expect(page.getByTestId('waiting')).toBeVisible()
+
+  // The customer sees it on the screen where they are asked to agree.
+  const { context: his, page: hisPhone } = await openPhone(browser)
+  await signIn(hisPhone, '0555987210', '+966555987210')
+  await hisPhone.getByTestId('awaiting').first().click()
+  await hisPhone.getByTestId('invoice-link').click()
+  await expect(hisPhone.getByTestId('invoice-image')).toBeVisible()
+  const invoice = new URL(hisPhone.url()).pathname
+
+  // A third phone is given nothing, neither the screen nor the bytes.
+  const { context: other, page: otherPhone } = await openPhone(browser)
+  await signIn(otherPhone, '0550123456', '+966550123456')
+  await otherPhone.goto(invoice)
+  await expect(otherPhone.getByRole('heading', { level: 1 })).toHaveText(
+    'غير موجود',
+  )
+  const refused = await otherPhone.request.get(
+    invoice.replace('/invoice/', '/api/invoices/'),
+  )
+  expect(refused.status()).toBe(404)
+
+  // Leave the fixture as it was found: the tests share one seeded ledger.
+  await page.getByRole('button', { name: 'إلغاء العملية' }).click()
+  await his.close()
+  await other.close()
+})
+
+/**
  * UC-05 and UC-06 at the counter: سالم is past his date and has 250 left of a
  * 1,500 limit. The warning can be gone past; the limit cannot.
  */

@@ -176,6 +176,16 @@ export const ar = {
   'operation.continue': 'سجّلها على أي حال',
   'operation.error.connection': 'هذا العميل ليس من عملائك.',
 
+  'invoice.label': 'الفاتورة',
+  'invoice.attach': 'إرفاق الفاتورة',
+  'invoice.clear': 'إزالة',
+  'invoice.open': 'عرض الفاتورة',
+  'invoice.title': 'الفاتورة',
+  'invoice.missing': 'الفاتورة غير موجودة.',
+  'invoice.error.type': 'صورة أو ملف PDF، لا غير.',
+  'invoice.error.size': 'حجم الملف أكبر من 5 ميغابايت.',
+  'invoice.error.empty': 'الملف فارغ.',
+
   'approval.title': 'الموافقة على العملية',
   'approval.approve': 'موافقة',
   'approval.decline': 'رفض',

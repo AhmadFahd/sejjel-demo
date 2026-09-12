@@ -37,6 +37,8 @@ export async function recordPendingPurchase(
     requestId: string
     /** UC-06: the merchant saw the overdue warning and went on. */
     acknowledgedOverdue?: boolean
+    /** UC-11: the invoice behind it, if the shopkeeper attached one. */
+    invoiceId?: string | null
     now?: Date
   },
 ): Promise<RecordResult> {
@@ -81,6 +83,7 @@ export async function recordPendingPurchase(
       status: 'pending',
       amountHalalas: input.amountHalalas,
       description: input.description?.trim() || null,
+      invoiceId: input.invoiceId ?? null,
       requestId: input.requestId,
       // The term and the due date are settled now, from the terms in force
       // now, so a later change to the shop's term cannot move this date.

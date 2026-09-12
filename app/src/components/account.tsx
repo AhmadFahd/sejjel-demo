@@ -1,3 +1,4 @@
+import { Link } from '@tanstack/react-router'
 import { Card, cx } from './primitives'
 import { TransactionRow } from './ledger'
 import { hasExpired } from '#/lib/purchase'
@@ -59,16 +60,29 @@ export function TransactionHistory({
                   : t(`tx.${entry.status}`)
             }
             action={
-              onCancel && entry.status === 'pending' && !lapsed ? (
-                <button
-                  type="button"
-                  data-testid="cancel-operation"
-                  className="text-[11px] font-black text-bad-text underline"
-                  onClick={() => onCancel(entry.id)}
-                >
-                  {t('operation.cancel')}
-                </button>
-              ) : undefined
+              <>
+                {/* UC-11: the invoice behind it, for both sides of the row. */}
+                {entry.invoiceId ? (
+                  <Link
+                    to="/invoice/$invoiceId"
+                    params={{ invoiceId: entry.invoiceId }}
+                    className="text-[11px] font-black text-steel underline"
+                    data-testid="invoice-link"
+                  >
+                    {t('invoice.open')}
+                  </Link>
+                ) : null}
+                {onCancel && entry.status === 'pending' && !lapsed ? (
+                  <button
+                    type="button"
+                    data-testid="cancel-operation"
+                    className="text-[11px] font-black text-bad-text underline"
+                    onClick={() => onCancel(entry.id)}
+                  >
+                    {t('operation.cancel')}
+                  </button>
+                ) : null}
+              </>
             }
           />
         )
