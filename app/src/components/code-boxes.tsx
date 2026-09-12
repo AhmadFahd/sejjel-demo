@@ -70,7 +70,7 @@ export function CodeBoxes({
           value={code[index] ?? ''}
           className={cx(
             'tabular h-14 w-full rounded-(--radius-control) border-2 text-center text-[22px] font-black text-ink',
-            code[index] ? 'border-steel bg-card' : 'border-neutral-bg bg-mist',
+            code[index] ? 'border-brand bg-card' : 'border-neutral-bg bg-bone',
           )}
           onChange={(event) => {
             const typed = event.target.value.replace(/\D/g, '')

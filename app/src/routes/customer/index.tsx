@@ -73,7 +73,7 @@ function CustomerHome() {
           <StatTile
             label={t('ledger.totalDebt')}
             value={money(totals.outstandingHalalas)}
-            tone="gold"
+            tone="brand"
           />
           <StatTile
             label={t('ledger.overdueTotal')}
@@ -101,7 +101,7 @@ function CustomerHome() {
             className="block"
             data-testid="awaiting"
           >
-            <Card className="border-[1.5px] border-gold">
+            <Card className="border-[1.5px] border-brand">
               <div className="mb-1 text-[13px] font-black text-warn-text">
                 {t('approval.awaiting')}
               </div>

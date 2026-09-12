@@ -6,7 +6,7 @@ import type { LedgerStatus } from '#/db/derive'
 import type { LimitLevel } from '#/lib/limit'
 
 /**
- * UC-19: the gold strip that says when everything falls due. The date is worked
+ * UC-19: the strip that says when everything falls due. The date is worked
  * out on the server and handed down, so the strip cannot disagree with the due
  * dates below it, and so a device set to another timezone reads the same day.
  */
@@ -26,13 +26,13 @@ export function PaydayStrip({
         'flex items-center gap-2.5 rounded-(--radius-control) p-3',
         onDark
           ? 'border border-white/30 bg-white/15'
-          : 'border border-gold/20 bg-linear-135 from-warn-bg to-white',
+          : 'border border-brand/20 bg-brand/[0.06]',
       )}
     >
       <span
         className={cx(
-          'grid size-9 flex-none place-items-center rounded-xl bg-gold',
-          onDark ? 'text-ink' : 'text-white',
+          'grid size-9 flex-none place-items-center rounded-xl',
+          onDark ? 'bg-bone text-brand' : 'bg-brand text-white',
         )}
         aria-hidden
       >
@@ -49,8 +49,8 @@ export function PaydayStrip({
         </b>
         <span
           className={cx(
-            'text-[11px] font-extrabold',
-            onDark ? 'text-gold-light' : 'text-warn-text',
+            'text-[11px] font-bold',
+            onDark ? 'text-white/75' : 'text-muted',
           )}
         >
           {nextPaydayAt
@@ -80,8 +80,8 @@ export function LimitBar({
 
   const fill: Record<LimitLevel, string> = {
     ok: 'bg-linear-to-r from-good/70 to-good',
-    warm: 'bg-linear-to-r from-gold-light to-gold',
-    hot: 'bg-linear-to-r from-gold to-warn',
+    warm: 'bg-linear-to-r from-warn/70 to-warn',
+    hot: 'bg-linear-to-r from-warn to-bad/80',
     full: 'bg-linear-to-r from-warn to-bad',
   }
 
@@ -99,7 +99,7 @@ export function LimitBar({
   return (
     <div className="mt-3" data-testid="limit-bar" data-percent={percent}>
       {onDark ? null : (
-        <div className="mb-1.5 flex justify-between gap-2.5 text-[11px] font-extrabold text-muted">
+        <div className="mb-1.5 flex justify-between gap-2.5 text-[11px] font-bold text-muted">
           <span>
             {t('ledger.creditLimit')}
             <b className="tabular ms-1 text-[13px] text-ink">
@@ -127,7 +127,7 @@ export function LimitBar({
       </div>
       <p
         className={cx(
-          'mt-1.5 text-[11px] font-extrabold',
+          'mt-1.5 text-[11px] font-bold',
           alarming
             ? onDark
               ? 'text-bad-bg'
@@ -168,24 +168,24 @@ export function OperationsCounter({
         <b className="tabular block text-lg font-black text-ink">
           {number(purchases + payments)}
         </b>
-        <span className="text-[11.5px] font-extrabold text-muted">
+        <span className="text-[11.5px] font-bold text-muted">
           {t('ledger.operations')}
         </span>
       </div>
       <div className="ms-auto flex gap-3.5 text-center">
         <div>
-          <b className="tabular block text-[15px] font-black text-steel">
+          <b className="tabular block text-[15px] font-black text-brand">
             {number(purchases)}
           </b>
-          <span className="text-[10.5px] font-extrabold text-muted">
+          <span className="text-[10.5px] font-bold text-muted">
             {t('ledger.purchases')}
           </span>
         </div>
         <div>
-          <b className="tabular block text-[15px] font-black text-steel">
+          <b className="tabular block text-[15px] font-black text-brand">
             {number(payments)}
           </b>
-          <span className="text-[10.5px] font-extrabold text-muted">
+          <span className="text-[10.5px] font-bold text-muted">
             {t('ledger.payments')}
           </span>
         </div>
@@ -214,7 +214,7 @@ export function BalanceHero({
 
   return (
     <div
-      className="relative mb-3 overflow-hidden rounded-(--radius-hero) bg-linear-140 from-ink to-[#6E877D] p-4.5 text-white"
+      className="relative mb-3 overflow-hidden rounded-(--radius-hero) bg-brand p-4.5 text-white"
       data-testid="balance-hero"
     >
       <div className="relative z-1 flex items-start justify-between">
@@ -227,12 +227,12 @@ export function BalanceHero({
 
       {children}
 
-      <div className="relative z-1 mt-3 text-[11px] font-extrabold text-white/75">
+      <div className="relative z-1 mt-3 text-[11px] font-bold text-white/75">
         {t('ledger.currentBalance')}
       </div>
       <div className="tabular relative z-1 text-[32px] leading-tight font-black">
         {amount(balanceHalalas)}{' '}
-        <small className="text-[15px] font-extrabold text-gold">
+        <small className="text-[15px] font-bold text-white/70">
           {t('money.currency')}
         </small>
       </div>
@@ -241,7 +241,7 @@ export function BalanceHero({
         <div className="relative z-1 mt-3.5 grid grid-cols-3 gap-2 border-t border-white/15 pt-3">
           {facts.map((fact) => (
             <div key={fact.label}>
-              <span className="mb-0.5 block text-[10px] font-extrabold text-white/70">
+              <span className="mb-0.5 block text-[10px] font-bold text-white/70">
                 {fact.label}
               </span>
               <b className="tabular text-[13px] font-black">{fact.value}</b>
@@ -276,7 +276,7 @@ export function TransactionRow({
   return (
     <div className="flex items-center justify-between border-b border-line py-3 last:border-b-0">
       <div>
-        <div className="text-[13.5px] font-extrabold text-ink">{title}</div>
+        <div className="text-[13.5px] font-bold text-ink">{title}</div>
         <div className="text-[11px] font-bold text-muted">{when}</div>
         {note ? (
           <div className="mt-0.5 flex items-center gap-2">

@@ -69,7 +69,7 @@ export function NotificationList({
       {entries.map((entry) => (
         <Card
           key={entry.id}
-          className={cx(entry.readAt ? undefined : 'border-s-4 border-gold')}
+          className={cx(entry.readAt ? undefined : 'border-s-4 border-brand')}
           data-testid="notification"
           data-kind={entry.kind}
         >
@@ -119,7 +119,7 @@ export function NotificationList({
           {/* UC-12: answered once, and it says so rather than offering again. */}
           {entry.actedAt ? (
             <p
-              className="mt-2 text-[12px] font-extrabold text-good-text"
+              className="mt-2 text-[12px] font-bold text-good-text"
               data-testid="notification-acted"
             >
               {t('notify.acted')}

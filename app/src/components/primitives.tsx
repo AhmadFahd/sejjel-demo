@@ -54,12 +54,12 @@ export function StatTile({
 }: {
   label: string
   value: string
-  tone?: 'plain' | 'gold' | 'bad'
+  tone?: 'plain' | 'brand' | 'bad'
   marked?: boolean
 }) {
   const toneClass =
-    tone === 'gold'
-      ? 'text-gold-dark'
+    tone === 'brand'
+      ? 'text-brand'
       : tone === 'bad'
         ? 'text-bad-text'
         : 'text-ink'
@@ -70,7 +70,7 @@ export function StatTile({
         {marked ? <span className="me-1 align-top text-[9px]">▲</span> : null}
         {value}
       </b>
-      <span className="text-[10.5px] font-extrabold text-muted">{label}</span>
+      <span className="text-[10.5px] font-bold text-muted">{label}</span>
     </div>
   )
 }
@@ -103,9 +103,9 @@ export function KeyValueRow({
 }
 
 const AVATAR_TONES = [
-  'bg-steel text-white',
-  'bg-ink text-white',
-  'bg-gold text-ink',
+  'bg-brand text-white',
+  'bg-brand text-white',
+  'bg-neutral-bg text-ink',
 ]
 
 export function Avatar({ name, index = 0 }: { name: string; index?: number }) {

@@ -106,7 +106,7 @@ function PayShop() {
         <Link
           to="/customer/$connectionId"
           params={{ connectionId: summary.connectionId }}
-          className="mb-3 inline-block text-[13px] font-black text-steel"
+          className="mb-3 inline-block text-[13px] font-black text-brand"
         >
           {t('nav.back')}
         </Link>
@@ -128,7 +128,7 @@ function PayShop() {
             <Link
               to="/customer/$connectionId"
               params={{ connectionId: summary.connectionId }}
-              className="mt-3 inline-block text-[13px] font-black text-steel"
+              className="mt-3 inline-block text-[13px] font-black text-brand"
             >
               {t('notFound.home')}
             </Link>
@@ -157,7 +157,7 @@ function PayShop() {
             {whole ? null : (
               <div className="mt-3">
                 <label
-                  className="mb-1 block text-[12.5px] font-extrabold text-muted"
+                  className="mb-1 block text-[12.5px] font-bold text-muted"
                   htmlFor="pay-amount"
                 >
                   {t('operation.amount')}
@@ -202,7 +202,7 @@ function PayShop() {
               <p
                 role="alert"
                 data-testid="pay-failed"
-                className="mt-3 text-[12.5px] font-extrabold text-bad-text"
+                className="mt-3 text-[12.5px] font-bold text-bad-text"
               >
                 {t('pay.failed')} {stage.reason ? `(${stage.reason})` : ''}
               </p>
@@ -212,7 +212,7 @@ function PayShop() {
               <p
                 key={problem}
                 role="alert"
-                className="mt-3 text-[12.5px] font-extrabold text-bad-text"
+                className="mt-3 text-[12.5px] font-bold text-bad-text"
               >
                 {t(`pay.error.${problem}`)}
               </p>

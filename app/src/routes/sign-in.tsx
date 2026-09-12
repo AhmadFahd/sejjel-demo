@@ -12,6 +12,7 @@ import {
 import { Button } from '#/components/chrome'
 import { CodeBoxes } from '#/components/code-boxes'
 import { LocaleToggle } from '#/components/locale-toggle'
+import { Mark } from '#/components/brand'
 import { useI18n } from '#/i18n/context'
 import type { ReactNode } from 'react'
 
@@ -132,14 +133,9 @@ function SignIn() {
   }
 
   return (
-    <main className="flex min-h-dvh flex-col bg-ink text-white">
+    <main className="flex min-h-dvh flex-col bg-brand text-white">
       <div className="px-7 pt-10 pb-8">
-        <span
-          className="grid size-12 place-items-center rounded-2xl bg-linear-135 from-gold-light via-gold to-gold-dark text-[22px] font-black text-ink"
-          aria-hidden
-        >
-          {t('appName').slice(0, 1)}
-        </span>
+        <Mark title={t('appName')} className="h-11 text-bone" />
         <h1 className="mt-5 text-[27px] leading-tight font-black">
           {t('auth.hero')}
         </h1>
@@ -153,18 +149,18 @@ function SignIn() {
 
       {/* The sheet, and everything in it is dark on light: the backdrop paints
           its own text white, which a field on the sheet would inherit. */}
-      <div className="mt-auto rounded-t-3xl bg-mist px-5 pt-3 pb-7 text-ink">
+      <div className="mt-auto rounded-t-3xl bg-bone px-5 pt-3 pb-7 text-ink">
         <div className="mx-auto mb-3 h-1 w-10 rounded-full bg-neutral-bg" />
 
         <div className="mb-3 flex justify-end">
-          <LocaleToggle className="border border-neutral-bg bg-card text-steel" />
+          <LocaleToggle className="border border-neutral-bg bg-card text-brand" />
         </div>
 
         {step.name === 'phone' ? (
           <>
             <h2 className="mb-3 text-base font-black">{t('auth.title')}</h2>
             <label
-              className="mb-1 block text-[12.5px] font-extrabold text-muted"
+              className="mb-1 block text-[12.5px] font-bold text-muted"
               htmlFor="phone"
             >
               {t('auth.phoneLabel')}
@@ -197,7 +193,7 @@ function SignIn() {
             <p className="mb-4 text-[11px] font-bold text-muted">
               {t('auth.phoneHint')}
             </p>
-            <Button tone="gold" disabled={busy} onClick={onSendCode}>
+            <Button tone="primary" disabled={busy} onClick={onSendCode}>
               {t('auth.sendCode')}
             </Button>
             <p className="mt-3 text-center text-[11px] font-bold text-muted">
@@ -218,7 +214,7 @@ function SignIn() {
               <button
                 type="button"
                 disabled={busy}
-                className="font-black text-steel"
+                className="font-black text-brand"
                 onClick={() => {
                   setCode('')
                   setTrouble(null)
@@ -245,7 +241,7 @@ function SignIn() {
             {/* A code that was refused, or a request that failed, needs a way
                 to be sent again: the completed code does not resubmit itself. */}
             <Button
-              tone="gold"
+              tone="primary"
               disabled={busy || code.length < OTP_LENGTH}
               onClick={() => void onVerify(code)}
             >
@@ -256,7 +252,7 @@ function SignIn() {
               type="button"
               disabled={busy || secondsUntilResend > 0}
               onClick={() => void send(step.phoneNumber)}
-              className="mt-2 w-full py-2 text-[11.5px] font-black text-steel disabled:text-faint"
+              className="mt-2 w-full py-2 text-[11.5px] font-black text-brand disabled:text-faint"
             >
               {secondsUntilResend > 0
                 ? t('auth.resendIn', { seconds: secondsUntilResend })
@@ -268,7 +264,7 @@ function SignIn() {
         {trouble ? (
           <p
             role="alert"
-            className="mt-4 rounded-(--radius-control) bg-bad-bg px-3.5 py-3 text-[12.5px] font-extrabold text-bad-text"
+            className="mt-4 rounded-(--radius-control) bg-bad-bg px-3.5 py-3 text-[12.5px] font-bold text-bad-text"
           >
             {t(`auth.error.${trouble}`)}
           </p>
@@ -281,9 +277,9 @@ function SignIn() {
 /** One thing the ledger does, on the backdrop behind the sheet. */
 function Reason({ children }: { children: ReactNode }) {
   return (
-    <li className="flex items-center gap-2.5 text-[13px] font-extrabold text-white/85">
+    <li className="flex items-center gap-2.5 text-[13px] font-bold text-white/85">
       <span
-        className="grid size-5 flex-none place-items-center rounded-full bg-gold/25 text-[11px] text-gold-light"
+        className="grid size-5 flex-none place-items-center rounded-full bg-white/20 text-[11px] text-white"
         aria-hidden
       >
         ✓

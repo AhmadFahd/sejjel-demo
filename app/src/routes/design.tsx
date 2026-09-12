@@ -55,7 +55,7 @@ function Panel({ locale }: { locale: Locale }) {
 
   return (
     <section
-      className="mx-auto w-full max-w-[430px] overflow-hidden rounded-[34px] bg-mist shadow-xl"
+      className="mx-auto w-full max-w-[430px] overflow-hidden rounded-[34px] bg-bone shadow-xl"
       data-testid={`gallery-${locale}`}
       data-dir={directionOf(locale)}
     >
@@ -65,7 +65,7 @@ function Panel({ locale }: { locale: Locale }) {
           <StatTile
             label={t('ledger.outstanding')}
             value={money(customer.balanceHalalas)}
-            tone="gold"
+            tone="brand"
           />
           <StatTile
             label={t('ledger.overdueTotal')}
@@ -177,7 +177,7 @@ function Panel({ locale }: { locale: Locale }) {
         </Card>
 
         <Card>
-          <p className="mb-2 text-[12.5px] font-extrabold text-muted">
+          <p className="mb-2 text-[12.5px] font-bold text-muted">
             {t('auth.codeLabel')}
           </p>
           <CodeBoxes code={code} onCode={setCode} />
@@ -188,9 +188,13 @@ function Panel({ locale }: { locale: Locale }) {
             {t('ledger.operations')}
           </Button>
           <div className="flex gap-2.5">
-            <Button tone="gold" onClick={() => setSheetOpen(true)}>
-              {t('ledger.creditLimit')}
-            </Button>
+            {/* The bone tone only ever sits on the green, so the gallery shows
+                it there rather than on a ground it disappears into. */}
+            <div className="flex-1 rounded-(--radius-control) bg-brand p-2">
+              <Button tone="bone" onClick={() => setSheetOpen(true)}>
+                {t('ledger.creditLimit')}
+              </Button>
+            </div>
             <Button tone="ghost">{t('ledger.available')}</Button>
           </div>
           <div className="flex gap-2.5">

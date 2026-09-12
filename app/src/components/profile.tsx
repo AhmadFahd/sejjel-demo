@@ -37,7 +37,7 @@ export function ProfileMenu({
         onClick={() => setOpen(!open)}
         className={cx(
           'flex items-center gap-2 rounded-full px-3 py-2 transition lg:px-4',
-          open ? 'bg-ink text-white' : 'text-muted',
+          open ? 'bg-brand text-white' : 'text-muted',
         )}
       >
         <PersonGlyph />
@@ -49,7 +49,7 @@ export function ProfileMenu({
           <div className="fixed inset-0 -z-10" onClick={() => setOpen(false)} />
           {/* Upward from a dock under the thumb, downward from one at the top
               of a desktop. */}
-          <div className="absolute end-0 bottom-full mb-3 w-[15.5rem] rounded-(--radius-card) border border-line bg-mist p-2 shadow-(--shadow-card) lg:top-full lg:bottom-auto lg:mt-3 lg:mb-0">
+          <div className="absolute end-0 bottom-full mb-3 w-[15.5rem] rounded-(--radius-card) border border-line bg-bone p-2 shadow-(--shadow-card) lg:top-full lg:bottom-auto lg:mt-3 lg:mb-0">
             <ProfileRows
               person={person}
               side={side}
@@ -175,7 +175,7 @@ function Row({
       onClick={onPress}
     >
       <span>{label}</span>
-      {value ? <span className="text-steel">{value}</span> : null}
+      {value ? <span className="text-brand">{value}</span> : null}
     </button>
   )
 }

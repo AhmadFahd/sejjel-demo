@@ -36,7 +36,7 @@ export const Route = createRootRoute({
       },
       {
         rel: 'stylesheet',
-        href: 'https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&display=swap',
+        href: 'https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap',
       },
     ],
   }),
@@ -61,7 +61,7 @@ function NotFound() {
         <p className="mb-3 text-[13px] font-bold text-muted">
           {t('notFound.body')}
         </p>
-        <Link to="/" className="text-[13px] font-black text-steel">
+        <Link to="/" className="text-[13px] font-black text-brand">
           {t('notFound.home')}
         </Link>
       </Card>
