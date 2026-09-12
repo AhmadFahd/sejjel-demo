@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { cx } from './primitives'
 import { useI18n } from '#/i18n/context'
-import { LanguageSlot } from '#/prototype/language-switch/slots'
+import { useAppBarHidden } from '#/prototype/no-app-bar/slots'
 import type { ReactNode } from 'react'
 
 export type NavItem = {
@@ -15,6 +15,11 @@ export type NavItem = {
 /** The dark bar at the top: mark, name, and whatever the screen puts beside it. */
 export function AppBar({ actions }: { actions?: ReactNode }) {
   const { t } = useI18n()
+  // PROTOTYPE (no-app-bar): every variant of that question does without this
+  // bar, and what it carried moves into the profile the variant provides.
+  const hidden = useAppBarHidden()
+
+  if (hidden) return null
 
   return (
     <header className="flex items-center gap-2.5 bg-ink px-3.5 pt-1 pb-3.5 text-white">
@@ -32,11 +37,7 @@ export function AppBar({ actions }: { actions?: ReactNode }) {
           {t('appTagline')}
         </div>
       </div>
-      <div className="ms-auto flex items-center gap-2">
-        {actions}
-        {/* PROTOTYPE (#language-switch): the signed-in slot. */}
-        <LanguageSlot slot="appbar" />
-      </div>
+      <div className="ms-auto flex items-center gap-2">{actions}</div>
     </header>
   )
 }

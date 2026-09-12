@@ -9,8 +9,8 @@ import { TanStackDevtools } from '@tanstack/react-devtools'
 import { Card } from '#/components/primitives'
 import { I18nProvider, useI18n } from '#/i18n/context'
 import { loadLocale } from '#/i18n/server'
-import { LanguageSlot } from '#/prototype/language-switch/slots'
-import { VariantSwitcher } from '#/prototype/language-switch/switcher'
+import { ChromeSlot } from '#/prototype/no-app-bar/slots'
+import { VariantSwitcher } from '#/prototype/no-app-bar/switcher'
 import { DEFAULT_LOCALE, directionOf } from '#/i18n/locales'
 import { createTranslate } from '#/i18n/translate'
 import type { ReactNode } from 'react'
@@ -81,9 +81,9 @@ function RootDocument({ children }: { children: ReactNode }) {
       </head>
       <body>
         <I18nProvider locale={locale ?? DEFAULT_LOCALE}>
-          {/* PROTOTYPE (#language-switch): whatever the chosen variant puts on
-              every screen, and the bar for flipping between them. */}
-          <LanguageSlot slot="global" />
+          {/* PROTOTYPE (no-app-bar): whatever the chosen variant puts on every
+              screen, and the bar for flipping between them. */}
+          <ChromeSlot slot="global" />
           {children}
           <VariantSwitcher />
         </I18nProvider>

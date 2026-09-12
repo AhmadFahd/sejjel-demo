@@ -1,5 +1,6 @@
 import { Link, useMatchRoute } from '@tanstack/react-router'
 import { cx } from './primitives'
+import { ChromeSlot } from '#/prototype/no-app-bar/slots'
 import type { LinkProps } from '@tanstack/react-router'
 
 export type DockItem = {
@@ -58,6 +59,9 @@ export function Dock({ items }: { items: Array<DockItem> }) {
               </Link>
             )
           })}
+
+          {/* PROTOTYPE (no-app-bar): where a variant puts the person. */}
+          <ChromeSlot slot="dock" />
         </div>
       </nav>
 

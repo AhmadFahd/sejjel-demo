@@ -54,7 +54,9 @@ export function VariantSwitcher() {
     <div
       dir="ltr"
       data-testid="prototype-switcher"
-      className="fixed bottom-2 left-1/2 z-9999 flex -translate-x-1/2 items-center gap-1 rounded-full bg-fuchsia-600 px-1.5 py-1 text-white shadow-lg"
+      // The dock owns the bottom of a phone and the top of a desktop, so this
+      // sits opposite it rather than on top of the thing being judged.
+      className="fixed top-2 left-1/2 z-9999 flex -translate-x-1/2 items-center gap-1 rounded-full bg-fuchsia-600 px-1.5 py-1 text-white shadow-lg lg:top-auto lg:bottom-2"
     >
       <a href={hrefFor(-1)} className="px-2 py-1 text-sm font-black">
         ←
