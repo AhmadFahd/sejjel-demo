@@ -1,6 +1,21 @@
 import { useEffect } from 'react'
 import { useRouter } from '@tanstack/react-router'
 import { FALLBACK_POLL_MS, fallbackAction } from '#/lib/freshness'
+import { moves } from '#/lib/moves'
+import type { EventKind } from '#/db/queries/events'
+
+/** Every kind the ledger sends, so each arrives knowing what it is. */
+const KINDS = [
+  'purchase.recorded',
+  'purchase.applied',
+  'purchase.cancelled',
+  'payment.received',
+  'connection.requested',
+  'connection.accepted',
+  'terms.changed',
+  'notification.added',
+  'notification.read',
+] as const satisfies ReadonlyArray<EventKind>
 
 /**
  * #14: the client end of the stream. An event says something changed; this
@@ -16,7 +31,18 @@ export function LedgerStream({ enabled }: { enabled: boolean }) {
   useEffect(() => {
     if (!enabled) return
 
-    const refresh = () => void router.invalidate()
+    /**
+     * #89: an event re-reads the screens it moved. A screen that has not said
+     * what moves it is re-read anyway, so this only ever spares a read that
+     * could not have changed anything — the shell on every event, and a screen
+     * that is about something else.
+     */
+    const refresh = (kind?: EventKind) =>
+      void router.invalidate(
+        kind
+          ? { filter: (match) => moves(match.staticData.movedBy, kind) }
+          : undefined,
+      )
 
     if (typeof EventSource === 'undefined') {
       // No stream in this browser, so the timer is the only thing that will
@@ -37,21 +63,11 @@ export function LedgerStream({ enabled }: { enabled: boolean }) {
       if (stopped) return
       source = new EventSource('/api/events')
 
-      // Every kind matters to some screen, and re-fetching is cheap, so one
-      // listener for all of them rather than a list to keep in step.
-      source.addEventListener('message', refresh)
-      for (const kind of [
-        'purchase.recorded',
-        'purchase.applied',
-        'purchase.cancelled',
-        'payment.received',
-        'connection.requested',
-        'connection.accepted',
-        'terms.changed',
-        'notification.added',
-        'notification.read',
-      ]) {
-        source.addEventListener(kind, refresh)
+      // An event without a name is one this app did not send, so it is
+      // answered the blunt way rather than guessed at.
+      source.addEventListener('message', () => refresh())
+      for (const kind of KINDS) {
+        source.addEventListener(kind, () => refresh(kind))
       }
     }
 

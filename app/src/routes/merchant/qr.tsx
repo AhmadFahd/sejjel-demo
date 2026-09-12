@@ -4,6 +4,7 @@ import { QrCanvas } from '#/components/qr-canvas'
 import { useI18n } from '#/i18n/context'
 import { requireSide } from '#/auth/enter'
 import { SETTLED } from '#/lib/freshness'
+import { NOTHING_MOVES_IT } from '#/lib/moves'
 
 const loadShopCode = createServerFn({ method: 'GET' }).handler(async () => {
   const { requireSignedInUser } = await import('#/auth/session.server')
@@ -25,6 +26,9 @@ export function shopUrl(merchantId: string) {
 /** UC-16: the shop's code, big enough to scan from arm's length. */
 export const Route = createFileRoute('/merchant/qr')({
   ...SETTLED,
+  // #89: the shop's own name and id, which only the shop changes, in its
+  // settings, where the save invalidates this itself.
+  staticData: NOTHING_MOVES_IT,
   loader: async ({ parentMatchPromise }) => {
     await requireSide(parentMatchPromise, 'merchant')
     return loadShopCode()

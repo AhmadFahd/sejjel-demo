@@ -1,5 +1,5 @@
 import { readFileSync } from 'node:fs'
-import { expect, test } from './fixtures'
+import { expect, go, hydrated, reload, test } from './fixtures'
 import { OTP_LOG } from '../../playwright.config'
 import type { Page } from '@playwright/test'
 
@@ -26,7 +26,7 @@ async function typeCode(page: Page, code: string) {
 test('a seeded customer signs in with a code, and stays signed in', async ({
   page,
 }) => {
-  await page.goto('/sign-in')
+  await go(page, '/sign-in')
 
   await page.getByLabel('رقم الجوال').fill('0550123456')
   await page.getByRole('button', { name: 'أرسل الرمز' }).click()
@@ -36,17 +36,19 @@ test('a seeded customer signs in with a code, and stays signed in', async ({
 
   // أحمد owes three shops and keeps none, so he lands on the customer side.
   await expect(page).toHaveURL(/\/customer$/)
+  // Signing in lands on a document of its own, with a window of its own.
+  await hydrated(page)
   await expect(page.getByText('بقالة الريان')).toBeVisible()
 
   // A session is a row, not a page's memory.
-  await page.reload()
+  await reload(page)
   await expect(page.getByText('بقالة الريان')).toBeVisible()
 })
 
 // Each test signs in as a different seeded person: a new code replaces the
 // last one for that number, so two tests sharing a number race each other.
 test('a wrong code is refused', async ({ page }) => {
-  await page.goto('/sign-in')
+  await go(page, '/sign-in')
 
   await page.getByLabel('رقم الجوال').fill('0533456789')
   await page.getByRole('button', { name: 'أرسل الرمز' }).click()
@@ -58,7 +60,7 @@ test('a wrong code is refused', async ({ page }) => {
 })
 
 test('a number nobody has connected gets no account', async ({ page }) => {
-  await page.goto('/sign-in')
+  await go(page, '/sign-in')
 
   await page.getByLabel('رقم الجوال').fill('0500000000')
   await page.getByRole('button', { name: 'أرسل الرمز' }).click()
@@ -74,12 +76,14 @@ test('the language a signed-in person picks follows their account', async ({
   page,
   context,
 }) => {
-  await page.goto('/sign-in')
+  await go(page, '/sign-in')
   await page.getByLabel('رقم الجوال').fill('0555987210')
   await page.getByRole('button', { name: 'أرسل الرمز' }).click()
   await expect(page.getByTestId('code-boxes')).toBeVisible()
   await typeCode(page, codeSentTo('+966555987210'))
   await expect(page).toHaveURL(/\/customer$/)
+  // Signing in lands on a document of its own, with a window of its own.
+  await hydrated(page)
 
   // PROTOTYPE (no-app-bar): the language lives in the profile now.
   await page.getByTestId('profile').click()
@@ -88,7 +92,7 @@ test('the language a signed-in person picks follows their account', async ({
 
   // Throw the cookie away: the choice has to come back from the row.
   await context.clearCookies({ name: 'sejjel_locale' })
-  await page.reload()
+  await reload(page)
 
   await expect(page.locator('html')).toHaveAttribute('lang', 'en')
 

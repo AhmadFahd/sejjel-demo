@@ -6,6 +6,7 @@ import { ApprovalCode } from '#/components/approval-code'
 import { ConnectionRequests } from '#/components/connection-requests'
 import { useI18n } from '#/i18n/context'
 import { WATCHED } from '#/lib/freshness'
+import { CONNECTING } from '#/lib/moves'
 
 /**
  * UC-08: the customer's own card. A shop scans it to ask for them, so it says
@@ -25,6 +26,10 @@ export const Route = createFileRoute('/customer/card')({
   // #80: what this loader reads is a list somebody else adds to, and the
   // stream says when they have.
   ...WATCHED,
+  // #89: what its loader reads is the shops asking for this person, so those
+  // two events reach it and nothing else does. The code is not the route's
+  // (#81), so no event can move that either.
+  staticData: CONNECTING,
   component: MyCard,
 })
 
