@@ -6,6 +6,7 @@ import {
 } from '@tanstack/react-router'
 import { TanStackRouterDevtoolsPanel } from '@tanstack/react-router-devtools'
 import { TanStackDevtools } from '@tanstack/react-devtools'
+import { LoadingBar } from '#/components/loading'
 import { Card } from '#/components/primitives'
 import { I18nProvider, useI18n } from '#/i18n/context'
 import { DEFAULT_SHELL, loadShell } from '#/auth/shell'
@@ -82,6 +83,9 @@ function RootDocument({ children }: { children: ReactNode }) {
       </head>
       <body>
         <I18nProvider locale={shell.locale} amountsHidden={shell.hideAmounts}>
+          {/* #75: every screen's answer to a tap, whether or not the screen
+              it is going to has a loader of its own. */}
+          <LoadingBar />
           <ViewerProvider signedIn={shell.signedIn}>{children}</ViewerProvider>
         </I18nProvider>
         <TanStackDevtools

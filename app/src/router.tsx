@@ -1,5 +1,4 @@
 import { createRouter as createTanStackRouter } from '@tanstack/react-router'
-import { Loading } from './components/loading'
 import { routeTree } from './routeTree.gen'
 
 export function getRouter() {
@@ -15,13 +14,17 @@ export function getRouter() {
      */
     defaultPreloadStaleTime: 5_000,
     /**
-     * #75: one loader for every screen, so none of them can sit blank while
-     * its data is on the way. It waits 150ms before it appears, which is
-     * longer than a navigation that had its answer already, and stays 300ms
-     * once it has, so it cannot flash and be gone. The router's own defaults
-     * are 1000 and 500, and with no component to draw the screen just froze.
+     * #75: how long a screen's own loader waits before it appears, and how
+     * long it stays once it has, so a navigation that answers quickly draws
+     * nothing and a slow one cannot flash. The router's own defaults are 1000
+     * and 500, which is long enough to look like nothing happened.
+     *
+     * There is deliberately no `defaultPendingComponent`. A pending component
+     * replaces the screen it stands in front of, which unmounts it, and the
+     * screens that hold an operation in their own state lose it when that
+     * happens. So the screens that only read name `Loading` themselves, and
+     * every screen gets `LoadingBar` from the shell instead.
      */
-    defaultPendingComponent: Loading,
     defaultPendingMs: 150,
     defaultPendingMinMs: 300,
   })

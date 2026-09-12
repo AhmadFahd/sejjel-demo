@@ -1,16 +1,24 @@
+import { useEffect, useState } from 'react'
+import { useRouterState } from '@tanstack/react-router'
 import { cx } from './primitives'
 import { useI18n } from '#/i18n/context'
 
+/** How long a wait has to last before the bar is worth drawing. */
+const BAR_AFTER_MS = 120
+
 /**
- * #75: the one loader in the app. Every screen is a stack of cards, so what
- * stands in for a screen that has not arrived yet is a stack of cards with
- * nothing in them. The router draws it inside the layout the screen would
- * have filled, so the dock and the header stay where they are and only the
- * content area changes.
+ * #75: the app's one loader, for a screen that is not there yet. Every screen
+ * is a stack of cards, so what stands in for one is a stack of cards with
+ * nothing in them. The router draws it where the screen would have gone, so
+ * the dock and the header stay put and only the content area changes.
  *
- * Late and brief on purpose: the router holds it back 150ms, so a navigation
- * that answers quickly never shows it, and keeps it 300ms once it is up, so
- * it cannot flash. Those two numbers are in `router.tsx`.
+ * A route asks for this by name, rather than the router handing it to every
+ * route: a pending component replaces the screen it stands in front of, which
+ * unmounts it, and the screens that carry an operation in their own state
+ * cannot afford that mid-flow. So the screens that only read wear it, and
+ * everything else says it is working with `LoadingBar` and keeps what the
+ * person was doing. The two numbers behind it, 150ms before it shows and
+ * 300ms once it has, are in `router.tsx`.
  */
 export function Loading({ rows = 3 }: { rows?: number }) {
   const { t } = useI18n()
@@ -37,6 +45,41 @@ export function Loading({ rows = 3 }: { rows?: number }) {
         </div>
       ))}
     </div>
+  )
+}
+
+/**
+ * The whole app's answer to a tap, on every screen: a hairline across the top
+ * for as long as the router is busy. It replaces nothing and unmounts
+ * nothing, so a half-typed operation survives it, and it is up while the
+ * first round trip of a navigation is still out — the part no pending
+ * component can cover (#79).
+ */
+export function LoadingBar() {
+  const busy = useRouterState({ select: (state) => state.isLoading })
+  const { t } = useI18n()
+  const [shown, setShown] = useState(false)
+
+  useEffect(() => {
+    if (!busy) {
+      setShown(false)
+      return
+    }
+
+    // A navigation that answers at once draws nothing at all.
+    const timer = setTimeout(() => setShown(true), BAR_AFTER_MS)
+    return () => clearTimeout(timer)
+  }, [busy])
+
+  if (!shown) return null
+
+  return (
+    <div
+      role="status"
+      aria-label={t('loading')}
+      data-testid="loading-bar"
+      className="fixed inset-x-0 top-0 z-90 h-0.5 animate-pulse bg-brand motion-reduce:animate-none"
+    />
   )
 }
 

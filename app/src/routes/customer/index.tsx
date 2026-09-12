@@ -13,6 +13,7 @@ import {
   StatusPill,
 } from '#/components/primitives'
 import { OperationsCounter, PaydayStrip } from '#/components/ledger'
+import { Loading } from '#/components/loading'
 import { useI18n } from '#/i18n/context'
 
 const loadShops = createServerFn({ method: 'GET' }).handler(async () => {
@@ -50,6 +51,9 @@ const loadShops = createServerFn({ method: 'GET' }).handler(async () => {
 export const Route = createFileRoute('/customer/')({
   beforeLoad: ({ context }) => requireSideOf(context.person, 'customer'),
   loader: () => loadShops(),
+  // #75: this screen only reads, so the app's loader can stand in for it
+  // while it arrives without anything being lost.
+  pendingComponent: Loading,
   component: CustomerHome,
 })
 

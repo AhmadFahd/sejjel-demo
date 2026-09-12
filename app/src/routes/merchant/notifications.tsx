@@ -3,12 +3,16 @@ import { Link, createFileRoute, useRouter } from '@tanstack/react-router'
 import { requireSideOf } from '#/auth/enter'
 import { loadNotifications } from '#/auth/notifications'
 import { NotificationList } from '#/components/notifications'
+import { Loading } from '#/components/loading'
 import { useI18n } from '#/i18n/context'
 
 /** UC-12: everything that happened on this side, newest first. */
 export const Route = createFileRoute('/merchant/notifications')({
   beforeLoad: ({ context }) => requireSideOf(context.person, 'merchant'),
   loader: () => loadNotifications(),
+  // #75: this screen only reads, so the app's loader can stand in for it
+  // while it arrives without anything being lost.
+  pendingComponent: Loading,
   component: SideNotifications,
 })
 

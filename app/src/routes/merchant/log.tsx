@@ -87,13 +87,11 @@ export const Route = createFileRoute('/merchant/log')({
   },
   loaderDeps: ({ search }) => search,
   loader: ({ deps }) => loadLog({ data: deps }),
-  // #75: every other screen shows the app's loader while it waits, but the
-  // search on this one is typed into the screen itself, and a search that is
-  // a new set of loader deps is a new match. Standing the loader in front of
-  // it would unmount the field mid-word and take the keyboard with it. So the
-  // rows a person is reading stay where they are, and the dots beside the
-  // field say that a newer answer is on its way.
-  pendingMs: Infinity,
+  // #75: no `pendingComponent` here, deliberately. The search is typed into
+  // this screen, and a new search is a new set of loader deps, so it is a new
+  // match: a loader standing in front of it would unmount the field mid-word
+  // and take the keyboard with it. The rows a person is reading stay where
+  // they are, and the dots beside the field say a newer answer is coming.
   component: OperationsLog,
 })
 

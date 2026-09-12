@@ -4,6 +4,7 @@ import { issueMyCode } from '#/auth/connect'
 import { Card } from '#/components/primitives'
 import { ApprovalCode } from '#/components/approval-code'
 import { ConnectionRequests } from '#/components/connection-requests'
+import { Loading } from '#/components/loading'
 import { useI18n } from '#/i18n/context'
 
 /**
@@ -15,6 +16,9 @@ export const Route = createFileRoute('/customer/card')({
   // Anybody signed in: a person no shop has connected yet is exactly who
   // needs a card to be scanned.
   loader: () => issueMyCode(),
+  // #75: this screen only reads, so the app's loader can stand in for it
+  // while it arrives without anything being lost.
+  pendingComponent: Loading,
   component: MyCard,
 })
 

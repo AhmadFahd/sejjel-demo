@@ -45,8 +45,9 @@ test('a customer holds one event stream, on the ledger and on the card', async (
 
 /**
  * #75: nothing rendered a pending state, so a screen whose data was on the
- * way left the old one frozen. One loader now stands in for it, and the dock
- * does not go anywhere while it does.
+ * way left the old one frozen. The card is a screen that only reads, so the
+ * app's loader stands in for it, the bar says so from the first moment, and
+ * the dock does not go anywhere while either happens.
  */
 test('the loader stands in for a screen on its way, and the dock stays put', async ({
   page,
@@ -67,11 +68,46 @@ test('the loader stands in for a screen on its way, and the dock stays put', asy
 
   await page.getByTestId('my-card-link').click()
 
+  // The bar comes up while the first round trip is still out, which is the
+  // part a pending component cannot reach.
+  await expect(page.getByTestId('loading-bar')).toBeVisible()
   await expect(page.getByTestId('loading')).toBeVisible()
   await expect(page.getByTestId('dock')).toBeVisible()
 
   await expect(page.getByTestId('my-card')).toBeVisible()
   await expect(page.getByTestId('loading')).toBeHidden()
+  await expect(page.getByTestId('loading-bar')).toBeHidden()
+})
+
+/**
+ * #75: a screen that carries an operation in its own state gets the bar and
+ * nothing else. The loader would unmount it, and the shop would lose the
+ * purchase it was halfway through recording.
+ */
+test('recording a purchase keeps what was typed while the screen waits', async ({
+  page,
+}) => {
+  await signIn(page, MERCHANT.typed, MERCHANT.e164)
+  await page.getByTestId('record').click()
+  await page.waitForFunction(() => '__TSR_ROUTER__' in window)
+
+  await page.getByLabel('العميل').selectOption({ label: 'أحمد محمد' })
+  await page.getByLabel('المبلغ').fill('75')
+
+  // A stream event, or anything else that reloads this screen, must not take
+  // the operation with it.
+  await holdTheServer(page)
+  await page.evaluate(() => {
+    const router = (
+      window as unknown as { __TSR_ROUTER__: { invalidate: () => void } }
+    ).__TSR_ROUTER__
+    router.invalidate()
+  })
+
+  await expect(page.getByTestId('loading-bar')).toBeVisible()
+  await expect(page.getByTestId('loading')).toHaveCount(0)
+  await expect(page.getByLabel('المبلغ')).toHaveValue('75')
+  await expect(page.getByRole('button', { name: 'أرسل للعميل' })).toBeEnabled()
 })
 
 /**
