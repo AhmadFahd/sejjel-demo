@@ -1,6 +1,8 @@
+import { Link } from '@tanstack/react-router'
 import { Card, KeyValueRow, StatusPill, cx } from './primitives'
 import { useI18n } from '#/i18n/context'
 import { limitUse } from '#/lib/limit'
+import type { LinkProps } from '@tanstack/react-router'
 import type { ReactNode } from 'react'
 import type { LedgerStatus } from '#/db/derive'
 import type { LimitLevel } from '#/lib/limit'
@@ -143,17 +145,23 @@ export function LimitBar({
   )
 }
 
-/** UC-15: the operations behind the balance. */
+/**
+ * UC-15: the operations behind the balance. Given somewhere to go, the whole
+ * card is the way there, as it is in the prototype: the count is what somebody
+ * presses when they want the operations it counts.
+ */
 export function OperationsCounter({
   purchases,
   payments,
+  to,
 }: {
   purchases: number
   payments: number
+  to?: LinkProps['to']
 }) {
   const { t, number } = useI18n()
 
-  return (
+  const card = (
     <Card
       className="flex items-center gap-3 px-3.5 py-3"
       data-testid="operations-counter"
@@ -189,8 +197,30 @@ export function OperationsCounter({
             {t('ledger.payments')}
           </span>
         </div>
+        {/* The arrow points the way the language runs. */}
+        {to ? (
+          <span
+            className="self-center text-base leading-none text-faint rtl:-scale-x-100"
+            aria-hidden
+          >
+            ›
+          </span>
+        ) : null}
       </div>
     </Card>
+  )
+
+  if (!to) return card
+
+  return (
+    <Link
+      to={to}
+      aria-label={t('log.open')}
+      className="block"
+      data-testid="log-open"
+    >
+      {card}
+    </Link>
   )
 }
 

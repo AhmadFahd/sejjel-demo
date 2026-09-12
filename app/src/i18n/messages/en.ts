@@ -139,6 +139,17 @@ export const en = {
   'tx.failed': 'Failed',
   'tx.expired': 'Lapsed',
 
+  'log.title': 'Operations',
+  'log.body': 'Every purchase and payment on your customers’ accounts.',
+  'log.open': 'All operations',
+  'log.search': 'Search by name or mobile',
+  'log.from': 'From',
+  'log.to': 'To',
+  'log.empty': 'Nothing recorded yet',
+  'log.emptyBody': 'Operations appear here as you record them.',
+  'log.noResults': 'Nothing matches that',
+  'log.noResultsBody': 'Try a different name, or widen the dates.',
+
   'notFound.title': 'Not here',
   'notFound.body': 'This page does not exist, or it is not yours to open.',
   'notFound.home': 'Back to the app',

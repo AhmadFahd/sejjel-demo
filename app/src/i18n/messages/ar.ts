@@ -135,6 +135,17 @@ export const ar = {
   'tx.failed': 'فشلت',
   'tx.expired': 'انتهت المهلة',
 
+  'log.title': 'سجل العمليات',
+  'log.body': 'كل عمليات البيع الآجل والسداد على حسابات عملائك.',
+  'log.open': 'كل العمليات',
+  'log.search': 'ابحث بالاسم أو الجوال',
+  'log.from': 'من',
+  'log.to': 'إلى',
+  'log.empty': 'لا عمليات بعد',
+  'log.emptyBody': 'تظهر العمليات هنا فور تسجيلها.',
+  'log.noResults': 'لا نتائج مطابقة',
+  'log.noResultsBody': 'جرّب اسمًا آخر، أو وسّع المدة.',
+
   'notFound.title': 'غير موجود',
   'notFound.body': 'هذه الصفحة غير موجودة، أو ليست لك.',
   'notFound.home': 'العودة إلى التطبيق',
