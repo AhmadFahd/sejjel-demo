@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { Link, createFileRoute, useRouter } from '@tanstack/react-router'
 import { createServerFn } from '@tanstack/react-start'
-import { requireSide } from '#/auth/guard'
+import { requireSideOf } from '#/auth/enter'
 import { saveShopDefaults } from '#/auth/terms'
 import { halalasToRiyals } from '#/lib/money'
 import { Button } from '#/components/chrome'
@@ -28,7 +28,7 @@ const loadDefaults = createServerFn({ method: 'GET' }).handler(async () => {
 
 /** UC-13: the figures every customer of this shop stands on. */
 export const Route = createFileRoute('/merchant/settings')({
-  beforeLoad: () => requireSide('merchant'),
+  beforeLoad: ({ context }) => requireSideOf(context.person, 'merchant'),
   loader: () => loadDefaults(),
   component: ShopSettings,
 })

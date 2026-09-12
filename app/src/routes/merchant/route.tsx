@@ -1,6 +1,5 @@
 import { Outlet, createFileRoute, useRouterState } from '@tanstack/react-router'
-import { loadSignedInUser } from '#/auth/session'
-import { countUnreadFn } from '#/auth/notifications'
+import { enterApp } from '#/auth/enter'
 import { AmountsEye } from '#/components/amounts-eye'
 import { NotificationsBell } from '#/components/notifications'
 import { Dock } from '#/components/dock'
@@ -14,22 +13,17 @@ import { useI18n } from '#/i18n/context'
  * without anybody pulling to refresh.
  */
 export const Route = createFileRoute('/merchant')({
-  // Who is signed in for the profile, and what is unread for the bell. Both
-  // belong to the dock, which is on every screen under here, so they are
-  // asked for once rather than by each screen.
-  loader: async () => {
-    const [person, unread] = await Promise.all([
-      loadSignedInUser(),
-      countUnreadFn(),
-    ])
-    return { person, unread }
-  },
+  // Who is signed in for the profile, what is unread for the bell, and
+  // whether this person is signed in at all: one question, before any screen
+  // under here runs. Its answer is the context those screens read, so none of
+  // them asks the server who is asking a second time.
+  beforeLoad: () => enterApp(),
   component: MerchantSide,
 })
 
 function MerchantSide() {
   const { t } = useI18n()
-  const { person, unread } = Route.useLoaderData()
+  const { person, unread } = Route.useRouteContext()
   const pathname = useRouterState({
     select: (state) => state.location.pathname,
   })

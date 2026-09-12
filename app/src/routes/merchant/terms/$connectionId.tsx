@@ -6,7 +6,7 @@ import {
   useRouter,
 } from '@tanstack/react-router'
 import { createServerFn } from '@tanstack/react-start'
-import { requireSide } from '#/auth/guard'
+import { requireSideOf } from '#/auth/enter'
 import { saveCustomerOverrides } from '#/auth/terms'
 import { halalasToRiyals, riyalsToHalalas } from '#/lib/money'
 import { isBelowBalance } from '#/lib/terms'
@@ -45,7 +45,7 @@ const loadTerms = createServerFn({ method: 'GET' })
 
 /** UC-13: what this one customer stands on, where it differs from the shop. */
 export const Route = createFileRoute('/merchant/terms/$connectionId')({
-  beforeLoad: () => requireSide('merchant'),
+  beforeLoad: ({ context }) => requireSideOf(context.person, 'merchant'),
   loader: async ({ params }) => {
     const terms = await loadTerms({
       data: { connectionId: params.connectionId },

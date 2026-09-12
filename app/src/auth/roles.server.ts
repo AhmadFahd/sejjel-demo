@@ -11,16 +11,15 @@ import type { Roles } from './roles'
 export async function resolveRoles(userId: string): Promise<Roles> {
   const db = getDatabase()
 
-  const shop = (
-    await db
+  // Neither question depends on the other's answer, and production is a
+  // network away, so they are asked at the same time.
+  const [shops, customerOf] = await Promise.all([
+    db
       .select({ id: merchants.id, name: merchants.name })
       .from(merchants)
       .where(eq(merchants.ownerUserId, userId))
-      .limit(1)
-  ).at(0)
-
-  const connection = (
-    await db
+      .limit(1),
+    db
       .select({ id: connections.id })
       .from(connections)
       .where(
@@ -29,8 +28,11 @@ export async function resolveRoles(userId: string): Promise<Roles> {
           ne(connections.status, 'revoked'),
         ),
       )
-      .limit(1)
-  ).at(0)
+      .limit(1),
+  ])
+
+  const shop = shops.at(0)
+  const connection = customerOf.at(0)
 
   return {
     ...NO_ROLES,

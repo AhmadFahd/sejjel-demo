@@ -1,6 +1,6 @@
 import { Link, createFileRoute } from '@tanstack/react-router'
 import { createServerFn } from '@tanstack/react-start'
-import { requireSide } from '#/auth/guard'
+import { requireSideOf } from '#/auth/enter'
 import { QrCanvas } from '#/components/qr-canvas'
 import { useI18n } from '#/i18n/context'
 
@@ -23,7 +23,7 @@ export function shopUrl(merchantId: string) {
 
 /** UC-16: the shop's code, big enough to scan from arm's length. */
 export const Route = createFileRoute('/merchant/qr')({
-  beforeLoad: () => requireSide('merchant'),
+  beforeLoad: ({ context }) => requireSideOf(context.person, 'merchant'),
   loader: () => loadShopCode(),
   component: ShopCode,
 })

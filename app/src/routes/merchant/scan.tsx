@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { Link, createFileRoute, useRouter } from '@tanstack/react-router'
-import { requireSide } from '#/auth/guard'
+import { requireSideOf } from '#/auth/enter'
 import { applyScannedCode } from '#/auth/approval'
 import { Button, buttonClass } from '#/components/chrome'
 import { Card } from '#/components/primitives'
@@ -42,7 +42,7 @@ type Outcome =
 
 /** UC-07: the merchant's scan is what applies the operation. */
 export const Route = createFileRoute('/merchant/scan')({
-  beforeLoad: () => requireSide('merchant'),
+  beforeLoad: ({ context }) => requireSideOf(context.person, 'merchant'),
   component: ScanCode,
 })
 

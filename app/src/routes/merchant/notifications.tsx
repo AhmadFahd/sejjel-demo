@@ -1,13 +1,13 @@
 import { useEffect } from 'react'
 import { Link, createFileRoute, useRouter } from '@tanstack/react-router'
-import { requireSide } from '#/auth/guard'
+import { requireSideOf } from '#/auth/enter'
 import { loadNotifications } from '#/auth/notifications'
 import { NotificationList } from '#/components/notifications'
 import { useI18n } from '#/i18n/context'
 
 /** UC-12: everything that happened on this side, newest first. */
 export const Route = createFileRoute('/merchant/notifications')({
-  beforeLoad: () => requireSide('merchant'),
+  beforeLoad: ({ context }) => requireSideOf(context.person, 'merchant'),
   loader: () => loadNotifications(),
   component: SideNotifications,
 })

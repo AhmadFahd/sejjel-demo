@@ -6,7 +6,13 @@ export function getRouter() {
     routeTree,
     scrollRestoration: true,
     defaultPreload: 'intent',
-    defaultPreloadStaleTime: 0,
+    /**
+     * A hover preloads the screen; without a stale time the preload is spent
+     * the instant it lands and the click pays for the same read again. Five
+     * seconds covers the gap between the two. Freshness does not rest on it:
+     * the event stream invalidates the loaders the moment a ledger changes.
+     */
+    defaultPreloadStaleTime: 5_000,
   })
 
   return router

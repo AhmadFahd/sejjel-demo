@@ -13,8 +13,32 @@ import type { SignedInUser } from './session'
  * may end up in a browser bundle.
  */
 
+/**
+ * The person, once per request. Rendering a document asks who is looking from
+ * the shell, the guard, the layout and the screen, and each answer used to be
+ * its own trip to the database; they share one now. The key is the request
+ * itself, so nothing is held after it is answered, and two requests never see
+ * each other's person.
+ */
+const perRequest = new WeakMap<Request, Promise<SignedInUser | null>>()
+
 /** Who is asking, or nobody. Read from the session row, never from the client. */
-export async function readSignedInUser(): Promise<SignedInUser | null> {
+export function readSignedInUser(): Promise<SignedInUser | null> {
+  const request = getRequest()
+  const answered = perRequest.get(request)
+  if (answered) return answered
+
+  const reading = readPerson().catch((error: unknown) => {
+    // A failed read is not the answer for the rest of the request: whoever
+    // asks next gets to try again.
+    perRequest.delete(request)
+    throw error
+  })
+  perRequest.set(request, reading)
+  return reading
+}
+
+async function readPerson(): Promise<SignedInUser | null> {
   const session = await getAuth().api.getSession({
     headers: getRequest().headers,
   })
