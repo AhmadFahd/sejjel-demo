@@ -280,20 +280,39 @@ export function getCustomerTotals(
   )
 }
 
-/** UC-09: every shop one customer owes. */
+/**
+ * UC-09: every shop one customer owes, a page at a time. Ordered by the
+ * shop's name and then by the connection's id, so two shops sharing a name
+ * cannot make a row appear on two pages or on none.
+ *
+ * #77: the page is picked from the connections before anything is added up,
+ * the way the shop's list of customers already did it. Read whole, this
+ * aggregated the customer's entire history on every load and sorted the
+ * result in memory.
+ */
 export async function listCustomerConnections(
   db: Database,
   userId: string,
   now: Date = new Date(),
+  page: Page = {},
 ) {
-  const rows = await summaryQuery(db)
+  const thisPage = db
+    .select({ id: connections.id })
+    .from(connections)
+    .innerJoin(merchants, eq(merchants.id, connections.merchantId))
     .where(
       and(
         eq(connections.customerUserId, userId),
         eq(connections.status, 'active'),
       ),
     )
-    .orderBy(merchants.name)
+    .orderBy(merchants.name, connections.id)
+    .limit(page.limit ?? DEFAULT_PAGE_SIZE)
+    .offset(page.offset ?? 0)
+
+  const rows = await summaryQuery(db)
+    .where(inArray(connections.id, thisPage))
+    .orderBy(merchants.name, connections.id)
   return rows.map((row) => toSummary(now, row))
 }
 

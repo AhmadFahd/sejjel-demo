@@ -43,6 +43,13 @@
       "when": 1789211159847,
       "tag": "0005_read_path_indexes",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "6",
+      "when": 1789228808910,
+      "tag": "0006_customer_read_path",
+      "breakpoints": true
     }
   ]
 }

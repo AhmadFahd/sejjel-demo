@@ -141,6 +141,15 @@ export async function listAwaitingCustomer(
   now: Date = new Date(),
   limit = AWAITING_LIMIT,
 ): Promise<Array<PendingOperation>> {
+  /**
+   * #77: this reads from the customer's end, and the indexes are what make it
+   * do so. It used to drive from `transactions` on an index over `status`
+   * alone and throw away everything belonging to somebody else, so what one
+   * customer paid to open their dashboard grew with every operation anybody
+   * in the app was waiting on. With that index replaced by one over a
+   * connection and a status, the planner takes this customer's connections
+   * first — they have a handful — and seeks the pending rows of each.
+   */
   const rows = await db
     .select({
       transaction: transactions,

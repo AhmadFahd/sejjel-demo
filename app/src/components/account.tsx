@@ -99,14 +99,17 @@ export function pagerLinkClass(disabled: boolean) {
 }
 
 /**
- * The two ends of a paged list. The links themselves are built by the screen,
+ * The two ends of a paged list, and for a list that knows how many pages it
+ * has, where in them it is. The links themselves are built by the screen,
  * which is the only place that knows the route they point at.
  */
 export function Pager({
   previous,
+  middle,
   next,
 }: {
   previous: ReactNode
+  middle?: ReactNode
   next: ReactNode
 }) {
   return (
@@ -115,7 +118,25 @@ export function Pager({
       data-testid="pager"
     >
       {previous}
+      {middle}
       {next}
     </nav>
+  )
+}
+
+/** Where in a list of known length this page is: "2 of 7". */
+export function PagerPosition({
+  page,
+  pages,
+}: {
+  page: number
+  pages: number
+}) {
+  const { t, number } = useI18n()
+
+  return (
+    <span className="text-[12px] font-bold text-muted">
+      {t('page.position', { page: number(page), pages: number(pages) })}
+    </span>
   )
 }
