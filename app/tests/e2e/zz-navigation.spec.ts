@@ -202,3 +202,48 @@ test('the log keeps its rows and its keyboard while it searches', async ({
   await expect(page.getByTestId('loading-dots')).toBeHidden()
   await expect(page.getByTestId('log-search')).toHaveValue('0550 123 456')
 })
+
+/**
+ * #88: the eye turns the figures over on the press. It used to write the
+ * choice, wait for it, and then wait for an invalidation of every loader, so
+ * the one control whose whole point is speed was the slowest thing in the app.
+ * The server is held here to prove the screen is not waiting for it.
+ */
+test('the eye hides the amounts before the server has heard about it', async ({
+  page,
+}) => {
+  await signIn(page, MERCHANT.typed, MERCHANT.e164)
+
+  // Whatever the figures are by the time this test runs — the suite works one
+  // ledger in file order and this is the last file in it — they are figures.
+  const main = page.locator('main')
+  await expect(main).toContainText('ر.س')
+  await expect(main).not.toContainText('••••')
+
+  await holdTheServer(page)
+  await page.getByTestId('amounts-eye').click()
+
+  // No waiting on the write: the figures are already dots.
+  await expect(main).toContainText('••••')
+  await expect(page.getByTestId('amounts-eye')).toHaveAttribute(
+    'aria-pressed',
+    'true',
+  )
+})
+
+/**
+ * #88: the dock outlives the screens inside it (#76), so the profile panel
+ * used to hang over whatever came next. Its own rows closed it; a dock item
+ * did not.
+ */
+test('the profile panel is put away by going somewhere', async ({ page }) => {
+  await signIn(page, CUSTOMER.typed, CUSTOMER.e164)
+
+  await page.getByTestId('profile').click()
+  await expect(page.getByTestId('locale-switch')).toBeVisible()
+
+  await page.getByTestId('dock').getByText('بطاقتي').click()
+
+  await expect(page.getByTestId('my-card')).toBeVisible()
+  await expect(page.getByTestId('locale-switch')).toHaveCount(0)
+})

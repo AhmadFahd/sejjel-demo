@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import {
   HeadContent,
   Link,
@@ -104,17 +104,28 @@ function RootDocument({ children }: { children: ReactNode }) {
     document.documentElement.dataset.hydrated = 'true'
   }, [])
 
+  /**
+   * #88: whether the amounts are behind dots, held here rather than read
+   * straight off the shell, so a press of the eye turns every figure over on
+   * the spot. The row is still where the choice lives — this follows it
+   * whenever the shell is read again, which is every document load.
+   */
+  const [hidden, setHidden] = useState(shell.hideAmounts)
+  useEffect(() => setHidden(shell.hideAmounts), [shell.hideAmounts])
+
   return (
     <html lang={shell.locale} dir={directionOf(shell.locale)}>
       <head>
         <HeadContent />
       </head>
       <body>
-        <I18nProvider locale={shell.locale} amountsHidden={shell.hideAmounts}>
+        <I18nProvider locale={shell.locale} amountsHidden={hidden}>
           {/* #75: every screen's answer to a tap, whether or not the screen
               it is going to has a loader of its own. */}
           <LoadingBar />
-          <ViewerProvider signedIn={shell.signedIn}>{children}</ViewerProvider>
+          <ViewerProvider signedIn={shell.signedIn} hideAmounts={setHidden}>
+            {children}
+          </ViewerProvider>
         </I18nProvider>
         <TanStackDevtools
           // The bottom of the screen belongs to the dock now, so the

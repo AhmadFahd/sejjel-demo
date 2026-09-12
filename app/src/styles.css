@@ -77,6 +77,18 @@ body {
   color: var(--color-ink);
 }
 
+/**
+ * #88: a button looks pressable. Tailwind 4's preflight leaves `button` with
+ * the arrow the browser gives a `<div>`, where v3 gave it a hand, so every
+ * button in the app read as furniture beside the links — which do have one.
+ * Here rather than on the buttons, because it is true of all of them, and not
+ * for a button that is refusing to be pressed.
+ */
+button:not(:disabled),
+[role='button']:not([aria-disabled='true']) {
+  cursor: pointer;
+}
+
 /** Amounts line up in a column, in either direction. */
 .tabular {
   font-variant-numeric: tabular-nums;

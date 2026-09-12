@@ -153,6 +153,7 @@ export const en = {
   'notFound.body': 'This page does not exist, or it is not yours to open.',
   'notFound.home': 'Back to the app',
   'nav.back': 'Back',
+  'nav.home': 'Sejjel, home',
   'page.previous': 'Previous',
   'page.next': 'Next',
   'page.position': 'Page {page} of {pages}',

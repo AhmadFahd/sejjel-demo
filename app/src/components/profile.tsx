@@ -1,5 +1,5 @@
-import { useState } from 'react'
-import { Link } from '@tanstack/react-router'
+import { useEffect, useState } from 'react'
+import { Link, useRouterState } from '@tanstack/react-router'
 import { authClient } from '#/auth/client'
 import { cx } from './primitives'
 import { useI18n } from '#/i18n/context'
@@ -26,6 +26,17 @@ export function ProfileMenu({
 }) {
   const { t } = useI18n()
   const [open, setOpen] = useState(false)
+
+  /**
+   * #88: the dock is mounted by the side's layout and outlives every screen
+   * inside it (#76), so the panel hung over whatever came next. Its own rows
+   * closed it; the dock's items and the bell did not, because nothing told it
+   * they had gone anywhere.
+   */
+  const pathname = useRouterState({
+    select: (state) => state.location.pathname,
+  })
+  useEffect(() => setOpen(false), [pathname])
 
   return (
     <div className="relative">

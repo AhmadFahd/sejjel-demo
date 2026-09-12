@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { createFileRoute } from '@tanstack/react-router'
+import { Link, createFileRoute } from '@tanstack/react-router'
 import { safeNextPath } from '#/lib/next-path'
 import { authClient } from '#/auth/client'
 import { OTP_LENGTH } from '#/auth/otp'
@@ -135,7 +135,11 @@ function SignIn() {
   return (
     <main className="flex min-h-dvh flex-col bg-brand text-white">
       <div className="px-7 pt-10 pb-8">
-        <Mark title={t('appName')} className="h-11 text-bone" />
+        {/* #88: a logo at the top of a page is the way back to the front of
+            it. Signed in, `/` sends them to their own side. */}
+        <Link to="/" aria-label={t('nav.home')} className="inline-block">
+          <Mark title={t('appName')} className="h-11 text-bone" />
+        </Link>
         <h1 className="mt-5 text-[27px] leading-tight font-black">
           {t('auth.hero')}
         </h1>
