@@ -4,7 +4,7 @@ import { requireSide } from '#/auth/guard'
 import { localSaudiMobile } from '#/auth/phone'
 import { getMerchantTotals, listMerchantConnections } from '#/db/queries/ledger'
 import { paydayOnOrAfter } from '#/lib/payday'
-import { AppBar, buttonClass } from '#/components/chrome'
+import { buttonClass } from '#/components/chrome'
 import {
   Avatar,
   Card,
@@ -15,8 +15,6 @@ import {
   cx,
 } from '#/components/primitives'
 import { OperationsCounter, PaydayStrip } from '#/components/ledger'
-import { SideSwitch } from '#/components/side-switch'
-import { SignOutButton } from '#/components/sign-out'
 import { useI18n } from '#/i18n/context'
 
 /** How many customers one screen of the list holds. */
@@ -56,7 +54,6 @@ const loadShop = createServerFn({ method: 'GET' })
       page: data.page,
       pages: Math.max(1, Math.ceil(totals.connections / PAGE_SIZE)),
       nextPaydayAt: paydayOnOrAfter(now),
-      roles: user.roles,
     }
   })
 
@@ -83,21 +80,6 @@ function MerchantHome() {
 
   return (
     <>
-      <AppBar
-        actions={
-          <>
-            <Link
-              to="/merchant/settings"
-              className="text-[12.5px] font-black text-white/80"
-              data-testid="settings"
-            >
-              {t('settings.open')}
-            </Link>
-            <SideSwitch roles={data.roles} side="merchant" />
-            <SignOutButton />
-          </>
-        }
-      />
       <main className="p-3.5">
         <h1 className="mb-3 text-xl font-black text-ink">{data.shop.name}</h1>
 

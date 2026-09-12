@@ -2,7 +2,6 @@ import { useEffect, useState } from 'react'
 import { Link, createFileRoute } from '@tanstack/react-router'
 import { requireSignedIn } from '#/auth/guard'
 import { issueMyCode } from '#/auth/connect'
-import { AppBar } from '#/components/chrome'
 import { Card } from '#/components/primitives'
 import { ApprovalCode } from '#/components/approval-code'
 import { ConnectionRequests } from '#/components/connection-requests'
@@ -41,7 +40,6 @@ function MyCard() {
 
   return (
     <>
-      <AppBar />
       {/* The shop scans this screen, so the answer has to arrive on it. */}
       <LedgerStream enabled />
       <main className="p-3.5">

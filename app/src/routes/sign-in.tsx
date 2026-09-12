@@ -10,6 +10,7 @@ import {
 } from '#/auth/phone'
 import { Button } from '#/components/chrome'
 import { CodeBoxes } from '#/components/code-boxes'
+import { LocaleToggle } from '#/components/locale-toggle'
 import { useI18n } from '#/i18n/context'
 import type { ReactNode } from 'react'
 
@@ -141,7 +142,11 @@ function SignIn() {
       {/* The sheet, and everything in it is dark on light: the backdrop paints
           its own text white, which a field on the sheet would inherit. */}
       <div className="mt-auto rounded-t-3xl bg-mist px-5 pt-3 pb-7 text-ink">
-        <div className="mx-auto mb-4 h-1 w-10 rounded-full bg-neutral-bg" />
+        <div className="mx-auto mb-3 h-1 w-10 rounded-full bg-neutral-bg" />
+
+        <div className="mb-3 flex justify-end">
+          <LocaleToggle className="border border-neutral-bg bg-card text-steel" />
+        </div>
 
         {step.name === 'phone' ? (
           <>

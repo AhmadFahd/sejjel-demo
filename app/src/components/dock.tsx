@@ -1,5 +1,6 @@
 import { Link, useMatchRoute } from '@tanstack/react-router'
 import { cx } from './primitives'
+import type { ReactNode } from 'react'
 import type { LinkProps } from '@tanstack/react-router'
 
 export type DockItem = {
@@ -13,9 +14,17 @@ export type DockItem = {
  * Where the app's navigation lives: one floating dock at every width, anchored
  * under the thumb on a phone and out of the content's way on a desktop. The
  * same control in both places rather than a bar on one and a bottom strip on
- * the other, so there is one thing to learn.
+ * the other, so there is one thing to learn. Whatever else the app keeps in one
+ * place rides at the end of it — the person, and everything the bar across the
+ * top used to hold.
  */
-export function Dock({ items }: { items: Array<DockItem> }) {
+export function Dock({
+  items,
+  children,
+}: {
+  items: Array<DockItem>
+  children?: ReactNode
+}) {
   const matchRoute = useMatchRoute()
 
   return (
@@ -58,6 +67,8 @@ export function Dock({ items }: { items: Array<DockItem> }) {
               </Link>
             )
           })}
+
+          {children}
         </div>
       </nav>
 

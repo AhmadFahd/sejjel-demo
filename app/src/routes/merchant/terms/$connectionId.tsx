@@ -10,7 +10,7 @@ import { requireSide } from '#/auth/guard'
 import { saveCustomerOverrides } from '#/auth/terms'
 import { halalasToRiyals, riyalsToHalalas } from '#/lib/money'
 import { isBelowBalance } from '#/lib/terms'
-import { AppBar, Button } from '#/components/chrome'
+import { Button } from '#/components/chrome'
 import { Card, KeyValueRow } from '#/components/primitives'
 import { NumberField, TermChangeList, TermsProblems } from '#/components/terms'
 import { useI18n } from '#/i18n/context'
@@ -108,7 +108,6 @@ function CustomerTerms() {
 
   return (
     <>
-      <AppBar />
       <main className="p-3.5">
         <Link
           to="/merchant/$connectionId"

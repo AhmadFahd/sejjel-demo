@@ -4,7 +4,7 @@ import { createServerFn } from '@tanstack/react-start'
 import { requireSide } from '#/auth/guard'
 import { saveShopDefaults } from '#/auth/terms'
 import { halalasToRiyals } from '#/lib/money'
-import { AppBar, Button } from '#/components/chrome'
+import { Button } from '#/components/chrome'
 import { Card } from '#/components/primitives'
 import { NumberField, TermChangeList, TermsProblems } from '#/components/terms'
 import { useI18n } from '#/i18n/context'
@@ -62,7 +62,6 @@ function ShopSettings() {
 
   return (
     <>
-      <AppBar />
       <main className="p-3.5">
         <Link
           to="/merchant"

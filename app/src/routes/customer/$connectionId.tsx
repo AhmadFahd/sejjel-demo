@@ -1,7 +1,7 @@
 import { Link, createFileRoute, notFound } from '@tanstack/react-router'
 import { createServerFn } from '@tanstack/react-start'
 import { requireSide } from '#/auth/guard'
-import { AppBar, buttonClass } from '#/components/chrome'
+import { buttonClass } from '#/components/chrome'
 import { Pager, TransactionHistory, pagerLinkClass } from '#/components/account'
 import {
   BalanceHero,
@@ -71,7 +71,6 @@ function CustomerAccount() {
 
   return (
     <>
-      <AppBar />
       <main className="p-3.5">
         <Link
           to="/customer"

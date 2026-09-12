@@ -2,7 +2,7 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 import { Link, createFileRoute, useRouter } from '@tanstack/react-router'
 import { requireSide } from '#/auth/guard'
 import { applyScannedCode } from '#/auth/approval'
-import { AppBar, Button, buttonClass } from '#/components/chrome'
+import { Button, buttonClass } from '#/components/chrome'
 import { Card } from '#/components/primitives'
 import { useI18n } from '#/i18n/context'
 
@@ -131,7 +131,6 @@ function ScanCode() {
 
   return (
     <>
-      <AppBar />
       <main className="p-3.5">
         <Link
           to="/merchant"

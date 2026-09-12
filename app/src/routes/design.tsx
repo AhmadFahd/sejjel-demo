@@ -15,14 +15,7 @@ import {
   PaydayStrip,
   TransactionRow,
 } from '#/components/ledger'
-import {
-  AppBar,
-  BottomNav,
-  Button,
-  Sheet,
-  Toast,
-  useToast,
-} from '#/components/chrome'
+import { BottomNav, Button, Sheet, Toast, useToast } from '#/components/chrome'
 import { CodeBoxes } from '#/components/code-boxes'
 import { I18nProvider, useI18n } from '#/i18n/context'
 import { LOCALES, directionOf } from '#/i18n/locales'
@@ -66,8 +59,6 @@ function Panel({ locale }: { locale: Locale }) {
       data-testid={`gallery-${locale}`}
       data-dir={directionOf(locale)}
     >
-      <AppBar />
-
       <div className="p-3.5">
         <div className="mb-3 grid grid-cols-3 gap-2.5">
           <StatTile label={t('ledger.customers')} value="3" />

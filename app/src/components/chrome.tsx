@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react'
 import { cx } from './primitives'
-import { useI18n } from '#/i18n/context'
 import type { ReactNode } from 'react'
 
 export type NavItem = {
@@ -9,31 +8,6 @@ export type NavItem = {
   icon: ReactNode
   badge?: number
   onSelect?: () => void
-}
-
-/** The dark bar at the top: mark, name, and whatever the screen puts beside it. */
-export function AppBar({ actions }: { actions?: ReactNode }) {
-  const { t } = useI18n()
-
-  return (
-    <header className="flex items-center gap-2.5 bg-ink px-3.5 pt-1 pb-3.5 text-white">
-      <span
-        className="grid size-10 flex-none place-items-center rounded-[13px] bg-linear-135 from-gold-light via-gold to-gold-dark text-lg font-black text-ink"
-        aria-hidden
-      >
-        {t('appName').slice(0, 1)}
-      </span>
-      <div>
-        <div className="text-[19px] leading-none font-black">
-          {t('appName')}
-        </div>
-        <div className="text-[10.5px] font-bold text-white/70">
-          {t('appTagline')}
-        </div>
-      </div>
-      <div className="ms-auto flex items-center gap-2">{actions}</div>
-    </header>
-  )
 }
 
 export function BottomNav({

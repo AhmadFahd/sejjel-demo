@@ -8,7 +8,7 @@ import { createServerFn } from '@tanstack/react-start'
 import { requireSide } from '#/auth/guard'
 import { localSaudiMobile } from '#/auth/phone'
 import { cancelOperation } from '#/auth/operation'
-import { AppBar, buttonClass } from '#/components/chrome'
+import { buttonClass } from '#/components/chrome'
 import { MobileNumber } from '#/components/primitives'
 import { Pager, TransactionHistory, pagerLinkClass } from '#/components/account'
 import { BalanceHero, LimitBar, OperationsCounter } from '#/components/ledger'
@@ -70,7 +70,6 @@ function MerchantAccount() {
 
   return (
     <>
-      <AppBar />
       <main className="p-3.5">
         <Link
           to="/merchant"
