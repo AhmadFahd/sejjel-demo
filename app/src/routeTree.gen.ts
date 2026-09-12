@@ -13,7 +13,6 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as CustomerRouteRouteImport } from './routes/customer/route'
 import { Route as DesignRouteImport } from './routes/design'
 import { Route as MerchantRouteRouteImport } from './routes/merchant/route'
-import { Route as PrototypeProfileRouteImport } from './routes/prototype-profile'
 import { Route as SignInRouteImport } from './routes/sign-in'
 import { Route as StatusRouteImport } from './routes/status'
 import { Route as WelcomeRouteImport } from './routes/welcome'
@@ -50,11 +49,6 @@ const DesignRoute = DesignRouteImport.update({
 const MerchantRouteRoute = MerchantRouteRouteImport.update({
   id: '/merchant',
   path: '/merchant',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const PrototypeProfileRoute = PrototypeProfileRouteImport.update({
-  id: '/prototype-profile',
-  path: '/prototype-profile',
   getParentRoute: () => rootRouteImport,
 } as any)
 const SignInRoute = SignInRouteImport.update({
@@ -150,7 +144,6 @@ export interface FileRoutesByFullPath {
   '/customer': typeof CustomerRouteRouteWithChildren
   '/merchant': typeof MerchantRouteRouteWithChildren
   '/design': typeof DesignRoute
-  '/prototype-profile': typeof PrototypeProfileRoute
   '/sign-in': typeof SignInRoute
   '/status': typeof StatusRoute
   '/welcome': typeof WelcomeRoute
@@ -172,7 +165,6 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/design': typeof DesignRoute
-  '/prototype-profile': typeof PrototypeProfileRoute
   '/sign-in': typeof SignInRoute
   '/status': typeof StatusRoute
   '/welcome': typeof WelcomeRoute
@@ -197,7 +189,6 @@ export interface FileRoutesById {
   '/customer': typeof CustomerRouteRouteWithChildren
   '/merchant': typeof MerchantRouteRouteWithChildren
   '/design': typeof DesignRoute
-  '/prototype-profile': typeof PrototypeProfileRoute
   '/sign-in': typeof SignInRoute
   '/status': typeof StatusRoute
   '/welcome': typeof WelcomeRoute
@@ -223,7 +214,6 @@ export interface FileRouteTypes {
     | '/customer'
     | '/merchant'
     | '/design'
-    | '/prototype-profile'
     | '/sign-in'
     | '/status'
     | '/welcome'
@@ -245,7 +235,6 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/design'
-    | '/prototype-profile'
     | '/sign-in'
     | '/status'
     | '/welcome'
@@ -269,7 +258,6 @@ export interface FileRouteTypes {
     | '/customer'
     | '/merchant'
     | '/design'
-    | '/prototype-profile'
     | '/sign-in'
     | '/status'
     | '/welcome'
@@ -294,7 +282,6 @@ export interface RootRouteChildren {
   CustomerRouteRoute: typeof CustomerRouteRouteWithChildren
   MerchantRouteRoute: typeof MerchantRouteRouteWithChildren
   DesignRoute: typeof DesignRoute
-  PrototypeProfileRoute: typeof PrototypeProfileRoute
   SignInRoute: typeof SignInRoute
   StatusRoute: typeof StatusRoute
   WelcomeRoute: typeof WelcomeRoute
@@ -330,13 +317,6 @@ declare module '@tanstack/react-router' {
       path: '/merchant'
       fullPath: '/merchant'
       preLoaderRoute: typeof MerchantRouteRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/prototype-profile': {
-      id: '/prototype-profile'
-      path: '/prototype-profile'
-      fullPath: '/prototype-profile'
-      preLoaderRoute: typeof PrototypeProfileRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/sign-in': {
@@ -510,7 +490,6 @@ const rootRouteChildren: RootRouteChildren = {
   CustomerRouteRoute: CustomerRouteRouteWithChildren,
   MerchantRouteRoute: MerchantRouteRouteWithChildren,
   DesignRoute: DesignRoute,
-  PrototypeProfileRoute: PrototypeProfileRoute,
   SignInRoute: SignInRoute,
   StatusRoute: StatusRoute,
   WelcomeRoute: WelcomeRoute,

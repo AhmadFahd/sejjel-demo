@@ -4,7 +4,7 @@ import { requireSide } from '#/auth/guard'
 import { ConnectionRequests } from '#/components/connection-requests'
 import { getCustomerTotals, listCustomerConnections } from '#/db/queries/ledger'
 import { paydayOnOrAfter } from '#/lib/payday'
-import { AppBar, buttonClass } from '#/components/chrome'
+import { buttonClass } from '#/components/chrome'
 import {
   Avatar,
   Card,
@@ -13,8 +13,6 @@ import {
   StatusPill,
 } from '#/components/primitives'
 import { OperationsCounter, PaydayStrip } from '#/components/ledger'
-import { SideSwitch } from '#/components/side-switch'
-import { SignOutButton } from '#/components/sign-out'
 import { useI18n } from '#/i18n/context'
 
 const loadShops = createServerFn({ method: 'GET' }).handler(async () => {
@@ -40,7 +38,6 @@ const loadShops = createServerFn({ method: 'GET' }).handler(async () => {
     awaiting: await listAwaitingCustomer(db, user.id, now),
     requests: await listConnectionRequests(db, user.id),
     nextPaydayAt: paydayOnOrAfter(now),
-    roles: user.roles,
   }
 })
 
@@ -52,20 +49,12 @@ export const Route = createFileRoute('/customer/')({
 })
 
 function CustomerHome() {
-  const { totals, shops, awaiting, requests, roles, nextPaydayAt } =
+  const { totals, shops, awaiting, requests, nextPaydayAt } =
     Route.useLoaderData()
   const { t, money, number, date } = useI18n()
 
   return (
     <>
-      <AppBar
-        actions={
-          <>
-            <SideSwitch roles={roles} side="customer" />
-            <SignOutButton />
-          </>
-        }
-      />
       <main className="p-3.5">
         <h1 className="mb-3 text-xl font-black text-ink">
           {t('role.customer')}
