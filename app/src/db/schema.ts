@@ -256,6 +256,12 @@ export const notifications = sqliteTable(
     }).notNull(),
     connectionId: text('connection_id').references(() => connections.id),
     transactionId: text('transaction_id').references(() => transactions.id),
+    /**
+     * What this row is about, where saying it twice would be wrong: a due
+     * date approaching is noticed every time a screen looks, and the person
+     * should be told once per date, not once per look.
+     */
+    dedupeKey: text('dedupe_key'),
     readAt: integer('read_at', { mode: 'timestamp' }),
     /** An actionable notification can be acted on once (UC-12). */
     actedAt: integer('acted_at', { mode: 'timestamp' }),
@@ -263,6 +269,7 @@ export const notifications = sqliteTable(
   },
   (table) => [
     index('notifications_user_idx').on(table.userId, table.createdAt),
+    uniqueIndex('notifications_dedupe_idx').on(table.dedupeKey),
   ],
 )
 

@@ -339,6 +339,63 @@ test('one tap hides every amount, and it holds after a reload', async ({
   await expect(page.getByTestId('balance-hero')).toContainText('1,250')
 })
 
+/**
+ * UC-12: the bell. سالم is past his date in the fixture, and nothing happened
+ * to make that true — the date came round — so the shop is told about it the
+ * first time a screen looks.
+ */
+test('the shop is told about a date that came round', async ({ page }) => {
+  await signIn(page, '0550111222', '+966550111222')
+
+  await page.getByTestId('bell').click()
+
+  const overdue = page
+    .getByTestId('notification')
+    .filter({ hasText: 'تجاوز موعده' })
+  await expect(overdue.first()).toBeVisible()
+
+  // Opening the list is what clears the count.
+  await expect(page.getByTestId('bell-badge')).toHaveCount(0)
+})
+
+/**
+ * UC-12: a purchase waiting on the customer is answered from the list itself,
+ * and once answered it says so rather than offering the buttons again.
+ */
+test('a customer answers a purchase from the bell', async ({
+  page,
+  browser,
+}) => {
+  test.slow()
+  const { context: shop, page: shopPhone } = await openPhone(browser)
+  await signIn(shopPhone, '0550111222', '+966550111222')
+  await shopPhone.getByTestId('record').click()
+  await shopPhone.getByLabel('العميل').selectOption({ label: 'خالد علي' })
+  await shopPhone.getByLabel('المبلغ').fill('40')
+  await shopPhone.getByLabel('الوصف (اختياري)').fill('تمر وقهوة')
+  await shopPhone.getByRole('button', { name: 'أرسل للعميل' }).click()
+  await expect(shopPhone.getByTestId('waiting')).toBeVisible()
+
+  await signIn(page, '0555987210', '+966555987210')
+  await expect(page.getByTestId('bell-badge')).toBeVisible()
+
+  await page.getByTestId('bell').click()
+  const waiting = page
+    .getByTestId('notification')
+    .filter({ hasText: 'بانتظار موافقتك' })
+    .first()
+  await expect(waiting).toContainText('40')
+
+  await waiting.getByTestId('notification-decline').click()
+
+  await expect(waiting.getByTestId('notification-acted')).toBeVisible()
+  await expect(waiting.getByTestId('notification-decline')).toHaveCount(0)
+
+  // The shop's screen moved on by itself: declining travels over the stream.
+  await expect(shopPhone.getByTestId('operation-settled')).toBeVisible()
+  await shop.close()
+})
+
 test('a customer sees every shop they owe, and can open one', async ({
   page,
 }) => {

@@ -89,6 +89,20 @@ export const ar = {
   'amounts.hide': 'إخفاء المبالغ',
   'amounts.show': 'إظهار المبالغ',
 
+  'notify.title': 'ما الذي حدث',
+  'notify.empty': 'لا شيء بعد.',
+  'notify.emptyBody': 'ستظهر هنا المشتريات والمدفوعات وما يقترب استحقاقه.',
+  'notify.open': 'الإشعارات',
+  'notify.unread': '{count} غير مقروء',
+  'notify.acted': 'تمت الإجابة',
+  'notify.purchase_awaiting_approval': 'عملية بانتظار موافقتك',
+  'notify.purchase_applied': 'سُجّلت عملية على الدفتر',
+  'notify.payment_received': 'تم سداد مبلغ',
+  'notify.connection_requested': 'متجر يطلب إضافتك',
+  'notify.limit_changed': 'تغيّر حد الائتمان',
+  'notify.due_soon': 'رصيد يقترب موعد استحقاقه',
+  'notify.overdue': 'رصيد تجاوز موعده',
+
   'money.currency': 'ر.س',
   'money.hidden': '••••',
 

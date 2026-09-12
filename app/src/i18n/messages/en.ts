@@ -92,6 +92,21 @@ export const en = {
   'amounts.hide': 'Hide the amounts',
   'amounts.show': 'Show the amounts',
 
+  'notify.title': 'What happened',
+  'notify.empty': 'Nothing has happened yet.',
+  'notify.emptyBody':
+    'Purchases, payments and anything falling due will appear here.',
+  'notify.open': 'Notifications',
+  'notify.unread': '{count} unread',
+  'notify.acted': 'Answered',
+  'notify.purchase_awaiting_approval': 'A purchase is waiting for you',
+  'notify.purchase_applied': 'A purchase went on the ledger',
+  'notify.payment_received': 'A payment went through',
+  'notify.connection_requested': 'A shop wants to add you',
+  'notify.limit_changed': 'Your credit limit changed',
+  'notify.due_soon': 'A balance falls due soon',
+  'notify.overdue': 'A balance is past due',
+
   'money.currency': 'SAR',
   'money.hidden': '••••',
 
