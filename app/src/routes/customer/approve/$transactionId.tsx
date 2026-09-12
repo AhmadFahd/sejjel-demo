@@ -16,6 +16,7 @@ import { Card, KeyValueRow } from '#/components/primitives'
 import { ApprovalCode } from '#/components/approval-code'
 import { useI18n } from '#/i18n/context'
 import { requireSide } from '#/auth/enter'
+import { MINTED } from '#/lib/freshness'
 
 const loadOperation = createServerFn({ method: 'GET' })
   .validator((input: unknown): { transactionId: string } => ({
@@ -37,6 +38,7 @@ const loadOperation = createServerFn({ method: 'GET' })
 
 /** UC-07: nothing lands on a ledger without the person standing there agreeing. */
 export const Route = createFileRoute('/customer/approve/$transactionId')({
+  ...MINTED,
   loader: async ({ params, parentMatchPromise }) => {
     await requireSide(parentMatchPromise, 'customer')
     const operation = await loadOperation({

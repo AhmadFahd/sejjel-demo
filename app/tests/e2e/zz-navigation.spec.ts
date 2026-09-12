@@ -58,8 +58,15 @@ test('a customer holds one event stream, on the ledger and on the card', async (
  * read — who is asking, what is unread, whether they belong here — used to be
  * a second one in front of it, on every navigation, because it sat in a
  * `beforeLoad` and `beforeLoad` keeps nothing.
+ *
+ * #80: and the way back costs none, because the ledger's answer is half a
+ * minute old at most and nothing has said it moved. The card is the other
+ * kind: its code is minted by the read, so every visit pays for a new one and
+ * none of them is painted from the last visit.
  */
-test('a tap inside a side costs one round trip, not two', async ({ page }) => {
+test('a tap inside a side costs one round trip, and the way back costs none', async ({
+  page,
+}) => {
   await signIn(page, CUSTOMER.typed, CUSTOMER.e164)
   await expect(page).toHaveURL(/\/customer$/)
   await hydrated(page)
@@ -73,10 +80,17 @@ test('a tap inside a side costs one round trip, not two', async ({ page }) => {
   await expect(page.getByTestId('my-card')).toBeVisible()
   expect(calls).toHaveLength(1)
 
-  // And back, where the ledger's own loader is the only thing left to ask.
+  // Back to a screen the router still holds, inside its window: nothing to
+  // ask, so the rows are simply there.
   calls.length = 0
   await page.getByTestId('dock').getByText('دفتري').click()
   await expect(page.getByTestId('connection-row').first()).toBeVisible()
+  expect(calls).toHaveLength(0)
+
+  // And the card again, which is never the screen that was left.
+  calls.length = 0
+  await page.getByTestId('dock').getByText('بطاقتي').click()
+  await expect(page.getByTestId('my-card')).toBeVisible()
   expect(calls).toHaveLength(1)
 })
 

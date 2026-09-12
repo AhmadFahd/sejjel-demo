@@ -2,6 +2,7 @@ import { createFileRoute } from '@tanstack/react-router'
 import { createServerFn } from '@tanstack/react-start'
 import { describeEnvironment } from '#/lib/environment'
 import { useI18n } from '#/i18n/context'
+import { SETTLED } from '#/lib/freshness'
 
 /**
  * What the front door used to show. Useful on a deployment, and no longer in
@@ -17,6 +18,7 @@ const getEnvironment = createServerFn({ method: 'GET' }).handler(() =>
 )
 
 export const Route = createFileRoute('/status')({
+  ...SETTLED,
   loader: () => getEnvironment(),
   component: Status,
 })

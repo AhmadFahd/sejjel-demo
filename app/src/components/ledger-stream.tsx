@@ -1,8 +1,6 @@
 import { useEffect } from 'react'
 import { useRouter } from '@tanstack/react-router'
-
-/** How often to re-fetch anyway, for a stream that died without saying so. */
-const FALLBACK_POLL_MS = 60_000
+import { FALLBACK_POLL_MS, fallbackAction } from '#/lib/freshness'
 
 /**
  * #14: the client end of the stream. An event says something changed; this
@@ -16,9 +14,16 @@ export function LedgerStream({ enabled }: { enabled: boolean }) {
   const router = useRouter()
 
   useEffect(() => {
-    if (!enabled || typeof EventSource === 'undefined') return
+    if (!enabled) return
 
     const refresh = () => void router.invalidate()
+
+    if (typeof EventSource === 'undefined') {
+      // No stream in this browser, so the timer is the only thing that will
+      // ever say a balance moved.
+      const blind = setInterval(refresh, FALLBACK_POLL_MS)
+      return () => clearInterval(blind)
+    }
 
     // A stream opened while the document is still loading counts as a
     // subresource that never finishes, so the tab spins forever and anything
@@ -48,16 +53,50 @@ export function LedgerStream({ enabled }: { enabled: boolean }) {
       ]) {
         source.addEventListener(kind, refresh)
       }
-
-      poll = setInterval(refresh, FALLBACK_POLL_MS)
     }
 
-    if (document.readyState === 'complete') open()
-    else window.addEventListener('load', open, { once: true })
+    // #80: the fallback asks only while the stream is not carrying events. It
+    // used to fire on a timer whatever the stream was doing, which cost every
+    // idle tab a round trip a minute to be told nothing had changed.
+    const beat = () => {
+      const action = fallbackAction(source?.readyState ?? null)
+      if (action === 'nothing') return
+      refresh()
+      if (action === 'ask-and-reopen') {
+        source?.close()
+        source = null
+        open()
+      }
+    }
+
+    // A phone that slept did not hear anything while it was away, and its
+    // connection is usually gone without the browser having noticed yet. So
+    // coming back to the app is its own beat, whatever the timer thinks.
+    const woken = () => {
+      if (document.visibilityState !== 'visible') return
+      refresh()
+      // 2 is CLOSED: the browser gave up while the tab was away, so the
+      // stream has to be opened again by hand.
+      if (source?.readyState === 2) {
+        source.close()
+        source = null
+        open()
+      }
+    }
+
+    const start = () => {
+      open()
+      poll = setInterval(beat, FALLBACK_POLL_MS)
+    }
+
+    if (document.readyState === 'complete') start()
+    else window.addEventListener('load', start, { once: true })
+    document.addEventListener('visibilitychange', woken)
 
     return () => {
       stopped = true
-      window.removeEventListener('load', open)
+      window.removeEventListener('load', start)
+      document.removeEventListener('visibilitychange', woken)
       if (poll) clearInterval(poll)
       source?.close()
     }

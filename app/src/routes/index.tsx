@@ -5,6 +5,7 @@ import { Mark, ShaddaTexture, Wordmark } from '#/components/brand'
 import { LocaleToggle } from '#/components/locale-toggle'
 import { paydayOnOrAfter } from '#/lib/payday'
 import { useI18n } from '#/i18n/context'
+import { SETTLED } from '#/lib/freshness'
 
 /**
  * A made-up page of the ledger, for the public page to show. The figures are
@@ -27,6 +28,7 @@ const DAY_MS = 24 * 60 * 60 * 1000
  * they are already using.
  */
 export const Route = createFileRoute('/')({
+  ...SETTLED,
   beforeLoad: async () => {
     const user = await loadSignedInUser()
     if (user) throw redirect({ to: homeFor(user.roles) })

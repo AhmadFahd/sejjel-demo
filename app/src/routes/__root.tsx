@@ -13,11 +13,13 @@ import { DEFAULT_SHELL, loadShell } from '#/auth/shell'
 import { ViewerProvider } from '#/auth/viewer'
 import { directionOf } from '#/i18n/locales'
 import { createTranslate } from '#/i18n/translate'
+import { SETTLED } from '#/lib/freshness'
 import type { ReactNode } from 'react'
 import type { Shell } from '#/auth/shell'
 import appCss from '../styles.css?url'
 
 export const Route = createRootRoute({
+  ...SETTLED,
   loader: () => loadShell(),
   head: ({ loaderData }) => ({
     meta: [

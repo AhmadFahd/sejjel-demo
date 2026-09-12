@@ -18,6 +18,7 @@ import { OperationsCounter, PaydayStrip } from '#/components/ledger'
 import { QrCanvas } from '#/components/qr-canvas'
 import { shopUrl } from './qr'
 import { useI18n } from '#/i18n/context'
+import { WATCHED } from '#/lib/freshness'
 
 /** How many customers one screen of the list holds. */
 const PAGE_SIZE = 25
@@ -68,6 +69,7 @@ const loadShop = createServerFn({ method: 'GET' })
 
 /** UC-02: the shop's position, and every customer in it. */
 export const Route = createFileRoute('/merchant/')({
+  ...WATCHED,
   // Page one carries no search parameter, so every other link to the shop —
   // a guard sending someone back, the side switch — stays a bare `/merchant`.
   validateSearch: (search: Record<string, unknown>): { page?: number } => {

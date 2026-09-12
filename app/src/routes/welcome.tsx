@@ -7,6 +7,7 @@ import { Card } from '#/components/primitives'
 import { ConnectionRequests } from '#/components/connection-requests'
 import { LedgerStream } from '#/components/ledger-stream'
 import { useI18n } from '#/i18n/context'
+import { WATCHED } from '#/lib/freshness'
 
 const loadRequests = createServerFn({ method: 'GET' }).handler(async () => {
   const { requireSignedInUser } = await import('#/auth/session.server')
@@ -19,6 +20,7 @@ const loadRequests = createServerFn({ method: 'GET' }).handler(async () => {
 
 /** For a person no shop has connected, who does not keep one either. */
 export const Route = createFileRoute('/welcome')({
+  ...WATCHED,
   beforeLoad: async () => {
     const user = await loadSignedInUser()
     if (!user) throw redirect({ to: '/sign-in' })

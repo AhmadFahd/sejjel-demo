@@ -4,6 +4,7 @@ import { requireSignedIn } from '#/auth/guard'
 import { isPdf } from '#/lib/invoice'
 import { Card } from '#/components/primitives'
 import { useI18n } from '#/i18n/context'
+import { SETTLED } from '#/lib/freshness'
 
 const loadInvoice = createServerFn({ method: 'GET' })
   .validator((input: unknown): { invoiceId: string } => ({
@@ -28,6 +29,7 @@ const loadInvoice = createServerFn({ method: 'GET' })
 
 /** UC-11: the invoice, full screen, for either party to the operation. */
 export const Route = createFileRoute('/invoice/$invoiceId')({
+  ...SETTLED,
   beforeLoad: () => requireSignedIn(),
   loader: async ({ params }) => {
     const invoice = await loadInvoice({

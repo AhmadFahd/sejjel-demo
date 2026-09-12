@@ -11,6 +11,7 @@ import { joinShopFn } from '#/auth/join'
 import { Button } from '#/components/chrome'
 import { Card, KeyValueRow } from '#/components/primitives'
 import { useI18n } from '#/i18n/context'
+import { MINTED } from '#/lib/freshness'
 
 const loadShop = createServerFn({ method: 'GET' })
   .validator((input: unknown): { merchantId: string } => ({
@@ -34,6 +35,10 @@ const loadShop = createServerFn({ method: 'GET' })
  * out, so it can be printed and left there.
  */
 export const Route = createFileRoute('/shop/$merchantId')({
+  // #80: this loader decides where its reader ends up — somebody the shop
+  // already keeps is sent to their account instead — so a cached answer would
+  // draw the wrong screen for a moment before correcting itself.
+  ...MINTED,
   beforeLoad: async ({ params }) => {
     const user = await loadSignedInUser()
     // Signed out, this is where they were going: back here once they are in.
