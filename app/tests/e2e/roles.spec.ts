@@ -767,6 +767,11 @@ test('a shop asks for a customer by scanning their card', async ({
   await expect(page.getByTestId('connection-request')).toContainText(
     'بقالة الريان',
   )
+
+  // #81: and the code the shop just scanned is still the code on the screen.
+  // The request arriving is what reloads this route, and the code is not the
+  // route's to mint — otherwise the QR would change under the camera.
+  await expect(page.getByTestId('approval-text')).toHaveText(card)
   await page.getByRole('button', { name: 'موافقة' }).click()
   await expect(page).toHaveURL(/\/customer$/)
 
