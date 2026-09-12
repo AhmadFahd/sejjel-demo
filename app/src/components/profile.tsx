@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { Link } from '@tanstack/react-router'
-import { signOut } from '#/auth/session'
+import { authClient } from '#/auth/client'
 import { cx } from './primitives'
 import { useI18n } from '#/i18n/context'
 import { useLocaleSwitch } from '#/i18n/use-locale-switch'
@@ -122,7 +122,7 @@ function ProfileRows({
         label={t('auth.signOut')}
         tone="danger"
         onPress={async () => {
-          await signOut()
+          await authClient.signOut()
           // A document load, not a navigation inside one: who is signed in
           // decides what the whole document is, and the shell around the
           // screens is rendered when the document is.

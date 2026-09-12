@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react'
 import { Link, createFileRoute } from '@tanstack/react-router'
-import { requireSignedIn } from '#/auth/guard'
 import { issueMyCode } from '#/auth/connect'
 import { Card } from '#/components/primitives'
 import { ApprovalCode } from '#/components/approval-code'
@@ -16,7 +15,6 @@ import { useI18n } from '#/i18n/context'
 export const Route = createFileRoute('/customer/card')({
   // Anybody signed in: a person no shop has connected yet is exactly who
   // needs a card to be scanned.
-  beforeLoad: () => requireSignedIn(),
   loader: () => issueMyCode(),
   component: MyCard,
 })

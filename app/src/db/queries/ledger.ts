@@ -48,6 +48,8 @@ export type ConnectionSummary = {
   termOverrideDays: number | null
   defaultLimitHalalas: number
   defaultTermDays: number
+  /** UC-06: when this customer took the shop's terms, or null. */
+  termsAcceptedAt: Date | null
   dueAt: Date | null
   dueState: DueState
   daysOverdue: number
@@ -93,6 +95,7 @@ function toSummary(
     termOverrideDays: row.connection.termOverrideDays,
     defaultLimitHalalas: row.merchant.defaultLimitHalalas,
     defaultTermDays: row.merchant.defaultTermDays,
+    termsAcceptedAt: row.connection.termsAcceptedAt,
     dueAt,
     dueState: dueStateOf(dueAt, now),
     daysOverdue: dueAt ? daysOverdue(dueAt, now) : 0,
@@ -302,4 +305,27 @@ export async function listTransactions(
     .orderBy(desc(transactions.createdAt), desc(transactions.id))
     .limit(page.limit ?? 50)
     .offset(page.offset ?? 0)
+}
+
+/**
+ * What became of one operation of this shop's, by the id the screen already
+ * holds. Scoped to the shop rather than read by id alone: a shop may ask
+ * about its own operations and no others.
+ */
+export async function readShopTransaction(
+  db: Database,
+  input: { transactionId: string; merchantId: string },
+) {
+  const rows = await db
+    .select({ id: transactions.id, status: transactions.status })
+    .from(transactions)
+    .innerJoin(connections, eq(connections.id, transactions.connectionId))
+    .where(
+      and(
+        eq(transactions.id, input.transactionId),
+        eq(connections.merchantId, input.merchantId),
+      ),
+    )
+    .limit(1)
+  return rows.at(0) ?? null
 }

@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { Link, createFileRoute, useRouter } from '@tanstack/react-router'
 import { createServerFn } from '@tanstack/react-start'
-import { requireSide } from '#/auth/guard'
+import { requireSideOf } from '#/auth/enter'
 import { localSaudiMobile } from '#/auth/phone'
 import { cancelOperation, recordOperation } from '#/auth/operation'
 import { Button, buttonClass } from '#/components/chrome'
@@ -21,7 +21,7 @@ const loadCustomers = createServerFn({ method: 'GET' })
   .handler(async ({ data }) => {
     const { requireSignedInUser } = await import('#/auth/session.server')
     const { getDatabase } = await import('#/db/client')
-    const { listMerchantConnections, listTransactions } =
+    const { listMerchantConnections, readShopTransaction } =
       await import('#/db/queries/ledger')
     const user = await requireSignedInUser()
     const shop = user.roles.merchant
@@ -35,27 +35,23 @@ const loadCustomers = createServerFn({ method: 'GET' })
       limit: 200,
     })
 
-    // The status of the operation being waited on, read fresh. The stream
-    // invalidates this loader, which is how the waiting screen moves on
-    // without a timer.
-    let waitingOn: { id: string; status: string } | null = null
-    if (data.pending) {
-      for (const row of customers) {
-        const rows = await listTransactions(db, row.connectionId, { limit: 50 })
-        const found = rows.find((entry) => entry.id === data.pending)
-        if (found) {
-          waitingOn = { id: found.id, status: found.status }
-          break
-        }
-      }
-    }
+    // The status of the operation being waited on, read fresh by the id the
+    // screen is waiting on rather than by walking every customer's ledger
+    // until it turns up. The stream invalidates this loader, which is how the
+    // waiting screen moves on without a timer.
+    const waitingOn = data.pending
+      ? await readShopTransaction(db, {
+          transactionId: data.pending,
+          merchantId: shop.id,
+        })
+      : null
 
     return { customers, waitingOn }
   })
 
 /** UC-04: عملية جديدة — what the customer just bought, on credit. */
 export const Route = createFileRoute('/merchant/record')({
-  beforeLoad: () => requireSide('merchant'),
+  beforeLoad: ({ context }) => requireSideOf(context.person, 'merchant'),
   validateSearch: (
     search: Record<string, unknown>,
   ): { customer?: string; pending?: string } => {

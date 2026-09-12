@@ -52,7 +52,16 @@ function createAuth() {
         verification: verifications,
       },
     }),
-    session: { expiresIn: SESSION_TTL_SECONDS },
+    session: {
+      expiresIn: SESSION_TTL_SECONDS,
+      /**
+       * The session travels in a signed cookie for a minute at a time, so
+       * reading who is asking does not query the session table on every
+       * request. Signing out clears the cookie with the row, and a minute is
+       * short enough that a revoked session cannot outlive it by long.
+       */
+      cookieCache: { enabled: true, maxAge: 60 },
+    },
     /**
      * Better Auth's own logger writes multi-line objects, which a log pipeline
      * reads as one entry per line. Send it through ours instead.

@@ -1,6 +1,6 @@
 import { Link, createFileRoute } from '@tanstack/react-router'
 import { createServerFn } from '@tanstack/react-start'
-import { requireSide } from '#/auth/guard'
+import { requireSideOf } from '#/auth/enter'
 import { ConnectionRequests } from '#/components/connection-requests'
 import { getCustomerTotals, listCustomerConnections } from '#/db/queries/ledger'
 import { paydayOnOrAfter } from '#/lib/payday'
@@ -48,7 +48,7 @@ const loadShops = createServerFn({ method: 'GET' }).handler(async () => {
 
 /** UC-09: every shop one customer owes, and what they owe in total. */
 export const Route = createFileRoute('/customer/')({
-  beforeLoad: () => requireSide('customer'),
+  beforeLoad: ({ context }) => requireSideOf(context.person, 'customer'),
   loader: () => loadShops(),
   component: CustomerHome,
 })

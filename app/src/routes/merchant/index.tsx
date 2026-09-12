@@ -1,6 +1,6 @@
 import { Link, createFileRoute } from '@tanstack/react-router'
 import { createServerFn } from '@tanstack/react-start'
-import { requireSide } from '#/auth/guard'
+import { requireSideOf } from '#/auth/enter'
 import { localSaudiMobile } from '#/auth/phone'
 import { getMerchantTotals, listMerchantConnections } from '#/db/queries/ledger'
 import { paydayOnOrAfter } from '#/lib/payday'
@@ -68,7 +68,7 @@ const loadShop = createServerFn({ method: 'GET' })
 
 /** UC-02: the shop's position, and every customer in it. */
 export const Route = createFileRoute('/merchant/')({
-  beforeLoad: () => requireSide('merchant'),
+  beforeLoad: ({ context }) => requireSideOf(context.person, 'merchant'),
   // Page one carries no search parameter, so every other link to the shop —
   // a guard sending someone back, the side switch — stays a bare `/merchant`.
   validateSearch: (search: Record<string, unknown>): { page?: number } => {

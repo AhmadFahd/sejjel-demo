@@ -1,4 +1,4 @@
-import { and, asc, eq, gt } from 'drizzle-orm'
+import { and, asc, desc, eq, gt } from 'drizzle-orm'
 import { events } from '../schema'
 import type { Database } from '../client'
 
@@ -69,7 +69,11 @@ export async function eventsSince(
   }))
 }
 
-/** Where a stream starts when the client has never heard anything. */
+/**
+ * Where a stream starts when the client has never heard anything. The table is
+ * append-only and never pruned, so this asks the index for the last row rather
+ * than reading every row this person has ever been sent.
+ */
 export async function latestEventId(
   db: Database,
   userId: string,
@@ -78,6 +82,7 @@ export async function latestEventId(
     .select({ id: events.id })
     .from(events)
     .where(eq(events.userId, userId))
-    .orderBy(asc(events.id))
-  return rows.at(-1)?.id ?? 0
+    .orderBy(desc(events.id))
+    .limit(1)
+  return rows.at(0)?.id ?? 0
 }

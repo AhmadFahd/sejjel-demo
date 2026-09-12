@@ -1,4 +1,4 @@
-import { and, desc, eq } from 'drizzle-orm'
+import { and, desc, eq, gt, isNull, or } from 'drizzle-orm'
 import { connections, merchants, transactions } from '../schema'
 import { hasExpired } from '#/lib/purchase'
 import { wouldBreachLimit } from '../derive'
@@ -46,13 +46,6 @@ export async function readOperation(
   const summary = await getConnectionSummary(db, row.connectionId, now)
   if (!summary) return null
 
-  const link = (
-    await db
-      .select()
-      .from(connections)
-      .where(eq(connections.id, row.connectionId))
-  ).at(0)
-
   return {
     // A pending operation nobody answered in time reads as called off, which
     // is what it is: the ledger will never take it now.
@@ -66,7 +59,7 @@ export async function readOperation(
     description: row.description,
     dueAt: row.dueAt,
     invoiceId: row.invoiceId,
-    termsAccepted: Boolean(link?.termsAcceptedAt),
+    termsAccepted: summary.termsAcceptedAt !== null,
   }
 }
 
@@ -146,24 +139,54 @@ export async function listAwaitingCustomer(
   db: Database,
   customerUserId: string,
   now: Date = new Date(),
+  limit = AWAITING_LIMIT,
 ): Promise<Array<PendingOperation>> {
   const rows = await db
-    .select({ id: transactions.id })
+    .select({
+      transaction: transactions,
+      connection: connections,
+      merchant: merchants,
+    })
     .from(transactions)
     .innerJoin(connections, eq(connections.id, transactions.connectionId))
+    .innerJoin(merchants, eq(merchants.id, connections.merchantId))
     .where(
       and(
         eq(connections.customerUserId, customerUserId),
         eq(transactions.status, 'pending'),
+        // What "waiting" means, said to the database rather than to a filter
+        // over rows already paid for: an operation nobody answered in time is
+        // not waiting on anybody.
+        or(
+          isNull(transactions.approvalExpiresAt),
+          gt(transactions.approvalExpiresAt, now),
+        ),
       ),
     )
     .orderBy(desc(transactions.createdAt))
+    .limit(limit)
 
-  const operations = await Promise.all(
-    rows.map((row) => readPendingOperation(db, row.id, now)),
-  )
-  return operations.filter((operation) => operation !== null)
+  return rows.map((row) => ({
+    status: row.transaction.status,
+    transactionId: row.transaction.id,
+    connectionId: row.connection.id,
+    merchantId: row.merchant.id,
+    merchantName: row.merchant.name,
+    customerUserId: row.connection.customerUserId,
+    amountHalalas: row.transaction.amountHalalas,
+    description: row.transaction.description,
+    dueAt: row.transaction.dueAt,
+    invoiceId: row.transaction.invoiceId,
+    termsAccepted: row.connection.termsAcceptedAt !== null,
+  }))
 }
+
+/**
+ * A screen shows what is waiting, not a year of it. Nothing in the app has
+ * ever had more than a handful at once; the limit is here so the cost of the
+ * screen stops tracking the length of the list.
+ */
+const AWAITING_LIMIT = 25
 
 /** Whose phone is the shop's, so the shop can be told what happened on it. */
 async function shopkeeperOf(db: Database, merchantId: string) {

@@ -10,6 +10,7 @@ import {
   applyApproval,
   approveOperation,
   declineOperation,
+  listAwaitingCustomer,
   readPendingOperation,
 } from '#/db/queries/approval'
 import { recordPendingPurchase } from '#/db/queries/purchases'
@@ -309,5 +310,56 @@ describe('applying a scanned code', () => {
     expect(
       await applyApproval(db, { code: second.code, merchantId: merchant.id }),
     ).toEqual({ ok: false, problem: 'already' })
+  })
+})
+
+describe('what a customer is waiting on', () => {
+  it('reads the operations themselves, with the shop that recorded them', async () => {
+    const { customer, merchant, transactionId } = await pendingOperation()
+
+    const awaiting = await listAwaitingCustomer(db, customer.id)
+
+    expect(awaiting).toHaveLength(1)
+    expect(awaiting[0]).toMatchObject({
+      transactionId,
+      merchantId: merchant.id,
+      merchantName: merchant.name,
+      customerUserId: customer.id,
+      amountHalalas: riyalsToHalalas(250),
+      status: 'pending',
+      termsAccepted: true,
+    })
+  })
+
+  it('leaves out an operation nobody answered in time', async () => {
+    const { customer } = await pendingOperation()
+    const tomorrow = new Date(Date.now() + 24 * 60 * 60 * 1000)
+
+    expect(await listAwaitingCustomer(db, customer.id, tomorrow)).toEqual([])
+  })
+
+  it('is this customer’s own, and nobody else’s', async () => {
+    const { customer } = await pendingOperation()
+    await pendingOperation()
+
+    const awaiting = await listAwaitingCustomer(db, customer.id)
+
+    expect(awaiting).toHaveLength(1)
+    expect(awaiting[0].customerUserId).toBe(customer.id)
+  })
+
+  it('stops at the limit it was given', async () => {
+    const { customer, connection, merchant } = await pendingOperation()
+    await recordPendingPurchase(db, {
+      connectionId: connection.id,
+      merchantId: merchant.id,
+      amountHalalas: riyalsToHalalas(10),
+      requestId: 'request-second',
+    })
+
+    expect(await listAwaitingCustomer(db, customer.id)).toHaveLength(2)
+    expect(
+      await listAwaitingCustomer(db, customer.id, new Date(), 1),
+    ).toHaveLength(1)
   })
 })

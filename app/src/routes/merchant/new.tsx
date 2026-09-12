@@ -1,6 +1,5 @@
 import { useState } from 'react'
 import { createFileRoute, useRouter } from '@tanstack/react-router'
-import { requireSignedIn } from '#/auth/guard'
 import { registerShop } from '#/auth/shop'
 import { Button } from '#/components/chrome'
 import { Card } from '#/components/primitives'
@@ -10,7 +9,6 @@ const DEFAULT_LIMIT_RIYALS = 1000
 const DEFAULT_TERM_DAYS = 30
 
 export const Route = createFileRoute('/merchant/new')({
-  beforeLoad: () => requireSignedIn(),
   component: NewShop,
 })
 
