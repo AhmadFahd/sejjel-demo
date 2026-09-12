@@ -15,12 +15,18 @@ import { ViewerProvider } from '#/auth/viewer'
 import { directionOf } from '#/i18n/locales'
 import { createTranslate } from '#/i18n/translate'
 import { SETTLED } from '#/lib/freshness'
+import { NOTHING_MOVES_IT } from '#/lib/moves'
 import type { ReactNode } from 'react'
 import type { Shell } from '#/auth/shell'
 import appCss from '../styles.css?url'
 
 export const Route = createRootRoute({
   ...SETTLED,
+  // #89: no event can reach this. What it reads is the language, whether
+  // somebody is signed in and whether amounts are hidden; this person's own
+  // two writes invalidate it where they are made, and signing in or out is a
+  // document of its own.
+  staticData: NOTHING_MOVES_IT,
   loader: () => loadShell(),
   head: ({ loaderData }) => ({
     meta: [

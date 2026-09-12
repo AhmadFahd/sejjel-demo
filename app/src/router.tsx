@@ -1,6 +1,7 @@
 import { createRouter as createTanStackRouter } from '@tanstack/react-router'
 import { routeTree } from './routeTree.gen'
 import { KEEP_MS } from '#/lib/freshness'
+import type { MovedBy } from '#/lib/moves'
 
 export function getRouter() {
   const router = createTanStackRouter({
@@ -47,5 +48,13 @@ export function getRouter() {
 declare module '@tanstack/react-router' {
   interface Register {
     router: ReturnType<typeof getRouter>
+  }
+
+  /**
+   * #89: what a route puts in `staticData`, which is the only thing about a
+   * route the stream can read while it decides whether an event reaches it.
+   */
+  interface StaticDataRouteOption {
+    movedBy?: MovedBy
   }
 }

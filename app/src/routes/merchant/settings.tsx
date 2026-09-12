@@ -10,6 +10,7 @@ import { useI18n } from '#/i18n/context'
 import type { TermsAnswer } from '#/auth/terms'
 import { requireSide } from '#/auth/enter'
 import { SETTLED } from '#/lib/freshness'
+import { NOTHING_MOVES_IT } from '#/lib/moves'
 
 const loadDefaults = createServerFn({ method: 'GET' }).handler(async () => {
   const { requireSignedInUser } = await import('#/auth/session.server')
@@ -30,6 +31,9 @@ const loadDefaults = createServerFn({ method: 'GET' }).handler(async () => {
 /** UC-13: the figures every customer of this shop stands on. */
 export const Route = createFileRoute('/merchant/settings')({
   ...SETTLED,
+  // #89: the shop's own defaults. One person keeps a shop, and their own save
+  // invalidates this where it is made.
+  staticData: NOTHING_MOVES_IT,
   loader: async ({ parentMatchPromise }) => {
     await requireSide(parentMatchPromise, 'merchant')
     return loadDefaults()

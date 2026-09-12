@@ -1,5 +1,5 @@
 import { readFileSync } from 'node:fs'
-import { expect, go, hydrated, openPhone, test } from './fixtures'
+import { expect, go, hydrated, openPhone, reload, test } from './fixtures'
 import type { Page } from '@playwright/test'
 import { OTP_LOG } from '../../playwright.config'
 
@@ -458,7 +458,7 @@ test('one tap hides every amount, and it holds after a reload', async ({
   await expect(main).toContainText('سالم العتيبي')
   await expect(main).toContainText('تجاوز الموعد')
 
-  await page.reload()
+  await reload(page)
   await expect(page.locator('main')).toContainText('••••')
 
   // #35: the operations log is amounts too, and goes behind the dots with
@@ -594,6 +594,17 @@ test('an operation recorded on one phone reaches the other', async ({
   await shopPhone.getByLabel('العميل').selectOption({ label: 'أحمد محمد' })
   await shopPhone.getByLabel('المبلغ').fill('75')
   await shopPhone.getByLabel('الوصف (اختياري)').fill('خبز وحليب')
+
+  // #89: what the event costs the phone that is watching. Two reads: the
+  // account he is looking at, and the side's own — the unread count moved,
+  // because a recorded purchase writes him a line. The shell used to be a
+  // third, on this and on every other event, and nothing an event does can
+  // change what the shell reads.
+  const his: Array<string> = []
+  page.on('request', (request) => {
+    if (request.url().includes('/_serverFn/')) his.push(request.url())
+  })
+
   await shopPhone.getByRole('button', { name: 'أرسل للعميل' }).click()
   await expect(shopPhone.getByTestId('waiting')).toBeVisible()
 
@@ -603,10 +614,21 @@ test('an operation recorded on one phone reaches the other', async ({
     'بانتظار الموافقة',
   )
 
+  expect(his).toHaveLength(2)
+
   // Leave the fixture as it was found — and calling it off travels the same
   // way, so his screen says so without him touching it either.
+  his.length = 0
   await shopPhone.getByRole('button', { name: 'إلغاء العملية' }).click()
   await expect(page.getByTestId('transactions')).toContainText('ملغاة')
+
+  // Two again, and the second one is the choice #89 made rather than a cost
+  // it missed: a cancelled purchase is the one kind that writes nobody a
+  // line, so his side's read could have been spared — but the side would
+  // have had to list the eight kinds that do move it, and a list like that
+  // is wrong the day somebody adds the ninth. Silence costs a read; a stale
+  // balance costs more.
+  expect(his).toHaveLength(2)
 
   await shop.close()
 })
