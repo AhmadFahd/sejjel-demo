@@ -12,7 +12,6 @@ import { buttonClass } from '#/components/chrome'
 import { MobileNumber } from '#/components/primitives'
 import { Pager, TransactionHistory, pagerLinkClass } from '#/components/account'
 import { BalanceHero, LimitBar, OperationsCounter } from '#/components/ledger'
-import { Loading } from '#/components/loading'
 import { useI18n } from '#/i18n/context'
 
 const loadAccount = createServerFn({ method: 'GET' })
@@ -61,9 +60,6 @@ export const Route = createFileRoute('/merchant/$connectionId')({
     if (!account) throw notFound()
     return account
   },
-  // #75: this screen only reads, so the app's loader can stand in for it
-  // while it arrives without anything being lost.
-  pendingComponent: Loading,
   component: MerchantAccount,
 })
 

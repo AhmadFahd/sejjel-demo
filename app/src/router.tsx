@@ -14,19 +14,14 @@ export function getRouter() {
      */
     defaultPreloadStaleTime: 5_000,
     /**
-     * #75: how long a screen's own loader waits before it appears, and how
-     * long it stays once it has, so a navigation that answers quickly draws
-     * nothing and a slow one cannot flash. The router's own defaults are 1000
-     * and 500, which is long enough to look like nothing happened.
-     *
-     * There is deliberately no `defaultPendingComponent`. A pending component
-     * replaces the screen it stands in front of, which unmounts it, and the
-     * screens that hold an operation in their own state lose it when that
-     * happens. So the screens that only read name `Loading` themselves, and
-     * every screen gets `LoadingBar` from the shell instead.
+     * #75: there is deliberately no pending component here or on any route. A
+     * pending component replaces the match it stands in front of, which
+     * unmounts the screen, and these screens hold the operation being
+     * recorded, the code just agreed to and the search being typed in their
+     * own state. The browser suite caught what that costs. `LoadingBar` in
+     * the shell says a screen is coming without taking away the one that is
+     * there, and `LoadingDots` does the same for one part of a screen.
      */
-    defaultPendingMs: 150,
-    defaultPendingMinMs: 300,
   })
 
   return router

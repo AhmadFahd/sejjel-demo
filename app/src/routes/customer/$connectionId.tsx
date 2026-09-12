@@ -3,7 +3,6 @@ import { createServerFn } from '@tanstack/react-start'
 import { requireSideOf } from '#/auth/enter'
 import { buttonClass } from '#/components/chrome'
 import { Pager, TransactionHistory, pagerLinkClass } from '#/components/account'
-import { Loading } from '#/components/loading'
 import {
   BalanceHero,
   LimitBar,
@@ -62,9 +61,6 @@ export const Route = createFileRoute('/customer/$connectionId')({
     if (!account) throw notFound()
     return account
   },
-  // #75: this screen only reads, so the app's loader can stand in for it
-  // while it arrives without anything being lost.
-  pendingComponent: Loading,
   component: CustomerAccount,
 })
 

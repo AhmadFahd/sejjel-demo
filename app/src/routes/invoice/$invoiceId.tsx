@@ -3,7 +3,6 @@ import { createServerFn } from '@tanstack/react-start'
 import { requireSignedIn } from '#/auth/guard'
 import { isPdf } from '#/lib/invoice'
 import { Card } from '#/components/primitives'
-import { Loading } from '#/components/loading'
 import { useI18n } from '#/i18n/context'
 
 const loadInvoice = createServerFn({ method: 'GET' })
@@ -37,9 +36,6 @@ export const Route = createFileRoute('/invoice/$invoiceId')({
     if (!invoice) throw notFound()
     return invoice
   },
-  // #75: this screen only reads, so the app's loader can stand in for it
-  // while it arrives without anything being lost.
-  pendingComponent: Loading,
   component: InvoiceView,
 })
 

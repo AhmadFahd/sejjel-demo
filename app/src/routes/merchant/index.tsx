@@ -16,7 +16,6 @@ import {
 } from '#/components/primitives'
 import { OperationsCounter, PaydayStrip } from '#/components/ledger'
 import { QrCanvas } from '#/components/qr-canvas'
-import { Loading } from '#/components/loading'
 import { shopUrl } from './qr'
 import { useI18n } from '#/i18n/context'
 
@@ -78,9 +77,6 @@ export const Route = createFileRoute('/merchant/')({
   },
   loaderDeps: ({ search }) => ({ page: search.page ?? 1 }),
   loader: ({ deps }) => loadShop({ data: { page: deps.page } }),
-  // #75: this screen only reads, so the app's loader can stand in for it
-  // while it arrives without anything being lost.
-  pendingComponent: Loading,
   component: MerchantHome,
 })
 

@@ -17,6 +17,16 @@ async function holdTheServer(page: Parameters<typeof signIn>[0]) {
 }
 
 /**
+ * A dock item is an anchor, so a tap before the client router exists is an
+ * ordinary document navigation and nothing here is in play. That window is
+ * real and worth its own measurement (#74); it is not what these tests are
+ * about.
+ */
+async function hydrated(page: Parameters<typeof signIn>[0]) {
+  await page.waitForFunction(() => '__TSR_ROUTER__' in window)
+}
+
+/**
  * #76: one stream for the app, not one per screen. The card used to mount its
  * own on top of the one the side's layout already held, which meant two
  * connections, two fallback polls, two server-side sweeps, and every event
@@ -44,58 +54,43 @@ test('a customer holds one event stream, on the ledger and on the card', async (
 })
 
 /**
- * #75: nothing rendered a pending state, so a screen whose data was on the
- * way left the old one frozen. The card is a screen that only reads, so the
- * app's loader stands in for it, the bar says so from the first moment, and
- * the dock does not go anywhere while either happens.
+ * #75: nothing said anything while a screen was on its way, so the app looked
+ * frozen. The bar says it, from the first round trip onwards, and the screen
+ * a person is looking at stays where it is until the next one is ready.
  */
-test('the loader stands in for a screen on its way, and the dock stays put', async ({
-  page,
-}) => {
+test('a slow navigation says so, and takes nothing away', async ({ page }) => {
   await signIn(page, CUSTOMER.typed, CUSTOMER.e164)
   await expect(page).toHaveURL(/\/customer$/)
+  await hydrated(page)
 
-  // A dock item is an anchor, so a tap before the client router exists is an
-  // ordinary document navigation: the server renders the next screen and
-  // nothing pends. That window is real and worth its own measurement; it is
-  // not what this test is about.
-  await page.waitForFunction(() => '__TSR_ROUTER__' in window)
-
-  // Hold the server functions long enough for the loader to be worth showing.
-  // A navigation that answers inside 150ms shows nothing, which is the point
-  // of the delay in `router.tsx` and cannot be tested by racing it.
   await holdTheServer(page)
-
   await page.getByTestId('my-card-link').click()
 
-  // The bar comes up while the first round trip is still out, which is the
-  // part a pending component cannot reach.
   await expect(page.getByTestId('loading-bar')).toBeVisible()
-  await expect(page.getByTestId('loading')).toBeVisible()
+  // The ledger is still there, dock and all, rather than a blank panel.
   await expect(page.getByTestId('dock')).toBeVisible()
+  await expect(page.getByTestId('my-card-link')).toBeVisible()
 
   await expect(page.getByTestId('my-card')).toBeVisible()
-  await expect(page.getByTestId('loading')).toBeHidden()
   await expect(page.getByTestId('loading-bar')).toBeHidden()
 })
 
 /**
- * #75: a screen that carries an operation in its own state gets the bar and
- * nothing else. The loader would unmount it, and the shop would lose the
- * purchase it was halfway through recording.
+ * #75: the screen that carries an operation in its own state keeps it. This
+ * is the regression a pending component caused, and the reason there is none.
  */
 test('recording a purchase keeps what was typed while the screen waits', async ({
   page,
 }) => {
   await signIn(page, MERCHANT.typed, MERCHANT.e164)
   await page.getByTestId('record').click()
-  await page.waitForFunction(() => '__TSR_ROUTER__' in window)
+  await hydrated(page)
 
   await page.getByLabel('العميل').selectOption({ label: 'أحمد محمد' })
   await page.getByLabel('المبلغ').fill('75')
 
   // A stream event, or anything else that reloads this screen, must not take
-  // the operation with it.
+  // the half-recorded operation with it.
   await holdTheServer(page)
   await page.evaluate(() => {
     const router = (
@@ -105,30 +100,26 @@ test('recording a purchase keeps what was typed while the screen waits', async (
   })
 
   await expect(page.getByTestId('loading-bar')).toBeVisible()
-  await expect(page.getByTestId('loading')).toHaveCount(0)
   await expect(page.getByLabel('المبلغ')).toHaveValue('75')
   await expect(page.getByRole('button', { name: 'أرسل للعميل' })).toBeEnabled()
 })
 
 /**
- * #75, the other half: a search is typed into the screen, and a new search is
- * a new set of loader deps, which is a new match. Standing the loader in
- * front of it would unmount the field mid-word. The log holds the loader back
- * and says it is working beside the field instead.
+ * #75: where the wait belongs to one part of a screen, the dots say it in
+ * place. The search is typed into this screen, so nothing about it may move.
  */
 test('the log keeps its rows and its keyboard while it searches', async ({
   page,
 }) => {
   await signIn(page, MERCHANT.typed, MERCHANT.e164)
   await page.goto('/merchant/log')
-  await page.waitForFunction(() => '__TSR_ROUTER__' in window)
+  await hydrated(page)
   await expect(page.getByTestId('log-search')).toBeVisible()
 
   await holdTheServer(page)
   await page.getByTestId('log-search').fill('0550 123 456')
 
   await expect(page.getByTestId('loading-dots')).toBeVisible()
-  await expect(page.getByTestId('loading')).toHaveCount(0)
   await expect(page.getByTestId('log-search')).toBeFocused()
 
   // And the answer lands on the screen that stayed.

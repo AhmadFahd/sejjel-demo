@@ -1,59 +1,25 @@
 import { useEffect, useState } from 'react'
 import { useRouterState } from '@tanstack/react-router'
-import { cx } from './primitives'
 import { useI18n } from '#/i18n/context'
 
-/** How long a wait has to last before the bar is worth drawing. */
-const BAR_AFTER_MS = 120
+/** How long a wait has to last before it is worth saying anything. */
+const SHOW_AFTER_MS = 120
 
 /**
- * #75: the app's one loader, for a screen that is not there yet. Every screen
- * is a stack of cards, so what stands in for one is a stack of cards with
- * nothing in them. The router draws it where the screen would have gone, so
- * the dock and the header stay put and only the content area changes.
+ * #75: the app's one loader. A hairline across the top of the screen for as
+ * long as the router is busy, mounted once in the shell, so every screen
+ * answers a tap whether or not its data has arrived.
  *
- * A route asks for this by name, rather than the router handing it to every
- * route: a pending component replaces the screen it stands in front of, which
- * unmounts it, and the screens that carry an operation in their own state
- * cannot afford that mid-flow. So the screens that only read wear it, and
- * everything else says it is working with `LoadingBar` and keeps what the
- * person was doing. The two numbers behind it, 150ms before it shows and
- * 300ms once it has, are in `router.tsx`.
- */
-export function Loading({ rows = 3 }: { rows?: number }) {
-  const { t } = useI18n()
-
-  return (
-    // A `div` and not a `main`: the screen this stands in for has the page's
-    // one `main`, and it is about to draw it.
-    <div
-      role="status"
-      aria-busy
-      aria-label={t('loading')}
-      data-testid="loading"
-      className="p-3.5"
-    >
-      <Bar className="mb-3 h-6 w-32" />
-
-      {Array.from({ length: rows }, (_, index) => (
-        <div
-          key={index}
-          className="mb-3 rounded-(--radius-card) bg-card p-4 shadow-(--shadow-card)"
-        >
-          <Bar className="mb-3 h-4 w-1/2" delayMs={index * 120} />
-          <Bar className="h-4 w-1/3" delayMs={index * 120 + 60} />
-        </div>
-      ))}
-    </div>
-  )
-}
-
-/**
- * The whole app's answer to a tap, on every screen: a hairline across the top
- * for as long as the router is busy. It replaces nothing and unmounts
- * nothing, so a half-typed operation survives it, and it is up while the
- * first round trip of a navigation is still out — the part no pending
- * component can cover (#79).
+ * It draws over the screen rather than in place of it, on purpose. TanStack's
+ * own answer to a pending screen is a `pendingComponent`, which replaces the
+ * match it stands in front of and so unmounts it; the screens here carry the
+ * operation being recorded, the code just agreed to and the search being
+ * typed in their own state, and losing that mid-flow is worse than a wait
+ * nobody was told about. So nothing is replaced: the screen a person is
+ * looking at stays, and this says that a newer one is on its way.
+ *
+ * It is also up while the first round trip of a navigation is still out, which
+ * is the part a pending component cannot reach at all (#79).
  */
 export function LoadingBar() {
   const busy = useRouterState({ select: (state) => state.isLoading })
@@ -67,7 +33,7 @@ export function LoadingBar() {
     }
 
     // A navigation that answers at once draws nothing at all.
-    const timer = setTimeout(() => setShown(true), BAR_AFTER_MS)
+    const timer = setTimeout(() => setShown(true), SHOW_AFTER_MS)
     return () => clearTimeout(timer)
   }, [busy])
 
@@ -84,8 +50,9 @@ export function LoadingBar() {
 }
 
 /**
- * The same loader where a whole screen is not waiting: a regenerated card
- * code, a page of the log. Small enough to sit in a line of text.
+ * The same loader where the wait belongs to one part of a screen rather than
+ * the whole of it: a regenerated card code, a page of the log. Small enough
+ * to sit in a line of text.
  */
 export function LoadingDots() {
   const { t } = useI18n()
@@ -106,24 +73,5 @@ export function LoadingDots() {
         />
       ))}
     </span>
-  )
-}
-
-/** A line of nothing, pulsing. The loader is made of these. */
-function Bar({
-  className,
-  delayMs = 0,
-}: {
-  className: string
-  delayMs?: number
-}) {
-  return (
-    <div
-      style={{ animationDelay: `${delayMs}ms` }}
-      className={cx(
-        'animate-pulse rounded-full bg-hairline/70 motion-reduce:animate-none',
-        className,
-      )}
-    />
   )
 }
