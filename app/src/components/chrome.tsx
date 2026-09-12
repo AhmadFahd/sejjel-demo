@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { cx } from './primitives'
 import { useI18n } from '#/i18n/context'
+import { LanguageSlot } from '#/prototype/language-switch/slots'
 import type { ReactNode } from 'react'
 
 export type NavItem = {
@@ -31,7 +32,11 @@ export function AppBar({ actions }: { actions?: ReactNode }) {
           {t('appTagline')}
         </div>
       </div>
-      <div className="ms-auto flex items-center gap-2">{actions}</div>
+      <div className="ms-auto flex items-center gap-2">
+        {actions}
+        {/* PROTOTYPE (#language-switch): the signed-in slot. */}
+        <LanguageSlot slot="appbar" />
+      </div>
     </header>
   )
 }

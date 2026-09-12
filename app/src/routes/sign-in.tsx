@@ -11,6 +11,7 @@ import {
 import { Button } from '#/components/chrome'
 import { CodeBoxes } from '#/components/code-boxes'
 import { useI18n } from '#/i18n/context'
+import { LanguageSlot } from '#/prototype/language-switch/slots'
 import type { ReactNode } from 'react'
 
 /**
@@ -121,12 +122,16 @@ function SignIn() {
   return (
     <main className="flex min-h-dvh flex-col bg-ink text-white">
       <div className="px-7 pt-10 pb-8">
-        <span
-          className="grid size-12 place-items-center rounded-2xl bg-linear-135 from-gold-light via-gold to-gold-dark text-[22px] font-black text-ink"
-          aria-hidden
-        >
-          {t('appName').slice(0, 1)}
-        </span>
+        <div className="flex items-center justify-between gap-3">
+          <span
+            className="grid size-12 place-items-center rounded-2xl bg-linear-135 from-gold-light via-gold to-gold-dark text-[22px] font-black text-ink"
+            aria-hidden
+          >
+            {t('appName').slice(0, 1)}
+          </span>
+          {/* PROTOTYPE (#language-switch) */}
+          <LanguageSlot slot="signin-hero" />
+        </div>
         <h1 className="mt-5 text-[27px] leading-tight font-black">
           {t('auth.hero')}
         </h1>
@@ -185,6 +190,10 @@ function SignIn() {
             </Button>
             <p className="mt-3 text-center text-[11px] font-bold text-muted">
               {t('auth.trust')}
+            </p>
+            {/* PROTOTYPE (#language-switch) */}
+            <p className="mt-2 text-center">
+              <LanguageSlot slot="signin-sheet" />
             </p>
           </>
         ) : (

@@ -1,8 +1,8 @@
 import { Link, createFileRoute, redirect } from '@tanstack/react-router'
 import { loadSignedInUser } from '#/auth/session'
 import { homeFor } from '#/auth/roles'
-import { LocaleToggle } from '#/components/locale-toggle'
 import { useI18n } from '#/i18n/context'
+import { LanguageSlot } from '#/prototype/language-switch/slots'
 
 /** What the phone in the hero is showing. A picture of the thing, not data. */
 const MOCK_BALANCE_HALALAS = 80_000
@@ -44,7 +44,8 @@ function Landing() {
           </div>
 
           <div className="ms-auto flex items-center gap-1">
-            <LocaleToggle className="text-white/70 hover:bg-white/10 hover:text-white" />
+            {/* PROTOTYPE (#language-switch) */}
+            <LanguageSlot slot="marketing-header" />
             <Link
               to="/sign-in"
               className="inline-flex items-center rounded-full bg-white px-4 py-2 text-[13px] font-black whitespace-nowrap text-ink transition active:scale-[0.98]"
@@ -85,8 +86,10 @@ function Landing() {
       </section>
 
       <footer className="border-t border-line bg-mist">
-        <div className="mx-auto max-w-6xl px-5 py-7 text-[12px] font-bold text-muted sm:px-8">
-          {t('landing.footer')}
+        <div className="mx-auto flex max-w-6xl flex-wrap items-center gap-x-4 gap-y-2 px-5 py-7 text-[12px] font-bold text-muted sm:px-8">
+          <span>{t('landing.footer')}</span>
+          {/* PROTOTYPE (#language-switch) */}
+          <LanguageSlot slot="marketing-footer" />
         </div>
       </footer>
 
