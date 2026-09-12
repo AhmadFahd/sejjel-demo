@@ -20,6 +20,11 @@ async function openProfile(page: Page) {
 
 async function signIn(page: Page, typed: string, e164: string) {
   await page.goto('/sign-in')
+  await signInHere(page, typed, e164)
+}
+
+/** For a sign-in screen already open, which is carrying where to go next. */
+async function signInHere(page: Page, typed: string, e164: string) {
   await page.getByLabel('رقم الجوال').fill(typed)
   await page.getByRole('button', { name: 'أرسل الرمز' }).click()
 
@@ -634,6 +639,51 @@ test('a shop asks for a customer by scanning their card', async ({
   await expect(shopPhone.getByTestId('connection-row')).toHaveCount(4)
   await expect(
     shopPhone.getByTestId('connection-row').filter({ hasText: 'عبدالله' }),
+  ).toBeVisible()
+
+  await shop.close()
+})
+
+/**
+ * UC-16: the code on بقالة الريان's counter. فاطمة is on neither side of the
+ * ledger, so her scan has to walk the whole way: sign in, land back on the
+ * shop she was going to, join it, and arrive at her account with it.
+ *
+ * After the scanning test above, so the counts it makes still hold.
+ */
+test('a customer joins a shop by the code on its counter', async ({
+  page,
+  browser,
+}) => {
+  test.slow()
+  const { context: shop, page: shopPhone } = await openPhone(browser)
+  await signIn(shopPhone, '0550111222', '+966550111222')
+
+  // The shop's own code, small on the dashboard and big one press away.
+  await expect(shopPhone.getByTestId('shop-qr')).toBeVisible()
+  await shopPhone.getByTestId('shop-qr-open').click()
+  await expect(shopPhone.getByTestId('shop-qr-full')).toBeVisible()
+
+  // What her camera would have read, opened while she is signed out.
+  const printed = await shopPhone.locator('main span[dir="ltr"]').innerText()
+  const shopPath = new URL(printed).pathname
+
+  await page.goto(shopPath)
+  await expect(page).toHaveURL(/\/sign-in/)
+
+  await signInHere(page, '0500000003', '+966500000003')
+
+  // Back where she was going, with the shop's terms in front of her.
+  await expect(page).toHaveURL(new RegExp(`${shopPath}$`))
+  await expect(page.getByTestId('join-shop')).toContainText('1,000')
+
+  await page.getByTestId('join').click()
+
+  // Her account with that shop, and the shop has her.
+  await expect(page.getByTestId('balance-hero')).toContainText('بقالة الريان')
+  await shopPhone.goto('/merchant')
+  await expect(
+    shopPhone.getByTestId('connection-row').filter({ hasText: 'فاطمة' }),
   ).toBeVisible()
 
   await shop.close()

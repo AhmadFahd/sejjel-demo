@@ -80,6 +80,15 @@ export const ar = {
   'shop.error.term': 'مدة بين يوم واحد و90 يومًا',
   'shop.error.already': 'لديك متجر بالفعل',
 
+  'shop.join': 'الانضمام إلى هذا المتجر',
+  'shop.joinBody':
+    'الشراء بالآجل هنا يعني أن ما تأخذه دين عليك لهذا المتجر، يُستحق في يوم السداد المبيّن.',
+  'shop.error.own': 'هذا متجرك أنت.',
+  'shop.counter': 'رمز الطاولة',
+  'shop.counterBody':
+    'اطبعه أو اتركه على الطاولة. من يمسحه ينضم إلى متجرك ويصل إلى حسابه لديك.',
+  'shop.counterOpen': 'عرضه ملء الشاشة',
+
   'merchant.noCustomers': 'لا عملاء بعد',
   'merchant.noCustomersBody': 'ينضم العميل أول مرة تسجّل له فيها عملية بالآجل.',
   'customer.noMerchants': 'لا متاجر بعد',

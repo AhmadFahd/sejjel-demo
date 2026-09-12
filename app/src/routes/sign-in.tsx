@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { createFileRoute } from '@tanstack/react-router'
+import { safeNextPath } from '#/lib/next-path'
 import { authClient } from '#/auth/client'
 import { OTP_LENGTH } from '#/auth/otp'
 import {
@@ -21,7 +22,15 @@ import type { ReactNode } from 'react'
  */
 const RESEND_SECONDS = 30
 
-export const Route = createFileRoute('/sign-in')({ component: SignIn })
+export const Route = createFileRoute('/sign-in')({
+  // UC-16: somebody who scanned a shop's code while signed out is sent here
+  // and has to land back on it, not on their dashboard.
+  validateSearch: (search: Record<string, unknown>): { next?: string } => {
+    const next = safeNextPath(search.next)
+    return next ? { next } : {}
+  },
+  component: SignIn,
+})
 
 type Step = { name: 'phone' } | { name: 'code'; phoneNumber: string }
 
@@ -44,6 +53,7 @@ function digitsOf(value: string) {
  */
 function SignIn() {
   const { t } = useI18n()
+  const { next } = Route.useSearch()
 
   const [step, setStep] = useState<Step>({ name: 'phone' })
   const [typed, setTyped] = useState('')
@@ -118,7 +128,7 @@ function SignIn() {
     // decides what the whole document is — the language comes off their row,
     // and so does whether the amounts are hidden — and the shell around the
     // screens is rendered once, when the document is.
-    window.location.assign('/')
+    window.location.assign(next ?? '/')
   }
 
   return (

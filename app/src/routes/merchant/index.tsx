@@ -15,6 +15,8 @@ import {
   cx,
 } from '#/components/primitives'
 import { OperationsCounter, PaydayStrip } from '#/components/ledger'
+import { QrCanvas } from '#/components/qr-canvas'
+import { shopUrl } from './qr'
 import { useI18n } from '#/i18n/context'
 
 /** How many customers one screen of the list holds. */
@@ -119,6 +121,33 @@ function MerchantHome() {
         >
           {t('operation.new')}
         </Link>
+
+        {/* UC-16: the shop's own code, for the counter. Small here, and one
+            press from being big enough to scan across a counter. */}
+        <Card>
+          <div className="flex items-center gap-3.5">
+            <QrCanvas
+              value={shopUrl(data.shop.id)}
+              size={96}
+              testId="shop-qr"
+            />
+            <div>
+              <h2 className="mb-1 text-[15px] font-black text-ink">
+                {t('shop.counter')}
+              </h2>
+              <p className="mb-2 text-[12px] font-bold text-muted">
+                {t('shop.counterBody')}
+              </p>
+              <Link
+                to="/merchant/qr"
+                className="text-[12.5px] font-black text-steel"
+                data-testid="shop-qr-open"
+              >
+                {t('shop.counterOpen')}
+              </Link>
+            </div>
+          </div>
+        </Card>
 
         <OperationsCounter
           purchases={totals.purchases}
