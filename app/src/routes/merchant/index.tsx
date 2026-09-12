@@ -98,7 +98,7 @@ function MerchantHome() {
           <StatTile
             label={t('ledger.outstanding')}
             value={money(totals.outstandingHalalas)}
-            tone="gold"
+            tone="brand"
           />
           <StatTile
             label={t('ledger.overdueTotal')}
@@ -159,7 +159,7 @@ function MerchantHome() {
                   {row.limitOverrideHalalas !== null ||
                   row.termOverrideDays !== null ? (
                     <span
-                      className="text-[12px] font-black text-gold-dark"
+                      className="text-[12px] font-black text-brand"
                       title={t('settings.overridden')}
                       data-testid="overridden"
                     >
@@ -205,7 +205,7 @@ function Pager({ page, pages }: { page: number; pages: number }) {
       <PagerLink to={page - 1} disabled={page <= 1}>
         {t('page.previous')}
       </PagerLink>
-      <span className="text-[12px] font-extrabold text-muted">
+      <span className="text-[12px] font-bold text-muted">
         {t('page.position', { page: number(page), pages: number(pages) })}
       </span>
       <PagerLink to={page + 1} disabled={page >= pages}>

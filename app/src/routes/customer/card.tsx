@@ -45,7 +45,7 @@ function MyCard() {
       <main className="p-3.5">
         <Link
           to="/"
-          className="mb-3 inline-block text-[13px] font-black text-steel"
+          className="mb-3 inline-block text-[13px] font-black text-brand"
         >
           {t('nav.back')}
         </Link>

@@ -1,22 +1,36 @@
 @import 'tailwindcss';
 
 /**
- * The prototype's palette and shapes, as tokens. Values come from the
- * stylesheet in index.html and the brand files; the names are what the
- * components ask for.
+ * The app's palette and shapes, as tokens. The colours come from
+ * `brand/identity-ar.html` and are named the way it names them, so a screen
+ * that reaches for a colour has to say which of the three it means. Anything
+ * below the brand colours is either a neutral or functional status colour,
+ * and the comments say which.
  */
 @theme {
-  --color-mist: #ede9e6;
-  --color-ink: #5c766d;
-  --color-steel: #5c766d;
-  --color-gold: #c9996b;
-  --color-gold-light: #e0be96;
-  --color-gold-dark: #a87a50;
+  /**
+   * The identity's three colours, under the names brand/identity-ar.html gives
+   * them: the letters' brown, the check's green, and the ground. Nothing else
+   * is a brand colour. `--color-ink` is the colour text is, which is the brown;
+   * the green is a mark and a surface, never the body copy.
+   */
+  --color-ink: #5c4f4a;
+  --color-brand: #5c766d;
+  --color-bone: #ede9e6;
+  --color-hairline: #d9d1ca;
+
+  /** Neutrals: tints of the ground and the letters, not a fourth colour. */
   --color-card: #ffffff;
   --color-line: rgba(58, 72, 66, 0.08);
   --color-muted: #6f615b;
   --color-faint: #a2938c;
+  --color-neutral-bg: #e5e0dc;
 
+  /**
+   * Status, which is functional colour rather than brand colour: what a figure
+   * is doing, not who it belongs to. The guide governs the palette above and
+   * says nothing about telling an overdue account from a settled one.
+   */
   --color-good: #4e8062;
   --color-good-bg: #e7efe9;
   --color-good-text: #3c6249;
@@ -32,8 +46,6 @@
   --color-info-bg: #e4edf5;
   --color-info-text: #31607e;
 
-  --color-neutral-bg: #e5e0dc;
-
   --radius-card: 18px;
   --radius-hero: 20px;
   --radius-tile: 15px;
@@ -44,6 +56,7 @@
   --shadow-tile: 0 1px 2px rgba(58, 72, 66, 0.05);
   --shadow-toast: 0 14px 34px rgba(0, 0, 0, 0.3);
 
+  /** The guide's one typeface, at the three weights it asks for. */
   --font-sans: 'Cairo', 'Segoe UI', Tahoma, Arial, sans-serif;
 }
 
@@ -60,7 +73,7 @@ body {
 
 body {
   font-family: var(--font-sans);
-  background: var(--color-mist);
+  background: var(--color-bone);
   color: var(--color-ink);
 }
 

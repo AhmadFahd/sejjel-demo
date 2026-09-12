@@ -134,7 +134,7 @@ function ScanCode() {
       <main className="p-3.5">
         <Link
           to="/merchant"
-          className="mb-3 inline-block text-[13px] font-black text-steel"
+          className="mb-3 inline-block text-[13px] font-black text-brand"
         >
           {t('nav.back')}
         </Link>
@@ -178,12 +178,12 @@ function ScanCode() {
                 muted
                 playsInline
                 data-testid="scanner"
-                className="mb-3 w-full rounded-(--radius-control) bg-ink/10"
+                className="mb-3 w-full rounded-(--radius-control) bg-brand/10"
               />
             )}
 
             <label
-              className="mb-1 block text-[12.5px] font-extrabold text-muted"
+              className="mb-1 block text-[12.5px] font-bold text-muted"
               htmlFor="scan-code"
             >
               {t('scan.manual')}
@@ -204,7 +204,7 @@ function ScanCode() {
                 agree, so all the shop can do is point them at it. */}
             <p className="mt-4 text-[11.5px] font-bold text-muted">
               {t('scan.invite')}{' '}
-              <span dir="ltr" className="font-black text-steel">
+              <span dir="ltr" className="font-black text-brand">
                 {origin}
               </span>
             </p>
@@ -214,7 +214,7 @@ function ScanCode() {
         {problem ? (
           <p
             role="alert"
-            className="mt-3 text-[12.5px] font-extrabold text-bad-text"
+            className="mt-3 text-[12.5px] font-bold text-bad-text"
           >
             {t(`scan.error.${problem}`)}
           </p>

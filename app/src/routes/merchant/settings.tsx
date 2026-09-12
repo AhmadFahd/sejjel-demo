@@ -65,7 +65,7 @@ function ShopSettings() {
       <main className="p-3.5">
         <Link
           to="/merchant"
-          className="mb-3 inline-block text-[13px] font-black text-steel"
+          className="mb-3 inline-block text-[13px] font-black text-brand"
         >
           {t('nav.back')}
         </Link>
@@ -104,7 +104,7 @@ function ShopSettings() {
           {saved ? (
             <p
               role="status"
-              className="mt-3 text-[12.5px] font-extrabold text-good-text"
+              className="mt-3 text-[12.5px] font-bold text-good-text"
               data-testid="defaults-saved"
             >
               {t('settings.saved')}{' '}
@@ -119,7 +119,7 @@ function ShopSettings() {
           {saved && answer.overLimit.length > 0 ? (
             <p
               role="alert"
-              className="mt-2 text-[12.5px] font-extrabold text-bad-text"
+              className="mt-2 text-[12.5px] font-bold text-bad-text"
               data-testid="over-limit"
             >
               {t('settings.overLimit', {
