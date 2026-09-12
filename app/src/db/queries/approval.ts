@@ -21,6 +21,8 @@ export type PendingOperation = {
   amountHalalas: number
   description: string | null
   dueAt: Date | null
+  /** UC-11: the invoice, so the customer sees it before agreeing to pay it. */
+  invoiceId: string | null
   termsAccepted: boolean
 }
 
@@ -63,6 +65,7 @@ export async function readOperation(
     amountHalalas: row.amountHalalas,
     description: row.description,
     dueAt: row.dueAt,
+    invoiceId: row.invoiceId,
     termsAccepted: Boolean(link?.termsAcceptedAt),
   }
 }

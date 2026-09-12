@@ -7,6 +7,8 @@ import { cancelOperation, recordOperation } from '#/auth/operation'
 import { Button, buttonClass } from '#/components/chrome'
 import { Card, KeyValueRow, MobileNumber, cx } from '#/components/primitives'
 import { LimitBar } from '#/components/ledger'
+import { InvoicePicker } from '#/components/invoice-picker'
+import type { PickedInvoice } from '#/components/invoice-picker'
 import { parseAmount } from '#/lib/money'
 import { PENDING_MINUTES, projectBalance } from '#/lib/purchase'
 import { useI18n } from '#/i18n/context'
@@ -93,6 +95,7 @@ function RecordOperation() {
   // One id per operation being entered, so a second tap on a slow connection
   // finds the purchase the first one made instead of recording another.
   const [requestId, setRequestId] = useState(() => crypto.randomUUID())
+  const [invoice, setInvoice] = useState<PickedInvoice | null>(null)
 
   if (!data) return null
 
@@ -118,6 +121,7 @@ function RecordOperation() {
         description,
         requestId,
         acknowledgedOverdue,
+        invoiceId: invoice?.invoiceId ?? null,
       },
     })
     setBusy(false)
@@ -153,6 +157,7 @@ function RecordOperation() {
     setPendingId(null)
     setAmount('')
     setDescription('')
+    setInvoice(null)
     setRequestId(crypto.randomUUID())
     await router.navigate({ to: '/merchant/record', search: {}, replace: true })
   }
@@ -263,6 +268,8 @@ function RecordOperation() {
               value={description}
               onChange={(event) => setDescription(event.target.value)}
             />
+
+            <InvoicePicker picked={invoice} onPicked={setInvoice} />
 
             {chosen && projection ? (
               <div className="mt-4" data-testid="projection">

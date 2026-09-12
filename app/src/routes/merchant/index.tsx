@@ -149,9 +149,12 @@ function MerchantHome() {
           </div>
         </Card>
 
+        {/* #35: the count of the operations is the way into them, as it is
+            in the prototype. */}
         <OperationsCounter
           purchases={totals.purchases}
           payments={totals.payments}
+          to="/merchant/log"
         />
 
         {data.customers.length === 0 ? (

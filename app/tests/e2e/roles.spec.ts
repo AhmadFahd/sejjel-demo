@@ -80,6 +80,70 @@ test('the shop position is on the dashboard', async ({ page }) => {
   await expect(page.getByTestId('pager')).toHaveCount(0)
 })
 
+/**
+ * A day as the date fields write it, counted in Riyadh, so a range asked for
+ * here means the same days the fixture was seeded against.
+ */
+function riyadhDay(daysAgo: number): string {
+  const RIYADH_OFFSET_MS = 3 * 60 * 60 * 1000
+  const DAY_MS = 24 * 60 * 60 * 1000
+  const at = Date.now() + RIYADH_OFFSET_MS - daysAgo * DAY_MS
+  return new Date(at).toISOString().slice(0, 10)
+}
+
+/**
+ * #35: the shop's whole ledger in one list, reached by pressing the count of
+ * it as it is pressed in the prototype. The figures here are the fixture as it
+ * was seeded, so this test sits above the ones that record operations of their
+ * own: بقالة الريان has five, أحمد's payment of 200 the newest and سالم's
+ * purchase from two months back the oldest.
+ */
+test('the shop searches its own operations', async ({ page }) => {
+  await signIn(page, '0550111222', '+966550111222')
+
+  await page.getByTestId('log-open').click()
+  await expect(page).toHaveURL(/\/merchant\/log$/)
+
+  const rows = page.getByTestId('log-row')
+  await expect(rows).toHaveCount(5)
+  await expect(rows.first()).toContainText('أحمد محمد')
+  await expect(rows.first()).toContainText('سداد')
+  await expect(rows.first()).toContainText('200')
+  await expect(rows.last()).toContainText('سالم العتيبي')
+
+  // By part of a name, and by the mobile as the row above the box writes it.
+  await page.getByTestId('log-search').fill('خالد')
+  await expect(rows).toHaveCount(2)
+  await page.getByTestId('log-search').fill('0550 123 456')
+  await expect(rows).toHaveCount(2)
+  await expect(rows.first()).toContainText('أحمد محمد')
+
+  // The search is in the URL, so the screen can be handed to somebody else
+  // exactly as it was read.
+  await expect(page).toHaveURL(/[?&]q=/)
+
+  await page.getByTestId('log-search').fill('')
+  await expect(rows).toHaveCount(5)
+
+  // One kind at a time: two payments at this shop, and the same press again
+  // puts them all back.
+  await page.getByTestId('log-kind-payment').click()
+  await expect(rows).toHaveCount(2)
+  await page.getByTestId('log-kind-payment').click()
+  await expect(rows).toHaveCount(5)
+
+  // A range, in Riyadh's days: only أحمد's payment is inside the fortnight.
+  await page.getByTestId('log-from').fill(riyadhDay(14))
+  await expect(rows).toHaveCount(1)
+  await expect(rows.first()).toContainText('سداد')
+
+  // Nothing has been recorded tomorrow, and a range with nothing in it is not
+  // the same screen as a shop with nothing in it.
+  await page.getByTestId('log-from').fill(riyadhDay(-1))
+  await expect(page.getByTestId('log-no-results')).toBeVisible()
+  await expect(page.getByTestId('log-empty')).toHaveCount(0)
+})
+
 test('a shopkeeper is sent back from the customer side, which is not theirs', async ({
   page,
 }) => {
@@ -181,6 +245,70 @@ test('a shopkeeper records an operation, and can call it off', async ({
 
   await page.getByTestId('cancel-operation').click()
   await expect(history).toContainText('ملغاة')
+
+  // #35: an operation that is not on the ledger says so in the log as well,
+  // rather than reading there as money that moved. The screens are reached by
+  // their own links, as the suite reaches them everywhere else.
+  await page.getByRole('link', { name: 'رجوع' }).first().click()
+  await page.getByTestId('log-open').click()
+  await expect(
+    page.getByTestId('log-row').filter({ hasText: 'مشتريات اليوم' }),
+  ).toContainText('ملغاة')
+})
+
+/**
+ * UC-11: the invoice behind an operation. The shop attaches it, the customer
+ * sees it before agreeing to pay it, and a third phone gets nothing.
+ */
+test('an operation carries its invoice, and only to the two of them', async ({
+  page,
+  browser,
+}) => {
+  test.slow()
+  await signIn(page, '0550111222', '+966550111222')
+  await page.getByTestId('record').click()
+  await page.getByLabel('العميل').selectOption({ label: 'خالد علي' })
+  await page.getByLabel('المبلغ').fill('60')
+  await page.getByLabel('الوصف (اختياري)').fill('فاتورة اليوم')
+
+  // A one-pixel PNG, which is a real picture and small enough to be one.
+  await page.getByTestId('invoice-file').setInputFiles({
+    name: 'receipt.png',
+    mimeType: 'image/png',
+    buffer: Buffer.from(
+      'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg==',
+      'base64',
+    ),
+  })
+  await expect(page.getByTestId('invoice-picked')).toContainText('receipt.png')
+
+  await page.getByRole('button', { name: 'أرسل للعميل' }).click()
+  await expect(page.getByTestId('waiting')).toBeVisible()
+
+  // The customer sees it on the screen where they are asked to agree.
+  const { context: his, page: hisPhone } = await openPhone(browser)
+  await signIn(hisPhone, '0555987210', '+966555987210')
+  await hisPhone.getByTestId('awaiting').first().click()
+  await hisPhone.getByTestId('invoice-link').click()
+  await expect(hisPhone.getByTestId('invoice-image')).toBeVisible()
+  const invoice = new URL(hisPhone.url()).pathname
+
+  // A third phone is given nothing, neither the screen nor the bytes.
+  const { context: other, page: otherPhone } = await openPhone(browser)
+  await signIn(otherPhone, '0550123456', '+966550123456')
+  await otherPhone.goto(invoice)
+  await expect(otherPhone.getByRole('heading', { level: 1 })).toHaveText(
+    'غير موجود',
+  )
+  const refused = await otherPhone.request.get(
+    invoice.replace('/invoice/', '/api/invoices/'),
+  )
+  expect(refused.status()).toBe(404)
+
+  // Leave the fixture as it was found: the tests share one seeded ledger.
+  await page.getByRole('button', { name: 'إلغاء العملية' }).click()
+  await his.close()
+  await other.close()
 })
 
 /**
@@ -329,6 +457,13 @@ test('one tap hides every amount, and it holds after a reload', async ({
 
   await page.reload()
   await expect(page.locator('main')).toContainText('••••')
+
+  // #35: the operations log is amounts too, and goes behind the dots with
+  // everything else on this side.
+  await page.getByTestId('log-open').click()
+  await expect(page.getByTestId('log-row').first()).toContainText('••••')
+  await expect(page.locator('main')).not.toContainText('1,250')
+  await page.getByRole('link', { name: 'رجوع' }).first().click()
 
   // The account view is covered too, hero and bar and history together.
   await page
