@@ -104,9 +104,7 @@
       "indexes": {
         "accounts_user_idx": {
           "name": "accounts_user_idx",
-          "columns": [
-            "user_id"
-          ],
+          "columns": ["user_id"],
           "isUnique": false
         }
       },
@@ -115,12 +113,8 @@
           "name": "accounts_user_id_users_id_fk",
           "tableFrom": "accounts",
           "tableTo": "users",
-          "columnsFrom": [
-            "user_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["user_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -194,26 +188,17 @@
       "indexes": {
         "connections_pair_idx": {
           "name": "connections_pair_idx",
-          "columns": [
-            "merchant_id",
-            "customer_user_id"
-          ],
+          "columns": ["merchant_id", "customer_user_id"],
           "isUnique": true
         },
         "connections_merchant_status_idx": {
           "name": "connections_merchant_status_idx",
-          "columns": [
-            "merchant_id",
-            "status"
-          ],
+          "columns": ["merchant_id", "status"],
           "isUnique": false
         },
         "connections_customer_status_idx": {
           "name": "connections_customer_status_idx",
-          "columns": [
-            "customer_user_id",
-            "status"
-          ],
+          "columns": ["customer_user_id", "status"],
           "isUnique": false
         }
       },
@@ -222,12 +207,8 @@
           "name": "connections_merchant_id_merchants_id_fk",
           "tableFrom": "connections",
           "tableTo": "merchants",
-          "columnsFrom": [
-            "merchant_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["merchant_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         },
@@ -235,12 +216,8 @@
           "name": "connections_customer_user_id_users_id_fk",
           "tableFrom": "connections",
           "tableTo": "users",
-          "columnsFrom": [
-            "customer_user_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["customer_user_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -292,10 +269,7 @@
       "indexes": {
         "events_user_idx": {
           "name": "events_user_idx",
-          "columns": [
-            "user_id",
-            "id"
-          ],
+          "columns": ["user_id", "id"],
           "isUnique": false
         }
       },
@@ -304,12 +278,8 @@
           "name": "events_user_id_users_id_fk",
           "tableFrom": "events",
           "tableTo": "users",
-          "columnsFrom": [
-            "user_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["user_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -371,12 +341,8 @@
           "name": "invoices_uploaded_by_user_id_users_id_fk",
           "tableFrom": "invoices",
           "tableTo": "users",
-          "columnsFrom": [
-            "uploaded_by_user_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["uploaded_by_user_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -435,16 +401,12 @@
       "indexes": {
         "merchants_owner_idx": {
           "name": "merchants_owner_idx",
-          "columns": [
-            "owner_user_id"
-          ],
+          "columns": ["owner_user_id"],
           "isUnique": false
         },
         "merchants_name_idx": {
           "name": "merchants_name_idx",
-          "columns": [
-            "name"
-          ],
+          "columns": ["name"],
           "isUnique": false
         }
       },
@@ -453,12 +415,8 @@
           "name": "merchants_owner_user_id_users_id_fk",
           "tableFrom": "merchants",
           "tableTo": "users",
-          "columnsFrom": [
-            "owner_user_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["owner_user_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -538,25 +496,17 @@
       "indexes": {
         "notifications_user_idx": {
           "name": "notifications_user_idx",
-          "columns": [
-            "user_id",
-            "created_at"
-          ],
+          "columns": ["user_id", "created_at"],
           "isUnique": false
         },
         "notifications_unread_idx": {
           "name": "notifications_unread_idx",
-          "columns": [
-            "user_id",
-            "read_at"
-          ],
+          "columns": ["user_id", "read_at"],
           "isUnique": false
         },
         "notifications_dedupe_idx": {
           "name": "notifications_dedupe_idx",
-          "columns": [
-            "dedupe_key"
-          ],
+          "columns": ["dedupe_key"],
           "isUnique": true
         }
       },
@@ -565,12 +515,8 @@
           "name": "notifications_user_id_users_id_fk",
           "tableFrom": "notifications",
           "tableTo": "users",
-          "columnsFrom": [
-            "user_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["user_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         },
@@ -578,12 +524,8 @@
           "name": "notifications_connection_id_connections_id_fk",
           "tableFrom": "notifications",
           "tableTo": "connections",
-          "columnsFrom": [
-            "connection_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["connection_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         },
@@ -591,12 +533,8 @@
           "name": "notifications_transaction_id_transactions_id_fk",
           "tableFrom": "notifications",
           "tableTo": "transactions",
-          "columnsFrom": [
-            "transaction_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["transaction_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -669,9 +607,7 @@
       "indexes": {
         "payment_links_token_idx": {
           "name": "payment_links_token_idx",
-          "columns": [
-            "token"
-          ],
+          "columns": ["token"],
           "isUnique": true
         }
       },
@@ -680,12 +616,8 @@
           "name": "payment_links_connection_id_connections_id_fk",
           "tableFrom": "payment_links",
           "tableTo": "connections",
-          "columnsFrom": [
-            "connection_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["connection_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         },
@@ -693,12 +625,8 @@
           "name": "payment_links_transaction_id_transactions_id_fk",
           "tableFrom": "payment_links",
           "tableTo": "transactions",
-          "columnsFrom": [
-            "transaction_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["transaction_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -772,16 +700,12 @@
       "indexes": {
         "sessions_token_idx": {
           "name": "sessions_token_idx",
-          "columns": [
-            "token"
-          ],
+          "columns": ["token"],
           "isUnique": true
         },
         "sessions_user_idx": {
           "name": "sessions_user_idx",
-          "columns": [
-            "user_id"
-          ],
+          "columns": ["user_id"],
           "isUnique": false
         }
       },
@@ -790,12 +714,8 @@
           "name": "sessions_user_id_users_id_fk",
           "tableFrom": "sessions",
           "tableTo": "users",
-          "columnsFrom": [
-            "user_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["user_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -875,18 +795,12 @@
       "indexes": {
         "term_changes_merchant_idx": {
           "name": "term_changes_merchant_idx",
-          "columns": [
-            "merchant_id",
-            "created_at"
-          ],
+          "columns": ["merchant_id", "created_at"],
           "isUnique": false
         },
         "term_changes_connection_idx": {
           "name": "term_changes_connection_idx",
-          "columns": [
-            "connection_id",
-            "created_at"
-          ],
+          "columns": ["connection_id", "created_at"],
           "isUnique": false
         }
       },
@@ -895,12 +809,8 @@
           "name": "term_changes_merchant_id_merchants_id_fk",
           "tableFrom": "term_changes",
           "tableTo": "merchants",
-          "columnsFrom": [
-            "merchant_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["merchant_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         },
@@ -908,12 +818,8 @@
           "name": "term_changes_connection_id_connections_id_fk",
           "tableFrom": "term_changes",
           "tableTo": "connections",
-          "columnsFrom": [
-            "connection_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["connection_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         },
@@ -921,12 +827,8 @@
           "name": "term_changes_changed_by_user_id_users_id_fk",
           "tableFrom": "term_changes",
           "tableTo": "users",
-          "columnsFrom": [
-            "changed_by_user_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["changed_by_user_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -1078,39 +980,27 @@
       "indexes": {
         "transactions_approval_token_idx": {
           "name": "transactions_approval_token_idx",
-          "columns": [
-            "approval_token"
-          ],
+          "columns": ["approval_token"],
           "isUnique": true
         },
         "transactions_request_id_idx": {
           "name": "transactions_request_id_idx",
-          "columns": [
-            "request_id"
-          ],
+          "columns": ["request_id"],
           "isUnique": true
         },
         "transactions_connection_idx": {
           "name": "transactions_connection_idx",
-          "columns": [
-            "connection_id",
-            "created_at"
-          ],
+          "columns": ["connection_id", "created_at"],
           "isUnique": false
         },
         "transactions_connection_status_idx": {
           "name": "transactions_connection_status_idx",
-          "columns": [
-            "connection_id",
-            "status"
-          ],
+          "columns": ["connection_id", "status"],
           "isUnique": false
         },
         "transactions_invoice_idx": {
           "name": "transactions_invoice_idx",
-          "columns": [
-            "invoice_id"
-          ],
+          "columns": ["invoice_id"],
           "isUnique": false
         }
       },
@@ -1119,12 +1009,8 @@
           "name": "transactions_connection_id_connections_id_fk",
           "tableFrom": "transactions",
           "tableTo": "connections",
-          "columnsFrom": [
-            "connection_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["connection_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         },
@@ -1132,12 +1018,8 @@
           "name": "transactions_invoice_id_invoices_id_fk",
           "tableFrom": "transactions",
           "tableTo": "invoices",
-          "columnsFrom": [
-            "invoice_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["invoice_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -1243,23 +1125,17 @@
       "indexes": {
         "users_phone_number_idx": {
           "name": "users_phone_number_idx",
-          "columns": [
-            "phone_number"
-          ],
+          "columns": ["phone_number"],
           "isUnique": true
         },
         "users_email_idx": {
           "name": "users_email_idx",
-          "columns": [
-            "email"
-          ],
+          "columns": ["email"],
           "isUnique": true
         },
         "users_name_idx": {
           "name": "users_name_idx",
-          "columns": [
-            "name"
-          ],
+          "columns": ["name"],
           "isUnique": false
         }
       },
@@ -1319,9 +1195,7 @@
       "indexes": {
         "verifications_identifier_idx": {
           "name": "verifications_identifier_idx",
-          "columns": [
-            "identifier"
-          ],
+          "columns": ["identifier"],
           "isUnique": false
         }
       },
