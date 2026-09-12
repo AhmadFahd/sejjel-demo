@@ -310,6 +310,12 @@ test('a customer sees every shop they owe, and can open one', async ({
   await expect(history).toContainText('1,000')
   await expect(history).toContainText('200')
   await expect(page.getByTestId('pager')).toHaveCount(0)
+
+  // UC-18: 800 of a 1,000 limit is 80% spent, so the bar is on the amber
+  // side of the second threshold and says how much of the limit is gone.
+  const bar = page.getByTestId('limit-bar')
+  await expect(bar).toHaveAttribute('data-percent', '80')
+  await expect(bar).toContainText('80%')
 })
 
 /**

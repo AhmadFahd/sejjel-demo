@@ -157,6 +157,18 @@ function Panel({ locale }: { locale: Locale }) {
           </div>
         </BalanceHero>
 
+        {/* UC-18: the four fills, so the thresholds can be looked at together
+            rather than hunted for on an account that happens to be there. */}
+        <Card>
+          {[40, 70, 90, 120].map((spent) => (
+            <LimitBar
+              key={spent}
+              usedHalalas={spent * 1000}
+              limitHalalas={100 * 1000}
+            />
+          ))}
+        </Card>
+
         <Card>
           {SAMPLE_TRANSACTIONS.map((entry) => (
             <TransactionRow
