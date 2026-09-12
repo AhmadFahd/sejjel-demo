@@ -13,6 +13,7 @@ import { MobileNumber } from '#/components/primitives'
 import { Pager, TransactionHistory, pagerLinkClass } from '#/components/account'
 import { BalanceHero, LimitBar, OperationsCounter } from '#/components/ledger'
 import { useI18n } from '#/i18n/context'
+import { WATCHED } from '#/lib/freshness'
 
 const loadAccount = createServerFn({ method: 'GET' })
   .validator((input: unknown): { connectionId: string; page: number } => {
@@ -47,6 +48,7 @@ const loadAccount = createServerFn({ method: 'GET' })
 
 /** UC-03: one customer's whole account, as the shop sees it. */
 export const Route = createFileRoute('/merchant/$connectionId')({
+  ...WATCHED,
   validateSearch: (search: Record<string, unknown>): { page?: number } => {
     const page = Math.trunc(Number(search.page))
     return Number.isFinite(page) && page > 1 ? { page } : {}

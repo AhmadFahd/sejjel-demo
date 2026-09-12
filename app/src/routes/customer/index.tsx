@@ -14,6 +14,7 @@ import {
 import { OperationsCounter, PaydayStrip } from '#/components/ledger'
 import { useI18n } from '#/i18n/context'
 import { requireSide } from '#/auth/enter'
+import { WATCHED } from '#/lib/freshness'
 
 const loadShops = createServerFn({ method: 'GET' }).handler(async () => {
   const { requireSignedInUser } = await import('#/auth/session.server')
@@ -48,6 +49,7 @@ const loadShops = createServerFn({ method: 'GET' }).handler(async () => {
 
 /** UC-09: every shop one customer owes, and what they owe in total. */
 export const Route = createFileRoute('/customer/')({
+  ...WATCHED,
   loader: async ({ parentMatchPromise }) => {
     await requireSide(parentMatchPromise, 'customer')
     return loadShops()

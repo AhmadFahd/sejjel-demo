@@ -6,6 +6,7 @@ import { Dock } from '#/components/dock'
 import { ProfileMenu } from '#/components/profile'
 import { LedgerStream } from '#/components/ledger-stream'
 import { useI18n } from '#/i18n/context'
+import { SETTLED } from '#/lib/freshness'
 
 /**
  * Everything on the shop's side of the ledger, with the event stream open
@@ -13,15 +14,16 @@ import { useI18n } from '#/i18n/context'
  * without anybody pulling to refresh.
  */
 export const Route = createFileRoute('/merchant')({
+  // #80: the answer is good until the stream says otherwise, which it does on
+  // every notification, and a stream that has stopped saying anything is asked
+  // anyway.
+  ...SETTLED,
   // #79: who is signed in for the profile and what is unread for the bell,
   // asked in the one hook that keeps its answer. A tap inside the side does
   // not ask again, and the screen's own loader is the only round trip left.
   // The side itself is each screen's own business: `requireSide` reads this
   // answer, because the card under here is open to anybody signed in.
   loader: () => enterApp(),
-  // The answer is good until the stream says otherwise, which it does on
-  // every notification, and the fallback poll behind it says so anyway.
-  staleTime: Infinity,
   component: MerchantSide,
 })
 

@@ -7,6 +7,7 @@ import { Button } from '#/components/chrome'
 import { Card, KeyValueRow } from '#/components/primitives'
 import { parseAmount } from '#/lib/money'
 import { useI18n } from '#/i18n/context'
+import { MINTED } from '#/lib/freshness'
 import type { PaymentMethod } from '#/providers/types'
 import type { SettlementProblem } from '#/lib/settlement'
 
@@ -31,6 +32,7 @@ const METHODS: Array<PaymentMethod> = ['apple_pay', 'mada', 'card']
 
 /** UC-10: paying a shop back, in full or in part. */
 export const Route = createFileRoute('/customer/pay/$connectionId')({
+  ...MINTED,
   loader: async ({ params, parentMatchPromise }) => {
     await requireSide(parentMatchPromise, 'customer')
     const summary = await loadAccount({

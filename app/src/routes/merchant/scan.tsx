@@ -5,6 +5,7 @@ import { requireSide } from '#/auth/enter'
 import { Button, buttonClass } from '#/components/chrome'
 import { Card } from '#/components/primitives'
 import { useI18n } from '#/i18n/context'
+import { SETTLED } from '#/lib/freshness'
 
 /**
  * The browser's own QR reader where there is one. Chromium has it; a browser
@@ -42,6 +43,7 @@ type Outcome =
 
 /** UC-07: the merchant's scan is what applies the operation. */
 export const Route = createFileRoute('/merchant/scan')({
+  ...SETTLED,
   // Nothing to read for this screen, so the loader exists for the guard
   // alone: it waits on the side's own read rather than asking again.
   loader: ({ parentMatchPromise }) =>

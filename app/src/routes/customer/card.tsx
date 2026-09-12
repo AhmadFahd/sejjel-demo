@@ -5,6 +5,7 @@ import { Card } from '#/components/primitives'
 import { ApprovalCode } from '#/components/approval-code'
 import { ConnectionRequests } from '#/components/connection-requests'
 import { useI18n } from '#/i18n/context'
+import { MINTED } from '#/lib/freshness'
 
 /**
  * UC-08: the customer's own card. A shop scans it to ask for them, so it says
@@ -12,6 +13,9 @@ import { useI18n } from '#/i18n/context'
  * of this screen is worth nothing two minutes later.
  */
 export const Route = createFileRoute('/customer/card')({
+  // #80: a code that runs out, minted by the read, so nothing is kept from
+  // the last visit to paint while this one waits.
+  ...MINTED,
   // Anybody signed in: a person no shop has connected yet is exactly who
   // needs a card to be scanned.
   loader: () => issueMyCode(),

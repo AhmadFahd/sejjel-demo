@@ -12,6 +12,7 @@ import { Pager, pagerLinkClass } from '#/components/account'
 import { LoadingDots } from '#/components/loading'
 import { Card, KeyValueRow, MobileNumber, cx } from '#/components/primitives'
 import { useI18n } from '#/i18n/context'
+import { WATCHED } from '#/lib/freshness'
 import type { LogEntry } from '#/db/queries/log'
 
 type Search = {
@@ -74,6 +75,7 @@ const loadLog = createServerFn({ method: 'GET' })
 
 /** Every operation in the shop, searchable, a page at a time. */
 export const Route = createFileRoute('/merchant/log')({
+  ...WATCHED,
   validateSearch: (search: Record<string, unknown>): Search => {
     const page = Math.trunc(Number(search.page))
     return {

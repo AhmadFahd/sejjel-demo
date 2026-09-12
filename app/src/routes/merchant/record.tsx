@@ -12,6 +12,7 @@ import type { PickedInvoice } from '#/components/invoice-picker'
 import { parseAmount } from '#/lib/money'
 import { PENDING_MINUTES, projectBalance } from '#/lib/purchase'
 import { useI18n } from '#/i18n/context'
+import { WATCHED } from '#/lib/freshness'
 import type { PurchaseProblem } from '#/lib/purchase'
 
 const loadCustomers = createServerFn({ method: 'GET' })
@@ -51,6 +52,7 @@ const loadCustomers = createServerFn({ method: 'GET' })
 
 /** UC-04: عملية جديدة — what the customer just bought, on credit. */
 export const Route = createFileRoute('/merchant/record')({
+  ...WATCHED,
   validateSearch: (
     search: Record<string, unknown>,
   ): { customer?: string; pending?: string } => {
