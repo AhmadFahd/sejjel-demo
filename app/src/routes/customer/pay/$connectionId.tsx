@@ -3,7 +3,7 @@ import { Link, createFileRoute, notFound } from '@tanstack/react-router'
 import { createServerFn } from '@tanstack/react-start'
 import { requireSide } from '#/auth/guard'
 import { confirmPayment, startPayment } from '#/auth/settle'
-import { AppBar, Button } from '#/components/chrome'
+import { Button } from '#/components/chrome'
 import { Card, KeyValueRow } from '#/components/primitives'
 import { parseAmount } from '#/lib/money'
 import { useI18n } from '#/i18n/context'
@@ -102,7 +102,6 @@ function PayShop() {
 
   return (
     <>
-      <AppBar />
       <main className="p-3.5">
         <Link
           to="/customer/$connectionId"

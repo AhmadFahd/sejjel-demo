@@ -10,6 +10,14 @@ function codeSentTo(phoneNumber: string): string {
   return line.split(' ')[1]
 }
 
+/**
+ * PROTOTYPE (no-app-bar): the dark bar these controls used to sit in is gone,
+ * and every variant of that question keeps them behind the profile instead.
+ */
+async function openProfile(page: Page) {
+  await page.getByTestId('profile').click()
+}
+
 async function signIn(page: Page, typed: string, e164: string) {
   await page.goto('/sign-in')
   await page.getByLabel('رقم الجوال').fill(typed)
@@ -218,6 +226,7 @@ test('the shop’s default moves whoever stands on it, and no one else', async (
   await expect(row('سالم العتيبي').getByTestId('overridden')).toBeVisible()
   await expect(row('أحمد محمد').getByTestId('overridden')).toHaveCount(0)
 
+  await openProfile(page)
   await page.getByTestId('settings').click()
   await page.getByLabel('حد الائتمان الافتراضي').fill('2000')
   await page.getByTestId('save-defaults').click()
@@ -237,6 +246,7 @@ test('the shop’s default moves whoever stands on it, and no one else', async (
 
   // Leave the fixture as it was found: the tests share one seeded ledger.
   await back()
+  await openProfile(page)
   await page.getByTestId('settings').click()
   await page.getByLabel('حد الائتمان الافتراضي').fill('1000')
   await page.getByTestId('save-defaults').click()
@@ -578,6 +588,7 @@ test('signing out ends the session and the ledger is closed again', async ({
   await signIn(page, '0533456789', '+966533456789')
   await expect(page).toHaveURL(/\/customer$/)
 
+  await openProfile(page)
   await page.getByTestId('sign-out').click()
   await expect(page).toHaveURL(/\/sign-in$/)
 
@@ -591,6 +602,7 @@ test('there is no switch for someone who is only on one side', async ({
   await signIn(page, '0550123456', '+966550123456')
 
   await expect(page).toHaveURL(/\/customer$/)
+  await openProfile(page)
   await expect(page.getByTestId('side-switch')).toHaveCount(0)
 })
 

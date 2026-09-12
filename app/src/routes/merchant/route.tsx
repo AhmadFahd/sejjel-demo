@@ -1,5 +1,8 @@
 import { Outlet, createFileRoute, useRouterState } from '@tanstack/react-router'
+import { loadSignedInUser } from '#/auth/session'
+import { AmountsEye } from '#/components/amounts-eye'
 import { Dock } from '#/components/dock'
+import { ProfileMenu } from '#/components/profile'
 import { LedgerStream } from '#/components/ledger-stream'
 import { useI18n } from '#/i18n/context'
 
@@ -8,10 +11,16 @@ import { useI18n } from '#/i18n/context'
  * behind it: a purchase the customer approves on their phone reaches this one
  * without anybody pulling to refresh.
  */
-export const Route = createFileRoute('/merchant')({ component: MerchantSide })
+export const Route = createFileRoute('/merchant')({
+  // Who is signed in, for the profile in the dock. Asked for once here rather
+  // than by each screen under it.
+  loader: () => loadSignedInUser(),
+  component: MerchantSide,
+})
 
 function MerchantSide() {
   const { t } = useI18n()
+  const person = Route.useLoaderData()
   const pathname = useRouterState({
     select: (state) => state.location.pathname,
   })
@@ -23,7 +32,11 @@ function MerchantSide() {
   return (
     <>
       <LedgerStream enabled />
-      <Outlet />
+      {/* The dock floats at the top of a desktop, where the bar used to hold
+          the screen off. */}
+      <div className={opening ? undefined : 'lg:pt-16'}>
+        <Outlet />
+      </div>
       {opening ? null : (
         <Dock
           items={[
@@ -31,7 +44,10 @@ function MerchantSide() {
             { to: '/merchant/record', label: t('nav.record'), glyph: '+' },
             { to: '/merchant/scan', label: t('nav.scan'), glyph: '⌗' },
           ]}
-        />
+        >
+          <AmountsEye />
+          <ProfileMenu person={person} side="merchant" />
+        </Dock>
       )}
     </>
   )

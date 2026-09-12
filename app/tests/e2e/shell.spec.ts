@@ -15,12 +15,17 @@ test('the shell renders right to left and reports its environment', async ({
 test('switching language turns the document around, and it stays turned', async ({
   page,
 }) => {
-  await page.goto('/status')
+  // Asked on the front door rather than on /status: a diagnostic page has no
+  // chrome, and the language control now lives in the chrome of the screens
+  // people actually arrive on.
+  await page.goto('/sign-in')
   await page.getByTestId('locale-switch').click()
 
   await expect(page.locator('html')).toHaveAttribute('dir', 'ltr')
   await expect(page.locator('html')).toHaveAttribute('lang', 'en')
-  await expect(page.getByRole('heading', { level: 1 })).toHaveText('Sejjel')
+  await expect(page.getByRole('heading', { level: 1 })).toHaveText(
+    'Your ledger with the shop, on your phone',
+  )
 
   await page.reload()
 

@@ -3,14 +3,11 @@ import {
   Link,
   Scripts,
   createRootRoute,
-  useRouter,
-  useRouterState,
 } from '@tanstack/react-router'
 import { TanStackRouterDevtoolsPanel } from '@tanstack/react-router-devtools'
 import { TanStackDevtools } from '@tanstack/react-devtools'
 import { Card } from '#/components/primitives'
 import { I18nProvider, useI18n } from '#/i18n/context'
-import { changeLocale } from '#/i18n/server'
 import { DEFAULT_SHELL, loadShell } from '#/auth/shell'
 import { ViewerProvider } from '#/auth/viewer'
 import { directionOf } from '#/i18n/locales'
@@ -85,10 +82,7 @@ function RootDocument({ children }: { children: ReactNode }) {
       </head>
       <body>
         <I18nProvider locale={shell.locale} amountsHidden={shell.hideAmounts}>
-          <ViewerProvider signedIn={shell.signedIn}>
-            <FloatingLocaleSwitch />
-            {children}
-          </ViewerProvider>
+          <ViewerProvider signedIn={shell.signedIn}>{children}</ViewerProvider>
         </I18nProvider>
         <TanStackDevtools
           // The bottom of the screen belongs to the dock now, so the
@@ -104,38 +98,5 @@ function RootDocument({ children }: { children: ReactNode }) {
         <Scripts />
       </body>
     </html>
-  )
-}
-
-/**
- * The whole document changes direction with the language, so the switch
- * reloads the route rather than swapping strings underneath a fixed layout.
- */
-function FloatingLocaleSwitch() {
-  const { locale, t } = useI18n()
-  const router = useRouter()
-  const pathname = useRouterState({
-    select: (state) => state.location.pathname,
-  })
-
-  // The public page carries the language control in its own bar; a second one
-  // floating over it would be two of the same control on one screen.
-  if (pathname === '/') return null
-
-  return (
-    <div className="flex justify-end p-4">
-      <button
-        type="button"
-        className="rounded-full border border-slate-300 px-4 py-1.5 text-sm font-medium hover:bg-slate-50"
-        aria-label={t('locale.label')}
-        data-testid="locale-switch"
-        onClick={async () => {
-          await changeLocale({ data: locale === 'ar' ? 'en' : 'ar' })
-          await router.invalidate()
-        }}
-      >
-        {t('locale.switch')}
-      </button>
-    </div>
   )
 }

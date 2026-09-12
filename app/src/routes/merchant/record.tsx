@@ -4,7 +4,7 @@ import { createServerFn } from '@tanstack/react-start'
 import { requireSide } from '#/auth/guard'
 import { localSaudiMobile } from '#/auth/phone'
 import { cancelOperation, recordOperation } from '#/auth/operation'
-import { AppBar, Button, buttonClass } from '#/components/chrome'
+import { Button, buttonClass } from '#/components/chrome'
 import { Card, KeyValueRow, MobileNumber, cx } from '#/components/primitives'
 import { LimitBar } from '#/components/ledger'
 import { parseAmount } from '#/lib/money'
@@ -163,7 +163,6 @@ function RecordOperation() {
 
   return (
     <>
-      <AppBar />
       <main className="p-3.5">
         <Link
           to="/merchant"

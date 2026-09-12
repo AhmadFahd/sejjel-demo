@@ -31,6 +31,7 @@ export const en = {
   'nav.scan': 'Scan',
   'nav.ledger': 'Ledger',
   'nav.card': 'My card',
+  'nav.profile': 'Profile',
 
   'auth.title': 'Sign in',
   'auth.phoneLabel': 'Mobile number',

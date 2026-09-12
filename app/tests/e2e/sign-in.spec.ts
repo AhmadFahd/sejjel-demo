@@ -81,6 +81,8 @@ test('the language a signed-in person picks follows their account', async ({
   await typeCode(page, codeSentTo('+966555987210'))
   await expect(page).toHaveURL(/\/customer$/)
 
+  // PROTOTYPE (no-app-bar): the language lives in the profile now.
+  await page.getByTestId('profile').click()
   await page.getByTestId('locale-switch').click()
   await expect(page.locator('html')).toHaveAttribute('lang', 'en')
 
@@ -92,6 +94,7 @@ test('the language a signed-in person picks follows their account', async ({
 
   // Leave the fixture as it was found. His language is on his row now, and
   // the rest of the suite reads his screens in Arabic.
+  await page.getByTestId('profile').click()
   await page.getByTestId('locale-switch').click()
   await expect(page.locator('html')).toHaveAttribute('lang', 'ar')
 })

@@ -29,6 +29,7 @@ export const ar = {
   'nav.scan': 'مسح',
   'nav.ledger': 'دفتري',
   'nav.card': 'بطاقتي',
+  'nav.profile': 'حسابي',
 
   'auth.title': 'تسجيل الدخول',
   'auth.phoneLabel': 'رقم الجوال',

@@ -1,6 +1,7 @@
 import { useRouter } from '@tanstack/react-router'
 import { setHideAmounts } from '#/auth/shell'
 import { useViewer } from '#/auth/viewer'
+import { cx } from './primitives'
 import { useI18n } from '#/i18n/context'
 
 const EYE = 'M2 12s3.6-6.5 10-6.5S22 12 22 12s-3.6 6.5-10 6.5S2 12 2 12z'
@@ -14,7 +15,9 @@ const STRUCK = [
 
 /**
  * UC-14: one tap puts every figure behind dots, so the person at the counter
- * beside you cannot read your balance over your shoulder.
+ * beside you cannot read your balance over your shoulder. It rides in the
+ * dock beside the person, where the app keeps its controls, and stays one
+ * press rather than a row inside a menu — the point of it is speed.
  *
  * The choice is stored on the person's row, so the screen comes back the way
  * they left it. Nothing about what the server sends changes; the amounts are
@@ -38,7 +41,10 @@ export function AmountsEye() {
       title={label}
       aria-pressed={amountsHidden}
       data-testid="amounts-eye"
-      className="grid size-9 place-items-center rounded-full text-white/85 transition active:scale-95"
+      className={cx(
+        'flex items-center rounded-full px-3 py-2 transition lg:px-4',
+        amountsHidden ? 'bg-ink text-white' : 'text-muted',
+      )}
       onClick={async () => {
         await setHideAmounts({ data: !amountsHidden })
         await router.invalidate()

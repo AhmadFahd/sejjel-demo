@@ -12,7 +12,7 @@ import {
   approveOperationFn,
   declineOperationFn,
 } from '#/auth/approval'
-import { AppBar, Button } from '#/components/chrome'
+import { Button } from '#/components/chrome'
 import { Card, KeyValueRow } from '#/components/primitives'
 import { ApprovalCode } from '#/components/approval-code'
 import { useI18n } from '#/i18n/context'
@@ -89,7 +89,6 @@ function ApproveOperation() {
 
   return (
     <>
-      <AppBar />
       <main className="p-3.5">
         <Link
           to="/customer"

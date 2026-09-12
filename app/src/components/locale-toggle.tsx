@@ -1,32 +1,26 @@
-import { useRouter } from '@tanstack/react-router'
 import { cx } from './primitives'
-import { useI18n } from '#/i18n/context'
-import { changeLocale } from '#/i18n/server'
+import { useLocaleSwitch } from '#/i18n/use-locale-switch'
 
 /**
- * The language switch, as a control a navigation bar can hold. The document's
- * direction changes with it, so it reloads the route rather than swapping
- * strings underneath a layout that was laid out the other way round.
+ * The language switch as a control a header or a sheet can hold. The screens
+ * behind sign-in keep theirs in the profile instead; this is for the two
+ * screens a person meets before there is one.
  */
 export function LocaleToggle({ className }: { className?: string }) {
-  const { locale, t } = useI18n()
-  const router = useRouter()
+  const locale = useLocaleSwitch()
 
   return (
     <button
       type="button"
-      aria-label={t('locale.label')}
+      aria-label={locale.ariaLabel}
       data-testid="locale-switch"
       className={cx(
         'rounded-full px-3 py-1.5 text-[12.5px] font-black transition',
         className,
       )}
-      onClick={async () => {
-        await changeLocale({ data: locale === 'ar' ? 'en' : 'ar' })
-        await router.invalidate()
-      }}
+      onClick={() => void locale.switchNow()}
     >
-      {t('locale.switch')}
+      {locale.label}
     </button>
   )
 }
