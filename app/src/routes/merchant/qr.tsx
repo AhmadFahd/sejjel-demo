@@ -2,6 +2,7 @@ import { Link, createFileRoute } from '@tanstack/react-router'
 import { createServerFn } from '@tanstack/react-start'
 import { QrCanvas } from '#/components/qr-canvas'
 import { useI18n } from '#/i18n/context'
+import { requireSide } from '#/auth/enter'
 
 const loadShopCode = createServerFn({ method: 'GET' }).handler(async () => {
   const { requireSignedInUser } = await import('#/auth/session.server')
@@ -22,7 +23,10 @@ export function shopUrl(merchantId: string) {
 
 /** UC-16: the shop's code, big enough to scan from arm's length. */
 export const Route = createFileRoute('/merchant/qr')({
-  loader: () => loadShopCode(),
+  loader: async ({ parentMatchPromise }) => {
+    await requireSide(parentMatchPromise, 'merchant')
+    return loadShopCode()
+  },
   component: ShopCode,
 })
 

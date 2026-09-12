@@ -7,6 +7,7 @@ import {
 } from '@tanstack/react-router'
 import { createServerFn } from '@tanstack/react-start'
 import { localSaudiMobile } from '#/auth/phone'
+import { requireSide } from '#/auth/enter'
 import { Pager, pagerLinkClass } from '#/components/account'
 import { LoadingDots } from '#/components/loading'
 import { Card, KeyValueRow, MobileNumber, cx } from '#/components/primitives'
@@ -84,7 +85,10 @@ export const Route = createFileRoute('/merchant/log')({
     }
   },
   loaderDeps: ({ search }) => search,
-  loader: ({ deps }) => loadLog({ data: deps }),
+  loader: async ({ deps, parentMatchPromise }) => {
+    await requireSide(parentMatchPromise, 'merchant')
+    return loadLog({ data: deps })
+  },
   // #75: no `pendingComponent` here, deliberately. The search is typed into
   // this screen, and a new search is a new set of loader deps, so it is a new
   // match: a loader standing in front of it would unmount the field mid-word

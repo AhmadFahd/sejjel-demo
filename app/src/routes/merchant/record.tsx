@@ -3,6 +3,7 @@ import { Link, createFileRoute, useRouter } from '@tanstack/react-router'
 import { createServerFn } from '@tanstack/react-start'
 import { localSaudiMobile } from '#/auth/phone'
 import { cancelOperation, recordOperation } from '#/auth/operation'
+import { requireSide } from '#/auth/enter'
 import { Button, buttonClass } from '#/components/chrome'
 import { Card, KeyValueRow, MobileNumber, cx } from '#/components/primitives'
 import { LimitBar } from '#/components/ledger'
@@ -61,7 +62,10 @@ export const Route = createFileRoute('/merchant/record')({
     }
   },
   loaderDeps: ({ search }) => ({ pending: search.pending ?? '' }),
-  loader: ({ deps }) => loadCustomers({ data: { pending: deps.pending } }),
+  loader: async ({ deps, parentMatchPromise }) => {
+    await requireSide(parentMatchPromise, 'merchant')
+    return loadCustomers({ data: { pending: deps.pending } })
+  },
   // #75: no `pendingComponent` here either. The operation being recorded
   // lives in this component's state, and recording it puts its id in the URL,
   // which is a new set of loader deps and so a new match. A loader standing

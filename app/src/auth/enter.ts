@@ -29,32 +29,43 @@ const readEntry = createServerFn({ method: 'GET' }).handler(
 )
 
 /**
- * The way in to one side of the ledger, and the whole of it: who is asking,
- * whether they may be here, and what is unread on the bell. A person who is
- * not signed in goes to the sign-in screen, and a shopkeeper who opens the
- * customer's screens goes to their own side rather than to a screen that
- * would show them nothing.
+ * The way in to the screens behind the front door: who is asking, and what is
+ * unread on the bell. Somebody who is not signed in goes to the sign-in
+ * screen.
  *
- * #79: this belongs to the side's layout and to its `loader`, not its
- * `beforeLoad`. A `beforeLoad` re-runs on every navigation with no staleness
- * check of any kind and holds up the screen's own loader behind it, so every
- * tap inside a side paid for this answer again, one round trip before the
- * one that fetched anything. A loader keeps what it read.
- *
- * The guard travels with it, which means it is answered from what the layout
- * read rather than re-asked per screen. That is a redirect for somebody's
- * convenience, not a lock: every server function reads the person again and
- * scopes its own query, so a cached answer here cannot show anyone a balance
- * that is not theirs.
+ * #79: this belongs in the side layout's `loader`, not its `beforeLoad`. A
+ * `beforeLoad` re-runs for every match on every load with no staleness check
+ * of any kind, and the screen's own loader cannot start until it comes back,
+ * so every tap inside a side paid for this answer again — one round trip in
+ * front of the one that fetched anything. A loader keeps what it read.
  */
-export async function enterSide(
-  side: Side,
-): Promise<Entry & { person: SignedInUser }> {
+export async function enterApp(): Promise<Entry & { person: SignedInUser }> {
   const entry = await readEntry()
   if (!entry.person) throw redirect({ to: '/sign-in' })
-  if (!canSee(entry.person.roles, side)) {
-    throw redirect({ to: homeFor(entry.person.roles) })
-  }
-
   return { person: entry.person, unread: entry.unread }
+}
+
+/**
+ * The side, per screen, answered from what the layout above already read: a
+ * shopkeeper who opens the customer's screens goes to their own side rather
+ * than to a screen that would show them nothing. No question to the server —
+ * this waits on the layout's loader, which has the answer or is already
+ * fetching it.
+ *
+ * Per screen rather than per side, because one screen under `/customer` is
+ * open to anybody signed in: the card, which is how a person no shop has
+ * connected yet gets connected. Moving this up to the layout took the card
+ * away from exactly the people it is for, and the browser suite said so.
+ *
+ * It is a redirect for somebody's convenience, not a lock. Every server
+ * function reads the person again and scopes its own query, so nothing here
+ * can show anyone a balance that is not theirs.
+ */
+export async function requireSide<
+  TParentMatch extends { loaderData?: { person: SignedInUser } | undefined },
+>(parentMatch: Promise<TParentMatch>, side: Side): Promise<SignedInUser> {
+  const person = (await parentMatch).loaderData?.person
+  if (!person) throw redirect({ to: '/sign-in' })
+  if (!canSee(person.roles, side)) throw redirect({ to: homeFor(person.roles) })
+  return person
 }

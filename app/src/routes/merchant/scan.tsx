@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { Link, createFileRoute, useRouter } from '@tanstack/react-router'
 import { applyScannedCode } from '#/auth/approval'
+import { requireSide } from '#/auth/enter'
 import { Button, buttonClass } from '#/components/chrome'
 import { Card } from '#/components/primitives'
 import { useI18n } from '#/i18n/context'
@@ -41,6 +42,10 @@ type Outcome =
 
 /** UC-07: the merchant's scan is what applies the operation. */
 export const Route = createFileRoute('/merchant/scan')({
+  // Nothing to read for this screen, so the loader exists for the guard
+  // alone: it waits on the side's own read rather than asking again.
+  loader: ({ parentMatchPromise }) =>
+    requireSide(parentMatchPromise, 'merchant'),
   component: ScanCode,
 })
 

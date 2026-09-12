@@ -7,6 +7,7 @@ import {
 import { createServerFn } from '@tanstack/react-start'
 import { localSaudiMobile } from '#/auth/phone'
 import { cancelOperation } from '#/auth/operation'
+import { requireSide } from '#/auth/enter'
 import { buttonClass } from '#/components/chrome'
 import { MobileNumber } from '#/components/primitives'
 import { Pager, TransactionHistory, pagerLinkClass } from '#/components/account'
@@ -51,7 +52,8 @@ export const Route = createFileRoute('/merchant/$connectionId')({
     return Number.isFinite(page) && page > 1 ? { page } : {}
   },
   loaderDeps: ({ search }) => ({ page: search.page ?? 1 }),
-  loader: async ({ params, deps }) => {
+  loader: async ({ params, deps, parentMatchPromise }) => {
+    await requireSide(parentMatchPromise, 'merchant')
     const account = await loadAccount({
       data: { connectionId: params.connectionId, page: deps.page },
     })

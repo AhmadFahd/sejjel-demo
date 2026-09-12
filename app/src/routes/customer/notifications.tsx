@@ -1,12 +1,16 @@
 import { useEffect } from 'react'
 import { Link, createFileRoute, useRouter } from '@tanstack/react-router'
 import { loadNotifications } from '#/auth/notifications'
+import { requireSide } from '#/auth/enter'
 import { NotificationList } from '#/components/notifications'
 import { useI18n } from '#/i18n/context'
 
 /** UC-12: everything that happened on this side, newest first. */
 export const Route = createFileRoute('/customer/notifications')({
-  loader: () => loadNotifications(),
+  loader: async ({ parentMatchPromise }) => {
+    await requireSide(parentMatchPromise, 'customer')
+    return loadNotifications()
+  },
   component: SideNotifications,
 })
 

@@ -1,6 +1,7 @@
 import { Link, createFileRoute } from '@tanstack/react-router'
 import { createServerFn } from '@tanstack/react-start'
 import { localSaudiMobile } from '#/auth/phone'
+import { requireSide } from '#/auth/enter'
 import { getMerchantTotals, listMerchantConnections } from '#/db/queries/ledger'
 import { paydayOnOrAfter } from '#/lib/payday'
 import { buttonClass } from '#/components/chrome'
@@ -74,7 +75,10 @@ export const Route = createFileRoute('/merchant/')({
     return Number.isFinite(page) && page > 1 ? { page } : {}
   },
   loaderDeps: ({ search }) => ({ page: search.page ?? 1 }),
-  loader: ({ deps }) => loadShop({ data: { page: deps.page } }),
+  loader: async ({ deps, parentMatchPromise }) => {
+    await requireSide(parentMatchPromise, 'merchant')
+    return loadShop({ data: { page: deps.page } })
+  },
   component: MerchantHome,
 })
 

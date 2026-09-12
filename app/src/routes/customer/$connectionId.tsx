@@ -10,6 +10,7 @@ import {
 } from '#/components/ledger'
 import { paydayOnOrAfter } from '#/lib/payday'
 import { useI18n } from '#/i18n/context'
+import { requireSide } from '#/auth/enter'
 
 const loadAccount = createServerFn({ method: 'GET' })
   .validator((input: unknown): { connectionId: string; page: number } => {
@@ -52,7 +53,8 @@ export const Route = createFileRoute('/customer/$connectionId')({
     return Number.isFinite(page) && page > 1 ? { page } : {}
   },
   loaderDeps: ({ search }) => ({ page: search.page ?? 1 }),
-  loader: async ({ params, deps }) => {
+  loader: async ({ params, deps, parentMatchPromise }) => {
+    await requireSide(parentMatchPromise, 'customer')
     const account = await loadAccount({
       data: { connectionId: params.connectionId, page: deps.page },
     })
