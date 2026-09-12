@@ -6,6 +6,9 @@ export const en = {
   appName: 'Sejjel',
   appTagline: 'The ledger between a shop and its customers',
 
+  /** What the loader says to a screen reader, which is all it says. */
+  loading: 'Loading',
+
   'locale.switch': 'العربية',
   'locale.label': 'Language',
 

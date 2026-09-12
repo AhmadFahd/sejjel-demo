@@ -17,6 +17,7 @@ import {
 } from '#/components/ledger'
 import { BottomNav, Button, Sheet, Toast, useToast } from '#/components/chrome'
 import { CodeBoxes } from '#/components/code-boxes'
+import { Loading, LoadingDots } from '#/components/loading'
 import { I18nProvider, useI18n } from '#/i18n/context'
 import { LOCALES, directionOf } from '#/i18n/locales'
 import {
@@ -181,6 +182,17 @@ function Panel({ locale }: { locale: Locale }) {
             {t('auth.codeLabel')}
           </p>
           <CodeBoxes code={code} onCode={setCode} />
+        </Card>
+
+        {/* #75: the loader every screen shows while it waits, and the dots
+            for the places where only a part of one is waiting. */}
+        <Card className="p-0">
+          <Loading rows={1} />
+        </Card>
+        <Card>
+          <p className="text-[13px] font-bold text-muted">
+            {t('loading')} <LoadingDots />
+          </p>
         </Card>
 
         <div className="grid gap-2.5">

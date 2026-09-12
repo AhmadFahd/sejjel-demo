@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { Button } from './chrome'
+import { LoadingDots } from './loading'
 import { QrCanvas } from './qr-canvas'
 import { APPROVAL_SECONDS } from '#/lib/approval'
 import { useI18n } from '#/i18n/context'
@@ -17,10 +18,11 @@ export function ApprovalCode({
   code: string
   /** When this code was minted, which is what the countdown counts from. */
   issuedAt: number
-  onRegenerate: () => void
+  onRegenerate: () => void | Promise<void>
 }) {
   const { t, number } = useI18n()
   const [left, setLeft] = useState(APPROVAL_SECONDS)
+  const [minting, setMinting] = useState(false)
 
   useEffect(() => {
     const tick = () => {
@@ -60,8 +62,21 @@ export function ApprovalCode({
         {code}
       </p>
 
-      <Button tone="ghost" onClick={onRegenerate}>
-        {t('approval.regenerate')}
+      {/* A new code is a round trip, so the button says so rather than
+          looking unpressed until the answer lands: #75. */}
+      <Button
+        tone="ghost"
+        disabled={minting}
+        onClick={async () => {
+          setMinting(true)
+          try {
+            await onRegenerate()
+          } finally {
+            setMinting(false)
+          }
+        }}
+      >
+        {minting ? <LoadingDots /> : t('approval.regenerate')}
       </Button>
     </div>
   )

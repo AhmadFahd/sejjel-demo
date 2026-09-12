@@ -5,6 +5,8 @@ export const ar = {
   appName: 'سجّل',
   appTagline: 'الدفتر بين المتجر وعملائه',
 
+  loading: 'جارٍ التحميل',
+
   'locale.switch': 'English',
   'locale.label': 'اللغة',
 

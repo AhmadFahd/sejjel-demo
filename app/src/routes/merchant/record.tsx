@@ -64,6 +64,12 @@ export const Route = createFileRoute('/merchant/record')({
   },
   loaderDeps: ({ search }) => ({ pending: search.pending ?? '' }),
   loader: ({ deps }) => loadCustomers({ data: { pending: deps.pending } }),
+  // #75, and the same reason the log holds it back: the operation being
+  // recorded lives in this component's state, and putting the app's loader in
+  // front of it unmounts the screen and throws that away. Recording a
+  // purchase puts its id in the URL, which is a new set of loader deps and so
+  // a new match, so the screen would go while the shop was mid-operation.
+  pendingMs: Infinity,
   component: RecordOperation,
 })
 

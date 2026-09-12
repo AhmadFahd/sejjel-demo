@@ -1,9 +1,15 @@
 import { useEffect, useState } from 'react'
-import { Link, createFileRoute, useRouter } from '@tanstack/react-router'
+import {
+  Link,
+  createFileRoute,
+  useRouter,
+  useRouterState,
+} from '@tanstack/react-router'
 import { createServerFn } from '@tanstack/react-start'
 import { requireSideOf } from '#/auth/enter'
 import { localSaudiMobile } from '#/auth/phone'
 import { Pager, pagerLinkClass } from '#/components/account'
+import { LoadingDots } from '#/components/loading'
 import { Card, KeyValueRow, MobileNumber, cx } from '#/components/primitives'
 import { useI18n } from '#/i18n/context'
 import type { LogEntry } from '#/db/queries/log'
@@ -81,6 +87,13 @@ export const Route = createFileRoute('/merchant/log')({
   },
   loaderDeps: ({ search }) => search,
   loader: ({ deps }) => loadLog({ data: deps }),
+  // #75: every other screen shows the app's loader while it waits, but the
+  // search on this one is typed into the screen itself, and a search that is
+  // a new set of loader deps is a new match. Standing the loader in front of
+  // it would unmount the field mid-word and take the keyboard with it. So the
+  // rows a person is reading stay where they are, and the dots beside the
+  // field say that a newer answer is on its way.
+  pendingMs: Infinity,
   component: OperationsLog,
 })
 
@@ -158,6 +171,7 @@ function OperationsLog() {
 function Filters({ search }: { search: Search }) {
   const { t } = useI18n()
   const router = useRouter()
+  const working = useRouterState({ select: (state) => state.isLoading })
   const [typed, setTyped] = useState(search.q ?? '')
 
   useEffect(() => setTyped(search.q ?? ''), [search.q])
@@ -189,15 +203,22 @@ function Filters({ search }: { search: Search }) {
 
   return (
     <Card>
-      <input
-        type="search"
-        aria-label={t('log.search')}
-        placeholder={t('log.search')}
-        className={field}
-        data-testid="log-search"
-        value={typed}
-        onChange={(event) => setTyped(event.target.value)}
-      />
+      <div className="relative">
+        <input
+          type="search"
+          aria-label={t('log.search')}
+          placeholder={t('log.search')}
+          className={field}
+          data-testid="log-search"
+          value={typed}
+          onChange={(event) => setTyped(event.target.value)}
+        />
+        {working ? (
+          <span className="absolute inset-y-0 end-3 flex items-center">
+            <LoadingDots />
+          </span>
+        ) : null}
+      </div>
 
       <div className="mt-2 flex gap-2">
         {(['purchase', 'payment'] as const).map((kind) => (
