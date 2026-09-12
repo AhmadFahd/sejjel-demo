@@ -1,11 +1,5 @@
 import { and, desc, eq, isNull, or } from 'drizzle-orm'
-import {
-  connections,
-  merchants,
-  notifications,
-  termChanges,
-  users,
-} from '../schema'
+import { connections, merchants, termChanges, users } from '../schema'
 import { getConnectionSummary, listAllMerchantConnections } from './ledger'
 import { announce } from './ledger-events'
 import { isBelowBalance } from '#/lib/terms'
@@ -86,18 +80,9 @@ async function settle(
     createdAt: input.now,
   })
 
-  if (input.limitChanged.length > 0) {
-    // The limit is what the customer's available balance is computed from, so
-    // a change to it is told to them rather than left to be noticed.
-    await db.insert(notifications).values(
-      input.limitChanged.map((row) => ({
-        userId: row.customerUserId,
-        kind: 'limit_changed' as const,
-        connectionId: row.connectionId,
-        createdAt: input.now,
-      })),
-    )
-  }
+  // Everyone affected has their screens refreshed; only the ones whose limit
+  // moved are told, because that is what the notification says.
+  const told = new Set(input.limitChanged.map((row) => row.connectionId))
 
   if (input.affected.length > 0) {
     await announce(
@@ -106,6 +91,7 @@ async function settle(
         userId: row.customerUserId,
         kind: 'terms.changed' as const,
         subjectId: row.connectionId,
+        ...(told.has(row.connectionId) ? {} : { notify: false as const }),
       })),
     )
   }

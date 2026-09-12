@@ -15,6 +15,10 @@ export type EventKind =
   | 'connection.requested'
   | 'connection.accepted'
   | 'terms.changed'
+  /** UC-12: a line arrived in somebody's list, or the list was opened and
+   * they were all read. Either way the bell re-counts. */
+  | 'notification.added'
+  | 'notification.read'
 
 export type LedgerEvent = {
   id: number

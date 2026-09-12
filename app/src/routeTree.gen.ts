@@ -20,9 +20,11 @@ import { Route as ApiEventsRouteImport } from './routes/api/events'
 import { Route as CustomerIndexRouteImport } from './routes/customer/index'
 import { Route as CustomerConnectionIdRouteImport } from './routes/customer/$connectionId'
 import { Route as CustomerCardRouteImport } from './routes/customer/card'
+import { Route as CustomerNotificationsRouteImport } from './routes/customer/notifications'
 import { Route as MerchantIndexRouteImport } from './routes/merchant/index'
 import { Route as MerchantConnectionIdRouteImport } from './routes/merchant/$connectionId'
 import { Route as MerchantNewRouteImport } from './routes/merchant/new'
+import { Route as MerchantNotificationsRouteImport } from './routes/merchant/notifications'
 import { Route as MerchantRecordRouteImport } from './routes/merchant/record'
 import { Route as MerchantScanRouteImport } from './routes/merchant/scan'
 import { Route as MerchantSettingsRouteImport } from './routes/merchant/settings'
@@ -86,6 +88,11 @@ const CustomerCardRoute = CustomerCardRouteImport.update({
   path: '/card',
   getParentRoute: () => CustomerRouteRoute,
 } as any)
+const CustomerNotificationsRoute = CustomerNotificationsRouteImport.update({
+  id: '/notifications',
+  path: '/notifications',
+  getParentRoute: () => CustomerRouteRoute,
+} as any)
 const MerchantIndexRoute = MerchantIndexRouteImport.update({
   id: '/',
   path: '/',
@@ -99,6 +106,11 @@ const MerchantConnectionIdRoute = MerchantConnectionIdRouteImport.update({
 const MerchantNewRoute = MerchantNewRouteImport.update({
   id: '/new',
   path: '/new',
+  getParentRoute: () => MerchantRouteRoute,
+} as any)
+const MerchantNotificationsRoute = MerchantNotificationsRouteImport.update({
+  id: '/notifications',
+  path: '/notifications',
   getParentRoute: () => MerchantRouteRoute,
 } as any)
 const MerchantRecordRoute = MerchantRecordRouteImport.update({
@@ -150,8 +162,10 @@ export interface FileRoutesByFullPath {
   '/api/events': typeof ApiEventsRoute
   '/customer/$connectionId': typeof CustomerConnectionIdRoute
   '/customer/card': typeof CustomerCardRoute
+  '/customer/notifications': typeof CustomerNotificationsRoute
   '/merchant/$connectionId': typeof MerchantConnectionIdRoute
   '/merchant/new': typeof MerchantNewRoute
+  '/merchant/notifications': typeof MerchantNotificationsRoute
   '/merchant/record': typeof MerchantRecordRoute
   '/merchant/scan': typeof MerchantScanRoute
   '/merchant/settings': typeof MerchantSettingsRoute
@@ -171,8 +185,10 @@ export interface FileRoutesByTo {
   '/api/events': typeof ApiEventsRoute
   '/customer/$connectionId': typeof CustomerConnectionIdRoute
   '/customer/card': typeof CustomerCardRoute
+  '/customer/notifications': typeof CustomerNotificationsRoute
   '/merchant/$connectionId': typeof MerchantConnectionIdRoute
   '/merchant/new': typeof MerchantNewRoute
+  '/merchant/notifications': typeof MerchantNotificationsRoute
   '/merchant/record': typeof MerchantRecordRoute
   '/merchant/scan': typeof MerchantScanRoute
   '/merchant/settings': typeof MerchantSettingsRoute
@@ -195,8 +211,10 @@ export interface FileRoutesById {
   '/api/events': typeof ApiEventsRoute
   '/customer/$connectionId': typeof CustomerConnectionIdRoute
   '/customer/card': typeof CustomerCardRoute
+  '/customer/notifications': typeof CustomerNotificationsRoute
   '/merchant/$connectionId': typeof MerchantConnectionIdRoute
   '/merchant/new': typeof MerchantNewRoute
+  '/merchant/notifications': typeof MerchantNotificationsRoute
   '/merchant/record': typeof MerchantRecordRoute
   '/merchant/scan': typeof MerchantScanRoute
   '/merchant/settings': typeof MerchantSettingsRoute
@@ -220,8 +238,10 @@ export interface FileRouteTypes {
     | '/api/events'
     | '/customer/$connectionId'
     | '/customer/card'
+    | '/customer/notifications'
     | '/merchant/$connectionId'
     | '/merchant/new'
+    | '/merchant/notifications'
     | '/merchant/record'
     | '/merchant/scan'
     | '/merchant/settings'
@@ -241,8 +261,10 @@ export interface FileRouteTypes {
     | '/api/events'
     | '/customer/$connectionId'
     | '/customer/card'
+    | '/customer/notifications'
     | '/merchant/$connectionId'
     | '/merchant/new'
+    | '/merchant/notifications'
     | '/merchant/record'
     | '/merchant/scan'
     | '/merchant/settings'
@@ -264,8 +286,10 @@ export interface FileRouteTypes {
     | '/api/events'
     | '/customer/$connectionId'
     | '/customer/card'
+    | '/customer/notifications'
     | '/merchant/$connectionId'
     | '/merchant/new'
+    | '/merchant/notifications'
     | '/merchant/record'
     | '/merchant/scan'
     | '/merchant/settings'
@@ -368,6 +392,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CustomerCardRouteImport
       parentRoute: typeof CustomerRouteRoute
     }
+    '/customer/notifications': {
+      id: '/customer/notifications'
+      path: '/notifications'
+      fullPath: '/customer/notifications'
+      preLoaderRoute: typeof CustomerNotificationsRouteImport
+      parentRoute: typeof CustomerRouteRoute
+    }
     '/merchant/': {
       id: '/merchant/'
       path: '/'
@@ -387,6 +418,13 @@ declare module '@tanstack/react-router' {
       path: '/new'
       fullPath: '/merchant/new'
       preLoaderRoute: typeof MerchantNewRouteImport
+      parentRoute: typeof MerchantRouteRoute
+    }
+    '/merchant/notifications': {
+      id: '/merchant/notifications'
+      path: '/notifications'
+      fullPath: '/merchant/notifications'
+      preLoaderRoute: typeof MerchantNotificationsRouteImport
       parentRoute: typeof MerchantRouteRoute
     }
     '/merchant/record': {
@@ -444,6 +482,7 @@ declare module '@tanstack/react-router' {
 interface CustomerRouteRouteChildren {
   CustomerConnectionIdRoute: typeof CustomerConnectionIdRoute
   CustomerCardRoute: typeof CustomerCardRoute
+  CustomerNotificationsRoute: typeof CustomerNotificationsRoute
   CustomerIndexRoute: typeof CustomerIndexRoute
   CustomerApproveTransactionIdRoute: typeof CustomerApproveTransactionIdRoute
   CustomerPayConnectionIdRoute: typeof CustomerPayConnectionIdRoute
@@ -452,6 +491,7 @@ interface CustomerRouteRouteChildren {
 const CustomerRouteRouteChildren: CustomerRouteRouteChildren = {
   CustomerConnectionIdRoute: CustomerConnectionIdRoute,
   CustomerCardRoute: CustomerCardRoute,
+  CustomerNotificationsRoute: CustomerNotificationsRoute,
   CustomerIndexRoute: CustomerIndexRoute,
   CustomerApproveTransactionIdRoute: CustomerApproveTransactionIdRoute,
   CustomerPayConnectionIdRoute: CustomerPayConnectionIdRoute,
@@ -464,6 +504,7 @@ const CustomerRouteRouteWithChildren = CustomerRouteRoute._addFileChildren(
 interface MerchantRouteRouteChildren {
   MerchantConnectionIdRoute: typeof MerchantConnectionIdRoute
   MerchantNewRoute: typeof MerchantNewRoute
+  MerchantNotificationsRoute: typeof MerchantNotificationsRoute
   MerchantRecordRoute: typeof MerchantRecordRoute
   MerchantScanRoute: typeof MerchantScanRoute
   MerchantSettingsRoute: typeof MerchantSettingsRoute
@@ -474,6 +515,7 @@ interface MerchantRouteRouteChildren {
 const MerchantRouteRouteChildren: MerchantRouteRouteChildren = {
   MerchantConnectionIdRoute: MerchantConnectionIdRoute,
   MerchantNewRoute: MerchantNewRoute,
+  MerchantNotificationsRoute: MerchantNotificationsRoute,
   MerchantRecordRoute: MerchantRecordRoute,
   MerchantScanRoute: MerchantScanRoute,
   MerchantSettingsRoute: MerchantSettingsRoute,

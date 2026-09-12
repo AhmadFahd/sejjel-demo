@@ -43,6 +43,8 @@ export function LedgerStream({ enabled }: { enabled: boolean }) {
         'connection.requested',
         'connection.accepted',
         'terms.changed',
+        'notification.added',
+        'notification.read',
       ]) {
         source.addEventListener(kind, refresh)
       }

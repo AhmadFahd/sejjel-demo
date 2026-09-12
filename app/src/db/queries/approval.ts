@@ -5,6 +5,7 @@ import { wouldBreachLimit } from '../derive'
 import { issueApproval, readApproval } from '#/lib/approval.server'
 import { getConnectionSummary } from './ledger'
 import { announce } from './ledger-events'
+import { markActed } from './notifications'
 import type { Database } from '../client'
 import type { ApprovalProblem } from '#/lib/approval.server'
 
@@ -114,6 +115,14 @@ export async function approveOperation(
   }
   if (!operation.termsAccepted) return { ok: false, problem: 'terms' }
 
+  // UC-12: whichever screen they came from, the line about this operation is
+  // answered now and cannot be answered again.
+  await markActed(db, {
+    transactionId: operation.transactionId,
+    userId: input.customerUserId,
+    now,
+  })
+
   return {
     ok: true,
     code: issueApproval(
@@ -181,6 +190,11 @@ export async function declineOperation(
         eq(transactions.status, 'pending'),
       ),
     )
+
+  await markActed(db, {
+    transactionId: operation.transactionId,
+    userId: input.customerUserId,
+  })
 
   // The shop is the one waiting on an answer, so the shop is the one told.
   const shopkeeper = await shopkeeperOf(db, operation.merchantId)
