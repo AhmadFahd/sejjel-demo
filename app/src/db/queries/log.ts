@@ -1,7 +1,7 @@
-import { and, desc, eq, gte, like, lt, or, sql } from 'drizzle-orm'
+import { and, desc, eq, gte, lt, or, sql } from 'drizzle-orm'
 import { connections, merchants, transactions, users } from '../schema'
 import { startOfRiyadhDay } from '#/lib/payday'
-import type { SQL } from 'drizzle-orm'
+import type { SQL, SQLWrapper } from 'drizzle-orm'
 import type { Database } from '../client'
 
 /**
@@ -36,6 +36,29 @@ export type LogFilter = {
 
 export const LOG_PAGE_SIZE = 25
 
+/**
+ * A search for part of a column, where `%` and `_` are letters somebody typed
+ * rather than wildcards: a search for `%` should find nothing, not everything.
+ */
+function contains(column: SQLWrapper, value: string): SQL {
+  const pattern = `%${value.replace(/[\\%_]/g, '\\$&')}%`
+  return sql`${column} like ${pattern} escape '\\'`
+}
+
+/**
+ * The digits a mobile is found by, whichever shape it was typed in. The ledger
+ * keeps `+966550123456`, the row above the search box reads `0550 123 456`,
+ * and somebody searching copies whichever is in front of them — so the country
+ * code and the local zero both come off, and what is left is common to both.
+ */
+function mobileNeedle(typed: string): string | null {
+  const digits = typed.replace(/\D/g, '')
+  const bare = digits.startsWith('966')
+    ? digits.slice(3)
+    : digits.replace(/^0+/, '')
+  return bare || null
+}
+
 export async function listShopOperations(
   db: Database,
   filter: LogFilter,
@@ -47,13 +70,11 @@ export async function listShopOperations(
 
   const needle = filter.search?.trim().toLowerCase()
   if (needle) {
-    // The number is matched with its spaces taken out, so a mobile typed as
-    // it is written on a card still finds the person.
-    const bare = needle.replace(/\s/g, '')
+    const mobile = mobileNeedle(needle)
     where.push(
       or(
-        like(sql`lower(${users.name})`, `%${needle}%`),
-        like(users.phoneNumber, `%${bare}%`),
+        contains(sql`lower(${users.name})`, needle),
+        ...(mobile ? [contains(users.phoneNumber, mobile)] : []),
       ),
     )
   }
