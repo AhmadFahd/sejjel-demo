@@ -25,9 +25,11 @@ import { Route as MerchantIndexRouteImport } from './routes/merchant/index'
 import { Route as MerchantConnectionIdRouteImport } from './routes/merchant/$connectionId'
 import { Route as MerchantNewRouteImport } from './routes/merchant/new'
 import { Route as MerchantNotificationsRouteImport } from './routes/merchant/notifications'
+import { Route as MerchantQrRouteImport } from './routes/merchant/qr'
 import { Route as MerchantRecordRouteImport } from './routes/merchant/record'
 import { Route as MerchantScanRouteImport } from './routes/merchant/scan'
 import { Route as MerchantSettingsRouteImport } from './routes/merchant/settings'
+import { Route as ShopMerchantIdRouteImport } from './routes/shop/$merchantId'
 import { Route as ApiAuthSplatRouteImport } from './routes/api/auth/$'
 import { Route as CustomerApproveTransactionIdRouteImport } from './routes/customer/approve/$transactionId'
 import { Route as CustomerPayConnectionIdRouteImport } from './routes/customer/pay/$connectionId'
@@ -113,6 +115,11 @@ const MerchantNotificationsRoute = MerchantNotificationsRouteImport.update({
   path: '/notifications',
   getParentRoute: () => MerchantRouteRoute,
 } as any)
+const MerchantQrRoute = MerchantQrRouteImport.update({
+  id: '/qr',
+  path: '/qr',
+  getParentRoute: () => MerchantRouteRoute,
+} as any)
 const MerchantRecordRoute = MerchantRecordRouteImport.update({
   id: '/record',
   path: '/record',
@@ -127,6 +134,11 @@ const MerchantSettingsRoute = MerchantSettingsRouteImport.update({
   id: '/settings',
   path: '/settings',
   getParentRoute: () => MerchantRouteRoute,
+} as any)
+const ShopMerchantIdRoute = ShopMerchantIdRouteImport.update({
+  id: '/shop/$merchantId',
+  path: '/shop/$merchantId',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const ApiAuthSplatRoute = ApiAuthSplatRouteImport.update({
   id: '/api/auth/$',
@@ -166,9 +178,11 @@ export interface FileRoutesByFullPath {
   '/merchant/$connectionId': typeof MerchantConnectionIdRoute
   '/merchant/new': typeof MerchantNewRoute
   '/merchant/notifications': typeof MerchantNotificationsRoute
+  '/merchant/qr': typeof MerchantQrRoute
   '/merchant/record': typeof MerchantRecordRoute
   '/merchant/scan': typeof MerchantScanRoute
   '/merchant/settings': typeof MerchantSettingsRoute
+  '/shop/$merchantId': typeof ShopMerchantIdRoute
   '/customer/': typeof CustomerIndexRoute
   '/merchant/': typeof MerchantIndexRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
@@ -189,9 +203,11 @@ export interface FileRoutesByTo {
   '/merchant/$connectionId': typeof MerchantConnectionIdRoute
   '/merchant/new': typeof MerchantNewRoute
   '/merchant/notifications': typeof MerchantNotificationsRoute
+  '/merchant/qr': typeof MerchantQrRoute
   '/merchant/record': typeof MerchantRecordRoute
   '/merchant/scan': typeof MerchantScanRoute
   '/merchant/settings': typeof MerchantSettingsRoute
+  '/shop/$merchantId': typeof ShopMerchantIdRoute
   '/customer': typeof CustomerIndexRoute
   '/merchant': typeof MerchantIndexRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
@@ -215,9 +231,11 @@ export interface FileRoutesById {
   '/merchant/$connectionId': typeof MerchantConnectionIdRoute
   '/merchant/new': typeof MerchantNewRoute
   '/merchant/notifications': typeof MerchantNotificationsRoute
+  '/merchant/qr': typeof MerchantQrRoute
   '/merchant/record': typeof MerchantRecordRoute
   '/merchant/scan': typeof MerchantScanRoute
   '/merchant/settings': typeof MerchantSettingsRoute
+  '/shop/$merchantId': typeof ShopMerchantIdRoute
   '/customer/': typeof CustomerIndexRoute
   '/merchant/': typeof MerchantIndexRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
@@ -242,9 +260,11 @@ export interface FileRouteTypes {
     | '/merchant/$connectionId'
     | '/merchant/new'
     | '/merchant/notifications'
+    | '/merchant/qr'
     | '/merchant/record'
     | '/merchant/scan'
     | '/merchant/settings'
+    | '/shop/$merchantId'
     | '/customer/'
     | '/merchant/'
     | '/api/auth/$'
@@ -265,9 +285,11 @@ export interface FileRouteTypes {
     | '/merchant/$connectionId'
     | '/merchant/new'
     | '/merchant/notifications'
+    | '/merchant/qr'
     | '/merchant/record'
     | '/merchant/scan'
     | '/merchant/settings'
+    | '/shop/$merchantId'
     | '/customer'
     | '/merchant'
     | '/api/auth/$'
@@ -290,9 +312,11 @@ export interface FileRouteTypes {
     | '/merchant/$connectionId'
     | '/merchant/new'
     | '/merchant/notifications'
+    | '/merchant/qr'
     | '/merchant/record'
     | '/merchant/scan'
     | '/merchant/settings'
+    | '/shop/$merchantId'
     | '/customer/'
     | '/merchant/'
     | '/api/auth/$'
@@ -310,6 +334,7 @@ export interface RootRouteChildren {
   StatusRoute: typeof StatusRoute
   WelcomeRoute: typeof WelcomeRoute
   ApiEventsRoute: typeof ApiEventsRoute
+  ShopMerchantIdRoute: typeof ShopMerchantIdRoute
   ApiAuthSplatRoute: typeof ApiAuthSplatRoute
 }
 
@@ -427,6 +452,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof MerchantNotificationsRouteImport
       parentRoute: typeof MerchantRouteRoute
     }
+    '/merchant/qr': {
+      id: '/merchant/qr'
+      path: '/qr'
+      fullPath: '/merchant/qr'
+      preLoaderRoute: typeof MerchantQrRouteImport
+      parentRoute: typeof MerchantRouteRoute
+    }
     '/merchant/record': {
       id: '/merchant/record'
       path: '/record'
@@ -447,6 +479,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/merchant/settings'
       preLoaderRoute: typeof MerchantSettingsRouteImport
       parentRoute: typeof MerchantRouteRoute
+    }
+    '/shop/$merchantId': {
+      id: '/shop/$merchantId'
+      path: '/shop/$merchantId'
+      fullPath: '/shop/$merchantId'
+      preLoaderRoute: typeof ShopMerchantIdRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/api/auth/$': {
       id: '/api/auth/$'
@@ -505,6 +544,7 @@ interface MerchantRouteRouteChildren {
   MerchantConnectionIdRoute: typeof MerchantConnectionIdRoute
   MerchantNewRoute: typeof MerchantNewRoute
   MerchantNotificationsRoute: typeof MerchantNotificationsRoute
+  MerchantQrRoute: typeof MerchantQrRoute
   MerchantRecordRoute: typeof MerchantRecordRoute
   MerchantScanRoute: typeof MerchantScanRoute
   MerchantSettingsRoute: typeof MerchantSettingsRoute
@@ -516,6 +556,7 @@ const MerchantRouteRouteChildren: MerchantRouteRouteChildren = {
   MerchantConnectionIdRoute: MerchantConnectionIdRoute,
   MerchantNewRoute: MerchantNewRoute,
   MerchantNotificationsRoute: MerchantNotificationsRoute,
+  MerchantQrRoute: MerchantQrRoute,
   MerchantRecordRoute: MerchantRecordRoute,
   MerchantScanRoute: MerchantScanRoute,
   MerchantSettingsRoute: MerchantSettingsRoute,
@@ -536,6 +577,7 @@ const rootRouteChildren: RootRouteChildren = {
   StatusRoute: StatusRoute,
   WelcomeRoute: WelcomeRoute,
   ApiEventsRoute: ApiEventsRoute,
+  ShopMerchantIdRoute: ShopMerchantIdRoute,
   ApiAuthSplatRoute: ApiAuthSplatRoute,
 }
 export const routeTree = rootRouteImport

@@ -82,6 +82,15 @@ export const en = {
   'shop.error.term': 'A term between 1 and 90 days',
   'shop.error.already': 'You already keep a shop',
 
+  'shop.join': 'Join this shop',
+  'shop.joinBody':
+    'Buying on credit here means what you take is a debt you owe this shop, due on the pay-day shown.',
+  'shop.error.own': 'This is your own shop.',
+  'shop.counter': 'The code for the counter',
+  'shop.counterBody':
+    'Print it or leave it on the counter. A customer scanning it joins the shop and lands on their account with you.',
+  'shop.counterOpen': 'Show it full screen',
+
   'merchant.noCustomers': 'No customers yet',
   'merchant.noCustomersBody':
     'A customer joins the first time you record something on credit for them.',

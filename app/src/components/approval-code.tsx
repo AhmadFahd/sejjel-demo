@@ -1,6 +1,6 @@
-import { useEffect, useRef, useState } from 'react'
-import QRCode from 'qrcode'
+import { useEffect, useState } from 'react'
 import { Button } from './chrome'
+import { QrCanvas } from './qr-canvas'
 import { APPROVAL_SECONDS } from '#/lib/approval'
 import { useI18n } from '#/i18n/context'
 
@@ -19,19 +19,8 @@ export function ApprovalCode({
   issuedAt: number
   onRegenerate: () => void
 }) {
-  const canvas = useRef<HTMLCanvasElement>(null)
   const { t, number } = useI18n()
   const [left, setLeft] = useState(APPROVAL_SECONDS)
-
-  useEffect(() => {
-    if (canvas.current) {
-      void QRCode.toCanvas(canvas.current, code, {
-        width: 232,
-        margin: 1,
-        color: { dark: '#37453F', light: '#ffffff' },
-      })
-    }
-  }, [code])
 
   useEffect(() => {
     const tick = () => {
@@ -49,11 +38,7 @@ export function ApprovalCode({
   return (
     <div>
       <div className="mb-3 flex justify-center">
-        <canvas
-          ref={canvas}
-          data-testid="approval-qr"
-          className="rounded-(--radius-control)"
-        />
+        <QrCanvas value={code} testId="approval-qr" />
       </div>
 
       <p

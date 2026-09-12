@@ -60,6 +60,12 @@ export const poc: Scenario = {
       phoneNumber: '+966500000002',
       name: 'عبدالله المطيري',
     })
+    // And somebody to walk in off the street and scan the code on the
+    // counter, which is the other direction the two sides can meet in.
+    await addPerson(db, {
+      phoneNumber: '+966500000003',
+      name: 'فاطمة السبيعي',
+    })
 
     const noorOwner = await addPerson(db, {
       phoneNumber: '+966551000001',
