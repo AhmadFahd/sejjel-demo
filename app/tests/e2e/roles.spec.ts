@@ -481,8 +481,12 @@ test('one tap hides every amount, and it holds after a reload', async ({
 
 /**
  * UC-12: the bell. سالم is past his date in the fixture, and nothing happened
- * to make that true — the date came round — so the shop is told about it the
- * first time a screen looks.
+ * to make that true — the date came round.
+ *
+ * #78: so nothing looks for it on the way in any more. The clock that starts
+ * with the server has already been round the ledger by the time anybody signs
+ * in, which is what this test now proves: the line is waiting, and no screen
+ * of this shop's has been opened to write it.
  */
 test('the shop is told about a date that came round', async ({ page }) => {
   await signIn(page, '0550111222', '+966550111222')

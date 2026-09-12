@@ -11,7 +11,12 @@ const config = defineConfig({
   resolve: { tsconfigPaths: true },
   plugins: [
     devtools(),
-    nitro({ rollupConfig: { external: [/^@sentry\//] } }),
+    nitro({
+      rollupConfig: { external: [/^@sentry\//] },
+      // #78: starts with the server rather than with a request, because a
+      // due date comes round whether or not anybody is looking.
+      plugins: ['./src/server/due-clock.ts'],
+    }),
     tailwindcss(),
     tanstackStart(),
     viteReact(),

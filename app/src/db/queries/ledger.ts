@@ -190,6 +190,30 @@ export async function listAllMerchantConnections(
 }
 
 /**
+ * #78: every active connection with something still owed on it, on both sides
+ * of the ledger, for the clock that notices a date coming round. Whittled down
+ * in SQL rather than in a filter over rows already paid for: a settled account
+ * and one with no date on it have nothing anybody needs telling about.
+ *
+ * Each row carries the shop's owner beside the customer, because a date coming
+ * round is news to both of them.
+ */
+export async function listOwedConnections(
+  db: Database,
+  now: Date = new Date(),
+): Promise<Array<ConnectionSummary & { ownerUserId: string }>> {
+  const rows = await summaryQuery(db)
+    .where(eq(connections.status, 'active'))
+    .having(
+      and(sql`${balanceExpression} > 0`, sql`${dueExpression} is not null`),
+    )
+  return rows.map((row) => ({
+    ...toSummary(now, row),
+    ownerUserId: row.merchant.ownerUserId,
+  }))
+}
+
+/**
  * The figures at the top of a dashboard, summed in SQL over every connection
  * on that side of the ledger — not over the page the screen happens to be
  * showing, so paging cannot change what is owed.

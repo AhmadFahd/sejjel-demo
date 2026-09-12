@@ -51,13 +51,6 @@ const loadShop = createServerFn({ method: 'GET' })
       }),
     ])
 
-    // UC-12: a date comes round without anybody doing anything, so the screen
-    // that has the figures is the one that notices it. The page in hand is
-    // enough: a shop with more customers than fit on it sees the rest as it
-    // pages through them.
-    const { noticeDueDates } = await import('#/db/queries/notifications')
-    await noticeDueDates(db, { userId: user.id, summaries: customers, now })
-
     return {
       shop,
       totals,

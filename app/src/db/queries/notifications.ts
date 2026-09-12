@@ -153,9 +153,13 @@ export async function markActed(
 
 /**
  * A due date approaching, and one gone past. Nothing happens to make these
- * true — time passes — so they are noticed by the screens that already have
- * the figures in hand rather than by a job that has to be running, and the
- * dedupe key is what keeps one look per date from becoming one row per look.
+ * true — time passes — so somebody has to look for them; the dedupe key is
+ * what keeps one look per date from becoming one row per look.
+ *
+ * #78: the looking is `sweepDueDates` below, on a clock. It used to be the two
+ * dashboards, which meant reading the slowest screen in the app wrote rows,
+ * fired an event and invalidated the screen that had just been waited for —
+ * and a customer who never opened the app was never told at all.
  */
 export async function noticeDueDates(
   db: Database,
@@ -210,4 +214,33 @@ export async function noticeDueDates(
   }
 
   return written.length
+}
+
+/**
+ * #78: the clock's own round of the ledger. Every account with something owed
+ * on it and a date on that, and a line for each of the two people it concerns
+ * — the customer who owes it and the shop that is waiting. One announcement
+ * per person however many of their accounts came round at once.
+ *
+ * Safe to run as often as anybody likes: the dedupe key means a date is one
+ * row per person whoever notices it and however many times.
+ */
+export async function sweepDueDates(db: Database, now: Date = new Date()) {
+  const { listOwedConnections } = await import('./ledger')
+  const owed = await listOwedConnections(db, now)
+
+  const byUser = new Map<string, Array<(typeof owed)[number]>>()
+  for (const summary of owed) {
+    for (const userId of [summary.customerUserId, summary.ownerUserId]) {
+      const mine = byUser.get(userId)
+      if (mine) mine.push(summary)
+      else byUser.set(userId, [summary])
+    }
+  }
+
+  let written = 0
+  for (const [userId, summaries] of byUser) {
+    written += await noticeDueDates(db, { userId, summaries, now })
+  }
+  return written
 }

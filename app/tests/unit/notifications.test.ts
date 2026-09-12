@@ -7,6 +7,7 @@ import {
   listNotifications,
   markAllRead,
   noticeDueDates,
+  sweepDueDates,
 } from '#/db/queries/notifications'
 import { listCustomerConnections } from '#/db/queries/ledger'
 import { announce } from '#/db/queries/ledger-events'
@@ -250,5 +251,78 @@ describe('a date that comes round on its own', () => {
     expect(
       await noticeDueDates(db, { userId: customer.id, summaries, now }),
     ).toBe(0)
+  })
+})
+
+/**
+ * #78: the clock's round of the ledger, which is what notices a date now that
+ * no screen does. Both people it concerns are told, and a customer who never
+ * opens the app is one of them.
+ */
+describe('sweeping for dates that came round', () => {
+  const at = new Date('2026-07-01T09:00:00Z')
+  const later = new Date('2026-09-01T09:00:00Z')
+
+  async function anOverdueAccount() {
+    const shopkeeper = await makeUser(db, { name: 'صاحب المتجر' })
+    const merchant = await makeMerchant(db, { ownerUserId: shopkeeper.id })
+    const customer = await makeUser(db, { name: 'العميل' })
+    const connection = await makeConnection(db, {
+      merchantId: merchant.id,
+      customerUserId: customer.id,
+    })
+    await makeTransaction(db, {
+      connectionId: connection.id,
+      amountHalalas: riyalsToHalalas(300),
+      dueAt: dueDateFor(at, 30),
+      createdAt: at,
+    })
+    return { shopkeeper, customer, connection }
+  }
+
+  it('tells the customer and the shop, without either of them looking', async () => {
+    const { shopkeeper, customer } = await anOverdueAccount()
+
+    expect(await sweepDueDates(db, later)).toBe(2)
+
+    for (const person of [customer, shopkeeper]) {
+      const rows = await db
+        .select()
+        .from(notifications)
+        .where(eq(notifications.userId, person.id))
+      expect(rows).toHaveLength(1)
+      expect(rows[0].kind).toBe('overdue')
+    }
+  })
+
+  it('writes the same date once however often it is swept', async () => {
+    await anOverdueAccount()
+
+    expect(await sweepDueDates(db, later)).toBe(2)
+    expect(await sweepDueDates(db, later)).toBe(0)
+    expect(await sweepDueDates(db, later)).toBe(0)
+  })
+
+  it('says nothing about a date that has not come round yet', async () => {
+    await anOverdueAccount()
+
+    // The purchase is a day old and its date is a month off.
+    expect(await sweepDueDates(db, new Date('2026-07-02T09:00:00Z'))).toBe(0)
+  })
+
+  it('leaves out an account with nothing owed on it', async () => {
+    const { connection } = await anOverdueAccount()
+    await makeTransaction(db, {
+      connectionId: connection.id,
+      kind: 'payment',
+      amountHalalas: riyalsToHalalas(300),
+      createdAt: at,
+    })
+
+    expect(await sweepDueDates(db, later)).toBe(0)
+  })
+
+  it('has nothing to say about an empty ledger', async () => {
+    expect(await sweepDueDates(db, later)).toBe(0)
   })
 })
