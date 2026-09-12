@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { cx } from './primitives'
+import { AmountsEye } from './amounts-eye'
 import { useI18n } from '#/i18n/context'
 import type { ReactNode } from 'react'
 
@@ -31,7 +32,12 @@ export function AppBar({ actions }: { actions?: ReactNode }) {
           {t('appTagline')}
         </div>
       </div>
-      <div className="ms-auto flex items-center gap-2">{actions}</div>
+      {/* UC-14: the eye sits in the bar on every screen behind the front
+          door, because the figures it hides are on most of them. */}
+      <div className="ms-auto flex items-center gap-2">
+        <AmountsEye />
+        {actions}
+      </div>
     </header>
   )
 }

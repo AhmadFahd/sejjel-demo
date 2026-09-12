@@ -1,5 +1,5 @@
 import { readFileSync } from 'node:fs'
-import { expect, test } from '@playwright/test'
+import { expect, openPhone, test } from './fixtures'
 import type { Page } from '@playwright/test'
 import { OTP_LOG } from '../../playwright.config'
 
@@ -121,8 +121,7 @@ test('a shopkeeper opens a customer account, and only their own', async ({
   // not there. A second context rather than a second sign-in: two shopkeepers
   // are two phones.
   const salemAtRiyan = new URL(page.url()).pathname
-  const nextDoor = await browser.newContext()
-  const theirPhone = await nextDoor.newPage()
+  const { context: nextDoor, page: theirPhone } = await openPhone(browser)
   await signIn(theirPhone, '0551000001', '+966551000001')
 
   await theirPhone.goto(salemAtRiyan)
@@ -290,6 +289,46 @@ test('a customer can be given their own limit and put back', async ({
   await expect(ahmed().getByTestId('overridden')).toHaveCount(0)
 })
 
+/**
+ * UC-14: the shopkeeper's figures go behind dots and come back, and the
+ * choice is on their row rather than in the tab, so a reload keeps it.
+ */
+test('one tap hides every amount, and it holds after a reload', async ({
+  page,
+}) => {
+  await signIn(page, '0550111222', '+966550111222')
+
+  const main = page.locator('main')
+  const eye = page.getByTestId('amounts-eye')
+  await expect(main).toContainText('2,050')
+  await expect(eye).toHaveAttribute('aria-pressed', 'false')
+
+  await eye.click()
+
+  await expect(eye).toHaveAttribute('aria-pressed', 'true')
+  await expect(main).not.toContainText('2,050')
+  await expect(main).toContainText('••••')
+  // The pills and the customers' names are not amounts and stay put.
+  await expect(main).toContainText('سالم العتيبي')
+  await expect(main).toContainText('تجاوز الموعد')
+
+  await page.reload()
+  await expect(page.locator('main')).toContainText('••••')
+
+  // The account view is covered too, hero and bar and history together.
+  await page
+    .getByTestId('connection-row')
+    .filter({ hasText: 'سالم العتيبي' })
+    .click()
+  await expect(page.getByTestId('balance-hero')).toContainText('••••')
+  await expect(page.getByTestId('balance-hero')).not.toContainText('1,250')
+  await expect(page.getByTestId('transactions')).toContainText('••••')
+
+  // Leave the fixture as it was found: the tests share one seeded ledger.
+  await page.getByTestId('amounts-eye').click()
+  await expect(page.getByTestId('balance-hero')).toContainText('1,250')
+})
+
 test('a customer sees every shop they owe, and can open one', async ({
   page,
 }) => {
@@ -335,8 +374,7 @@ test('an operation recorded on one phone reaches the other', async ({
     .click()
   await expect(page.getByTestId('transactions')).toBeVisible()
 
-  const shop = await browser.newContext()
-  const shopPhone = await shop.newPage()
+  const { context: shop, page: shopPhone } = await openPhone(browser)
   await signIn(shopPhone, '0550111222', '+966550111222')
   await shopPhone.getByTestId('record').click()
   await shopPhone.getByLabel('العميل').selectOption({ label: 'أحمد محمد' })
@@ -350,6 +388,11 @@ test('an operation recorded on one phone reaches the other', async ({
   await expect(page.getByTestId('transactions')).toContainText(
     'بانتظار الموافقة',
   )
+
+  // Leave the fixture as it was found — and calling it off travels the same
+  // way, so his screen says so without him touching it either.
+  await shopPhone.getByRole('button', { name: 'إلغاء العملية' }).click()
+  await expect(page.getByTestId('transactions')).toContainText('ملغاة')
 
   await shop.close()
 })
@@ -373,8 +416,7 @@ test('a purchase is agreed on one phone and applied on the other', async ({
   await page.getByRole('button', { name: 'أرسل للعميل' }).click()
   await expect(page.getByTestId('waiting')).toBeVisible()
 
-  const customer = await browser.newContext()
-  const theirPhone = await customer.newPage()
+  const { context: customer, page: theirPhone } = await openPhone(browser)
   await signIn(theirPhone, '0555987210', '+966555987210')
 
   await theirPhone.getByTestId('awaiting').click()
@@ -426,8 +468,7 @@ test('the shop’s waiting screen moves on when the customer says no', async ({
   await page.getByTestId('record-anyway').click()
   await expect(page.getByTestId('waiting')).toBeVisible()
 
-  const customer = await browser.newContext()
-  const theirPhone = await customer.newPage()
+  const { context: customer, page: theirPhone } = await openPhone(browser)
   await signIn(theirPhone, '0533456789', '+966533456789')
   await theirPhone.getByTestId('awaiting').filter({ hasText: '60' }).click()
   await theirPhone.getByRole('button', { name: 'رفض' }).click()
@@ -464,8 +505,7 @@ test('a customer settles part of what they owe', async ({ page, browser }) => {
   await page.goto('/customer')
   await expect(page.locator('main')).toContainText('920')
 
-  const shop = await browser.newContext()
-  const shopPhone = await shop.newPage()
+  const { context: shop, page: shopPhone } = await openPhone(browser)
   await signIn(shopPhone, '0550111222', '+966550111222')
   await expect(
     shopPhone.getByTestId('connection-row').filter({ hasText: 'أحمد محمد' }),
@@ -501,8 +541,7 @@ test('a shop asks for a customer by scanning their card', async ({
   await page.getByTestId('my-card-link').click()
   const card = await page.getByTestId('approval-text').innerText()
 
-  const shop = await browser.newContext()
-  const shopPhone = await shop.newPage()
+  const { context: shop, page: shopPhone } = await openPhone(browser)
   await signIn(shopPhone, '0550111222', '+966550111222')
   await expect(shopPhone.getByTestId('connection-row')).toHaveCount(3)
 

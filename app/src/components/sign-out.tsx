@@ -1,10 +1,8 @@
-import { useRouter } from '@tanstack/react-router'
 import { signOut } from '#/auth/session'
 import { useI18n } from '#/i18n/context'
 
 export function SignOutButton() {
   const { t } = useI18n()
-  const router = useRouter()
 
   return (
     <button
@@ -13,8 +11,9 @@ export function SignOutButton() {
       className="rounded-full bg-white/15 px-3 py-1.5 text-[12px] font-black text-white"
       onClick={async () => {
         await signOut()
-        await router.invalidate()
-        await router.navigate({ to: '/sign-in' })
+        // Signing out changes the document the same way signing in does, so
+        // it leaves the same way: by loading a new one.
+        window.location.assign('/sign-in')
       }}
     >
       {t('auth.signOut')}

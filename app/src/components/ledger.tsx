@@ -210,7 +210,7 @@ export function BalanceHero({
   facts?: Array<{ label: string; value: string }>
   children?: ReactNode
 }) {
-  const { t, number } = useI18n()
+  const { t, amount } = useI18n()
 
   return (
     <div
@@ -231,7 +231,7 @@ export function BalanceHero({
         {t('ledger.currentBalance')}
       </div>
       <div className="tabular relative z-1 text-[32px] leading-tight font-black">
-        {number(balanceHalalas / 100)}{' '}
+        {amount(balanceHalalas)}{' '}
         <small className="text-[15px] font-extrabold text-gold">
           {t('money.currency')}
         </small>

@@ -22,7 +22,11 @@ const launchOptions = existsSync(preinstalledChromium)
 /** Runs against a production build, which is the thing that actually ships. */
 export default defineConfig({
   testDir: './tests/e2e',
-  fullyParallel: true,
+  // One worker, and the files in order: every test in this suite works on the
+  // same seeded ledger, so two running at once are two shopkeepers editing one
+  // shop. The whole suite takes well under a minute as it is.
+  fullyParallel: false,
+  workers: 1,
   forbidOnly: Boolean(process.env.CI),
   retries: process.env.CI ? 1 : 0,
   reporter: process.env.CI ? 'github' : 'list',
