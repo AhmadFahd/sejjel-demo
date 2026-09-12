@@ -76,9 +76,13 @@ test('a tap inside a side costs one round trip, and the way back costs none', as
     if (request.url().includes('/_serverFn/')) calls.push(request.url())
   })
 
+  // #81: the card asks for two things and waits for neither — the shops
+  // asking for this person, which its loader reads, and the code, which the
+  // screen asks for once it is up.
   await page.getByTestId('my-card-link').click()
   await expect(page.getByTestId('my-card')).toBeVisible()
-  expect(calls).toHaveLength(1)
+  await expect(page.getByTestId('approval-qr')).toBeVisible()
+  expect(calls).toHaveLength(2)
 
   // Back to a screen the router still holds, inside its window: nothing to
   // ask, so the rows are simply there.
@@ -87,10 +91,11 @@ test('a tap inside a side costs one round trip, and the way back costs none', as
   await expect(page.getByTestId('connection-row').first()).toBeVisible()
   expect(calls).toHaveLength(0)
 
-  // And the card again, which is never the screen that was left.
+  // And the card again, inside its window: its list is still in hand, so the
+  // code is the only thing left to ask for — and a code is never in hand.
   calls.length = 0
   await page.getByTestId('dock').getByText('بطاقتي').click()
-  await expect(page.getByTestId('my-card')).toBeVisible()
+  await expect(page.getByTestId('approval-qr')).toBeVisible()
   expect(calls).toHaveLength(1)
 })
 
@@ -104,16 +109,52 @@ test('a slow navigation says so, and takes nothing away', async ({ page }) => {
   await expect(page).toHaveURL(/\/customer$/)
   await hydrated(page)
 
+  // One shop's history, which this screen does not hold and so has to wait
+  // for. The card used to be the example here; since #81 it does not block at
+  // all, which is a different test.
   await holdTheServer(page)
-  await page.getByTestId('my-card-link').click()
+  await page.getByTestId('connection-row').first().click()
 
   await expect(page.getByTestId('loading-bar')).toBeVisible()
   // The ledger is still there, dock and all, rather than a blank panel.
   await expect(page.getByTestId('dock')).toBeVisible()
   await expect(page.getByTestId('my-card-link')).toBeVisible()
 
-  await expect(page.getByTestId('my-card')).toBeVisible()
+  await expect(page.getByTestId('pay')).toBeVisible()
   await expect(page.getByTestId('loading-bar')).toBeHidden()
+})
+
+/**
+ * #81: the card used to be a screen that did not exist until a round trip
+ * finished, because its loader minted the code. The frame, the heading and the
+ * explanation depend on none of that, so they arrive on the tap that asked for
+ * them and the code fills in behind.
+ */
+test('the card paints before its code arrives', async ({ page }) => {
+  await signIn(page, CUSTOMER.typed, CUSTOMER.e164)
+  await expect(page).toHaveURL(/\/customer$/)
+  await hydrated(page)
+
+  await holdTheServer(page)
+  await page.getByTestId('my-card-link').click()
+
+  // The card itself, with its heading and its explanation, and the square
+  // holding the space the code is coming into.
+  await expect(page.getByTestId('my-card')).toBeVisible()
+  await expect(page.getByTestId('approval-waiting')).toBeVisible()
+  await expect(page.getByTestId('approval-qr')).toHaveCount(0)
+
+  // And then the code, on the screen that was already there.
+  await expect(page.getByTestId('approval-qr')).toBeVisible()
+  await expect(page.getByTestId('approval-waiting')).toHaveCount(0)
+  await expect(page.getByTestId('countdown')).toContainText('صالح لمدة')
+
+  // The same on a direct hit, where the list of shops asking is streamed into
+  // the document rather than fetched by the browser.
+  await page.goto('/customer/card')
+  await expect(page.getByTestId('my-card')).toBeVisible()
+  await expect(page.getByTestId('approval-waiting')).toBeVisible()
+  await expect(page.getByTestId('approval-qr')).toBeVisible()
 })
 
 /**

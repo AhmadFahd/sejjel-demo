@@ -206,6 +206,7 @@ export const en = {
   'approval.expiresIn': 'Good for {time}',
   'approval.expired': 'This code has run out.',
   'approval.regenerate': 'New code',
+  'approval.codeProblem': 'The code did not arrive. Ask for a new one.',
   'approval.termsTitle': 'Before your first operation',
   'approval.termsBody':
     'Buying on credit from {shop} means the amount is a debt you owe them, due on the pay-day shown.',

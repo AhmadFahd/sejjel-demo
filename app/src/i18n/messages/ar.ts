@@ -199,6 +199,7 @@ export const ar = {
   'approval.expiresIn': 'صالح لمدة {time}',
   'approval.expired': 'انتهت صلاحية الرمز.',
   'approval.regenerate': 'رمز جديد',
+  'approval.codeProblem': 'لم يصل الرمز. اطلب رمزًا جديدًا.',
   'approval.termsTitle': 'قبل أول عملية',
   'approval.termsBody':
     'الشراء بالآجل من {shop} يعني أن المبلغ دين عليك، يُستحق في يوم السداد المبيّن.',
