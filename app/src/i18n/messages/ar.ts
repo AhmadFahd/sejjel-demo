@@ -138,7 +138,6 @@ export const ar = {
   'log.from': 'من',
   'log.to': 'إلى',
   'log.empty': 'لا عمليات بعد',
-  'log.emptyBody': 'تظهر العمليات هنا فور تسجيلها.',
   'log.noResults': 'لا نتائج مطابقة',
   'log.noResultsBody': 'جرّب اسمًا آخر، أو وسّع المدة.',
 

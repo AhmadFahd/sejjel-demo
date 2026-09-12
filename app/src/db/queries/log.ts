@@ -47,9 +47,9 @@ function contains(column: SQLWrapper, value: string): SQL {
 
 /**
  * The digits a mobile is found by, whichever shape it was typed in. The ledger
- * keeps `+966550123456`, the row above the search box reads `0550 123 456`,
- * and somebody searching copies whichever is in front of them — so the country
- * code and the local zero both come off, and what is left is common to both.
+ * keeps `+966550123456` and the row above the search box reads `0550 123 456`,
+ * and somebody searching copies whichever is in front of them. The country code
+ * and the local zero both come off, and what is left is common to both.
  */
 function mobileNeedle(typed: string): string | null {
   const digits = typed.replace(/\D/g, '')

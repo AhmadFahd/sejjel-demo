@@ -143,7 +143,6 @@ export const en = {
   'log.from': 'From',
   'log.to': 'To',
   'log.empty': 'Nothing recorded yet',
-  'log.emptyBody': 'Operations appear here as you record them.',
   'log.noResults': 'Nothing matches that',
   'log.noResultsBody': 'Try a different name, or widen the dates.',
 
