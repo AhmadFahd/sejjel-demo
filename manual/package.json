@@ -1,0 +1,19 @@
+{
+  "name": "sejjel-manual",
+  "version": "1.0.0",
+  "scripts": {
+    "dev": "slidev merchant.md --open false",
+    "dev:customer": "slidev customer.md --open false",
+    "build": "slidev build merchant.md --base /manual/merchant/ --out dist/merchant && slidev build customer.md --base /manual/customer/ --out dist/customer",
+    "pdf": "slidev export merchant.md ${CHROMIUM_PATH:+--executable-path $CHROMIUM_PATH} --output dist/sejjel-merchant-manual.pdf && slidev export customer.md ${CHROMIUM_PATH:+--executable-path $CHROMIUM_PATH} --output dist/sejjel-customer-manual.pdf"
+  },
+  "dependencies": {
+    "@slidev/cli": "^52.19.1",
+    "@slidev/theme-default": "^0.25.0",
+    "vue": "^3.5.41"
+  },
+  "devDependencies": {
+    "playwright-chromium": "^1.62.1"
+  },
+  "private": true
+}
