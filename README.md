@@ -13,6 +13,7 @@ market. Amounts in ر.س.
 | `MVP.md`, `business_model*.md` | Scope and business model for a later release. |
 | `brand/`, `logo.svg`, `icon.svg` | Brand identity. |
 | `pitch/` | The Slidev decks published at `/marketing` and `/domain/business_model`. |
+| `manual/` | The two user manuals, in Arabic: `merchant.md` and `customer.md`, published at `/manual/merchant` and `/manual/customer`. |
 
 The work of turning the prototype into the app is tracked on the
 [wayfinder map](https://github.com/AhmadFahd/sejjel-demo/issues/11) and its tickets.
@@ -53,6 +54,19 @@ npm run db:deploy            # what runs before a deploy: migrate, repair, seed 
 
 `.github/workflows/ci.yml` runs lint, types, formatting, the unit suite and the
 browser suite on every pull request.
+
+## Reading the manuals
+
+```bash
+cd manual
+npm install
+npm run dev            # دليل التاجر
+npm run dev:customer   # دليل العميل
+npm run pdf            # both, as PDFs in dist/
+```
+
+Their screenshots come out of the running app in one pass, which
+`manual/README.md` explains how to repeat.
 
 ## Running the prototype
 

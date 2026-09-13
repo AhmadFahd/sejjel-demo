@@ -1,7 +1,8 @@
 #!/usr/bin/env bash
 # Assemble the publish directory: the static prototype at the root,
 # the brand guides at /brand, the merchant pitch deck at /marketing,
-# and the stakeholder business-model deck at /domain/business_model.
+# the stakeholder business-model deck at /domain/business_model, and the two
+# user manuals at /manual/merchant and /manual/customer.
 set -euo pipefail
 
 rm -rf _site
@@ -18,3 +19,10 @@ mkdir -p _site/domain
 cp -r pitch/dist-business-model _site/domain/business_model
 # The SPA rewrites live in netlify.toml; drop Slidev's own copies so there is one source of truth.
 rm -f _site/marketing/_redirects _site/domain/business_model/_redirects
+
+npm ci --prefix manual
+npm run build --prefix manual
+mkdir -p _site/manual
+cp -r manual/dist/merchant _site/manual/merchant
+cp -r manual/dist/customer _site/manual/customer
+rm -f _site/manual/merchant/_redirects _site/manual/customer/_redirects

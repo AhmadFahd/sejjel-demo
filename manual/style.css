@@ -1,0 +1,260 @@
+:root {
+  --sajjel-mist: #ede9e6;
+  --sajjel-sage: #5c766d;
+  --sajjel-tan: #c9996b;
+  --sajjel-ink: #453c36;
+  --sajjel-muted: #8c7f77;
+  --sajjel-card: #ffffff;
+}
+
+html {
+  direction: rtl;
+}
+
+.slidev-layout {
+  direction: rtl;
+  text-align: right;
+  font-family: 'Cairo', sans-serif;
+  background: var(--sajjel-mist);
+  color: var(--sajjel-ink);
+  padding: 2.2rem 3rem;
+}
+
+.slidev-layout h1,
+.slidev-layout h2,
+.slidev-layout h3 {
+  color: var(--sajjel-sage);
+  font-weight: 700;
+}
+
+.slidev-layout h1 {
+  font-size: 2.1rem;
+  line-height: 1.35;
+  margin-bottom: 0.9rem;
+  border-inline-start: 0.3rem solid var(--sajjel-tan);
+  padding-inline-start: 0.9rem;
+}
+
+.slidev-layout h2 {
+  font-size: 1.25rem;
+  margin-bottom: 0.5rem;
+}
+
+.slidev-layout p,
+.slidev-layout li {
+  font-size: 1.05rem;
+  line-height: 1.85;
+  color: #4a4038;
+}
+
+.slidev-layout ul,
+.slidev-layout ol {
+  padding-inline-start: 1.3rem;
+  padding-inline-end: 0;
+}
+
+.slidev-layout li {
+  margin-bottom: 0.3rem;
+}
+
+.slidev-layout li::marker {
+  color: var(--sajjel-tan);
+  font-weight: 700;
+}
+
+.slidev-layout strong {
+  color: var(--sajjel-sage);
+}
+
+/* a screen beside its explanation */
+.split {
+  display: flex;
+  align-items: flex-start;
+  gap: 2.2rem;
+}
+
+.split > .words {
+  flex: 1 1 0;
+  min-width: 0;
+}
+
+.split > .screens {
+  flex: 0 0 auto;
+  display: flex;
+  gap: 1rem;
+  align-items: flex-start;
+}
+
+.shot {
+  height: 22rem;
+  width: auto;
+  border-radius: 1.1rem;
+  border: 1px solid #d9d1ca;
+  box-shadow: 0 0.6rem 1.6rem rgba(69, 60, 54, 0.14);
+  background: var(--sajjel-card);
+}
+
+.shot.tall {
+  height: 24.5rem;
+}
+
+.shot.short {
+  height: 18rem;
+}
+
+.shot-caption {
+  margin-top: 0.45rem;
+  text-align: center;
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: var(--sajjel-muted);
+}
+
+.screen {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* a row of screens under a heading */
+.strip {
+  display: flex;
+  gap: 1.4rem;
+  justify-content: center;
+  margin-top: 0.6rem;
+}
+
+.callout {
+  margin-top: 1.1rem;
+  padding: 0.6rem 1.1rem;
+  border-radius: 0.7rem;
+  background: var(--sajjel-sage);
+  color: var(--sajjel-mist) !important;
+  display: inline-block;
+  font-weight: 600;
+  font-size: 0.98rem;
+}
+
+.note {
+  margin-top: 0.9rem;
+  padding: 0.6rem 1rem;
+  border-inline-start: 0.25rem solid var(--sajjel-tan);
+  background: #f5f1ee;
+  border-radius: 0.5rem;
+  font-size: 0.95rem;
+}
+
+.steps {
+  counter-reset: step;
+  list-style: none !important;
+  padding: 0;
+}
+
+.steps li {
+  list-style: none !important;
+}
+
+.steps li {
+  counter-increment: step;
+  position: relative;
+  padding-inline-start: 2.2rem;
+  margin-bottom: 0.65rem;
+}
+
+.steps li::before {
+  content: counter(step);
+  position: absolute;
+  inset-inline-start: 0;
+  top: 0.25rem;
+  width: 1.55rem;
+  height: 1.55rem;
+  border-radius: 50%;
+  background: var(--sajjel-sage);
+  color: var(--sajjel-mist);
+  font-size: 0.85rem;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* cover */
+.cover {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  gap: 0.6rem;
+}
+
+.cover h1 {
+  border: none;
+  padding: 0;
+  margin: 0;
+  font-size: 2.7rem;
+}
+
+.cover-logo {
+  width: 15rem;
+  margin-bottom: 1rem;
+}
+
+.cover-sub {
+  font-size: 1.15rem;
+  color: var(--sajjel-muted);
+}
+
+/* tables: the demo accounts, the glossary */
+.slidev-layout table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.95rem;
+  margin-top: 0.6rem;
+}
+
+.slidev-layout th,
+.slidev-layout td {
+  text-align: right;
+  padding: 0.42rem 0.7rem;
+  border-bottom: 1px solid #ded6d0;
+}
+
+.slidev-layout th {
+  color: var(--sajjel-sage);
+  font-weight: 800;
+}
+
+.slidev-layout td code,
+.slidev-layout p code,
+.slidev-layout li code {
+  direction: ltr;
+  display: inline-block;
+  background: #f5f1ee;
+  border-radius: 0.35rem;
+  padding: 0 0.35rem;
+  font-size: 0.9em;
+  color: var(--sajjel-ink);
+}
+
+/* the section divider */
+.slidev-layout.section {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: stretch;
+  text-align: right;
+  background: var(--sajjel-sage);
+}
+
+.slidev-layout.section h1 {
+  color: var(--sajjel-mist);
+  border-inline-start-color: var(--sajjel-tan);
+  font-size: 2.4rem;
+}
+
+.slidev-layout.section p {
+  color: #d7ded9;
+  font-size: 1.15rem;
+}
